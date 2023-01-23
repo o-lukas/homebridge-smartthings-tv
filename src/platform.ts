@@ -2,7 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import { PLUGIN_NAME } from './settings';
 import { TvAccessory } from './tvAccessory';
-import { SmartThingsClient, BearerTokenAuthenticator, Device } from '@smartthings/core-sdk';
+import { SubscriptionSource, SmartThingsClient, BearerTokenAuthenticator, Device, SubscriptionRequest } from '@smartthings/core-sdk';
 
 export class SmartThingsPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
@@ -46,7 +46,6 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   }
 
   registerDevice(client: SmartThingsClient, device: Device) {
-    this.log.debug('Device: ', device);
     const existingAccessory = this.accessories.find(a => a.UUID === device.deviceId);
 
     switch (device.ocf?.ocfDeviceType) {

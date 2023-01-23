@@ -38,10 +38,6 @@ export class TvAccessory {
       || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
 
     this.registerCapabilities(component);
-
-    this.client.devices.getStatus(this.device.deviceId).then(status => {
-      this.platform.log.debug('ocf: ', status.components?.main);
-    });
   }
 
   async registerCapabilities(component: Component) {
@@ -54,7 +50,6 @@ export class TvAccessory {
   }
 
   registerCapability(capability: Capability) {
-
     switch (capability.id) {
       case 'switch':
         this.platform.log.info('Registering capability:', capability.name);
