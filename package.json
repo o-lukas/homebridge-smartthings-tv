@@ -1,16 +1,16 @@
 {
   "private": true,
-  "displayName": "Smartthings TV",
+  "displayName": "SmartThings TV",
   "name": "homebridge-smartthings-tv",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Plugin to access samsung TVs using the SmartThings API",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "https://github.com/o-lukas/homebridge-smartthings-tv.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/o-lukas/homebridge-smartthings-tv/issues"
   },
   "engines": {
     "node": ">=14.18.1",
