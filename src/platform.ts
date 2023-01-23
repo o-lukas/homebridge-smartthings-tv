@@ -2,7 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import { PLUGIN_NAME } from './settings';
 import { TvAccessory } from './tvAccessory';
-import { SubscriptionSource, SmartThingsClient, BearerTokenAuthenticator, Device, SubscriptionRequest } from '@smartthings/core-sdk';
+import { SmartThingsClient, BearerTokenAuthenticator, Device } from '@smartthings/core-sdk';
 
 export class SmartThingsPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
