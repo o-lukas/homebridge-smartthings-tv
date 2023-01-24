@@ -8,7 +8,8 @@
       "token": {
         "title": "SmartThings API token",
         "type": "string",
-        "required": true
+        "required": true,
+        "description": "The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open https://account.smartthings.com/tokens and generate a new one (make sure at least devices is selected)."
       }
     }
   }
