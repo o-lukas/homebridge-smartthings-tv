@@ -72,6 +72,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     if (!accessory) {
       accessory = new this.api.platformAccessory(device.name ?? device.deviceId, device.deviceId);
       accessory.context.device = device;
+      accessory.category = this.api.hap.Categories.TELEVISION;
       this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
     }
 
