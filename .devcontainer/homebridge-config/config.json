@@ -13,7 +13,7 @@
         {
             "name": "Config",
             "port": 8581,
-            "auth": "form",
+            "auth": "none",
             "theme": "auto",
             "tempUnits": "c",
             "lang": "en",
