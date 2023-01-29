@@ -17,6 +17,7 @@ export class TvAccessory {
   private service: Service;
   private speakerService: Service;
   private inputSources: Service[] = [];
+  private capabilities: string[] = [];
 
   constructor(
     private readonly platform: SmartThingsPlatform,
@@ -53,6 +54,10 @@ export class TvAccessory {
   }
 
   registerCapability(capability: Capability) {
+    if (capability.id && !this.capabilities.includes(capability.id)) {
+      this.capabilities.push(capability.id);
+    }
+
     switch (capability.id) {
       case 'switch':
         this.platform.log.info('Registering capability:', capability.name);
