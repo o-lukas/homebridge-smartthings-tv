@@ -37,6 +37,10 @@ export class TvAccessory {
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       || this.accessory.addService(this.platform.Service.Television);
+    this.service
+      .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
+        this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE)
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, device.name ?? device.deviceId);
     this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
       || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
     this.service.addLinkedService(this.speakerService);
