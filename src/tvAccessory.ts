@@ -30,8 +30,7 @@ export class TvAccessory {
       .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId)
       .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
       .setCharacteristic(this.platform.Characteristic.Manufacturer, device.manufacturerName)
-      .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown');
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       || this.accessory.addService(this.platform.Service.Television);
