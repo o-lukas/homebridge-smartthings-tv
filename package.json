@@ -27,7 +27,9 @@
     "homebridge-plugin"
   ],
   "dependencies": {
-    "@smartthings/core-sdk": "^5.2.0"
+    "@smartthings/core-sdk": "^5.2.0",
+    "@types/wol": "^1.0.1",
+    "wol": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^16.10.9",

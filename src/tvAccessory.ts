@@ -2,6 +2,7 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
 import { SmartThingsPlatform } from './platform';
 import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
+import { wake } from 'wol';
 
 class SamsungVdMediaInputSource {
   public readonly id: string;
@@ -25,6 +26,7 @@ export class TvAccessory {
     private readonly device: Device,
     private readonly component: Component,
     private readonly client: SmartThingsClient,
+    private readonly macAddress: string | undefined = undefined,
   ) {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId)
@@ -135,10 +137,22 @@ export class TvAccessory {
 
   async setActive(value: CharacteristicValue) {
     this.platform.log.debug('Set active to:', value);
-    this.client.devices.executeCommand(this.device.deviceId, {
-      capability: 'switch',
-      command: value as boolean ? 'on' : 'off',
-    });
+    if (value) {
+      if (this.macAddress) {
+        this.platform.log.debug('Use wake-on-lan functionality because mac-address has been configured');
+        wake(this.macAddress);
+      } else {
+        this.client.devices.executeCommand(this.device.deviceId, {
+          capability: 'switch',
+          command: 'on',
+        });
+      }
+    } else {
+      this.client.devices.executeCommand(this.device.deviceId, {
+        capability: 'switch',
+        command: 'off',
+      });
+    }
   }
 
   async getActive(): Promise<CharacteristicValue> {

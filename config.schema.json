@@ -10,6 +10,23 @@
         "type": "string",
         "required": true,
         "description": "The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open https://account.smartthings.com/tokens and generate a new one (make sure at least devices is selected)."
+      },
+      "deviceMappings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Use the device mappings when turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device.",
+          "properties": {
+            "deviceId": {
+              "type": "string",
+              "description": "The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id."
+            },
+            "macAddress": {
+              "type": "string",
+              "description": "The mac address of the device."
+            }
+          }
+        }
       }
     }
   }
