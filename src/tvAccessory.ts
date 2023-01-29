@@ -30,12 +30,15 @@ export class TvAccessory {
       .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
       .setCharacteristic(this.platform.Characteristic.Manufacturer, device.manufacturerName)
       .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId)
+      .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
+        this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE);
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       || this.accessory.addService(this.platform.Service.Television);
     this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
       || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+    this.service.addLinkedService(this.speakerService);
 
     this.registerCapabilities(component);
   }
