@@ -102,7 +102,9 @@ export class TvAccessory {
     this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
       .then(status => {
         const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
-        const newInputSources: Array<Service> = [];
+
+        this.inputSources.forEach(inputSource => this.service.removeLinkedService(inputSource));
+        this.inputSources = [];
 
         for (let i = 0; i < supportedInputSources.length; i++) {
           const inputSource = supportedInputSources[i];
@@ -117,10 +119,8 @@ export class TvAccessory {
             .setCharacteristic(this.platform.Characteristic.IsConfigured, this.platform.Characteristic.IsConfigured.CONFIGURED)
             .setCharacteristic(this.platform.Characteristic.InputSourceType, this.guessInputSourceType(inputSource.id));
           this.service.addLinkedService(inputSourceService);
-          newInputSources[i] = inputSourceService;
+          this.inputSources[i] = inputSourceService;
         }
-
-        this.inputSources = newInputSources;
       });
   }
 
