@@ -31,9 +31,7 @@ export class TvAccessory {
       .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
       .setCharacteristic(this.platform.Characteristic.Manufacturer, device.manufacturerName)
       .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId)
-      .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
-        this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE);
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       || this.accessory.addService(this.platform.Service.Television);
@@ -41,6 +39,9 @@ export class TvAccessory {
       .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
         this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE)
       .setCharacteristic(this.platform.Characteristic.ConfiguredName, device.name ?? device.deviceId);
+    this.service.getCharacteristic(this.platform.Characteristic.RemoteKey)
+      .onSet(this.setRemoteKey.bind(this));
+
     this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
       || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
     this.service.addLinkedService(this.speakerService);
@@ -196,5 +197,144 @@ export class TvAccessory {
         this.platform.log.debug('samsungvd.mediaInputSource status:', status);
         return this.inputSources.findIndex(inputSource => inputSource.name === status.inputSource.value);
       });
+  }
+
+  async setRemoteKey(value: CharacteristicValue) {
+    switch (value) {
+      case this.platform.Characteristic.RemoteKey.REWIND:
+        if (this.validateCapability('mediaPlayback', 'REWIND')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'mediaPlayback',
+            command: 'rewind',
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.FAST_FORWARD:
+        if (this.validateCapability('mediaPlayback', 'FAST_FORWARD')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'mediaPlayback',
+            command: 'fastForward',
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.NEXT_TRACK:
+        if (this.validateCapability('mediaTrackControl', 'NEXT_TRACK')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'mediaTrackControl',
+            command: 'nextTrack',
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK:
+        if (this.validateCapability('mediaTrackControl', 'PREVIOUS_TRACK')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'mediaTrackControl',
+            command: 'previousTrack',
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.ARROW_UP:
+        if (this.validateCapability('samsungvd.remoteControl', 'ARROW_UP')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['UP'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.ARROW_DOWN:
+        if (this.validateCapability('samsungvd.remoteControl', 'ARROW_DOWN')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['DOWN'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.ARROW_LEFT:
+        if (this.validateCapability('samsungvd.remoteControl', 'ARROW_LEFT')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['LEFT'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.ARROW_RIGHT:
+        if (this.validateCapability('samsungvd.remoteControl', 'ARROW_RIGHT')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['RIGHT'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.SELECT:
+        if (this.validateCapability('samsungvd.remoteControl', 'SELECT')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['OK'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.BACK:
+        if (this.validateCapability('samsungvd.remoteControl', 'BACK')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['BACK'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.EXIT:
+        if (this.validateCapability('samsungvd.remoteControl', 'EXIT')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['HOME'],
+          });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.PLAY_PAUSE:
+        if (this.validateCapability('mediaPlayback', 'PLAY_PAUSE')) {
+          this.client.devices.executeCommand(this.device.deviceId,
+            {
+              capability: 'mediaPlayback',
+              command: 'play',
+            });
+        }
+        break;
+
+      case this.platform.Characteristic.RemoteKey.INFORMATION:
+        if (this.validateCapability('samsungvd.remoteControl', 'INFORMATION')) {
+          this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'samsungvd.remoteControl',
+            command: 'send',
+            arguments: ['MENU'],
+          });
+        }
+        break;
+    }
+  }
+
+  validateCapability(capabilityId: string, remoteKey: string): boolean {
+    if (this.capabilities.includes(capabilityId)) {
+      return true;
+    } else {
+      this.platform.log.error('can\'t handle RemoteKey', remoteKey, 'because', capabilityId, 'capability is not available');
+      return false;
+    }
   }
 }
