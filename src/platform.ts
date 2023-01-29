@@ -19,7 +19,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     this.log.debug('Finished initializing platform:', this.config.name);
 
     if (!config.token) {
-      throw new Error('SmartThings API token must be configured');
+      this.log.error('SmartThings API token must be configured');
+      return;
     }
 
     this.api.on('didFinishLaunching', () => {
