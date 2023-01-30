@@ -5,7 +5,7 @@ import { TvAccessory } from './tvAccessory';
 import { SmartThingsClient, BearerTokenAuthenticator, Device } from '@smartthings/core-sdk';
 
 class DeviceMapping {
-  constructor(public readonly deviceId: string, public readonly macAddress: string) {
+  constructor(public readonly deviceId: string, public readonly macAddress: string, public readonly ipAddress: string) {
   }
 }
 
@@ -83,6 +83,6 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
     }
 
-    new TvAccessory(this, accessory, device, component, client, deviceMapping?.macAddress);
+    new TvAccessory(this, accessory, device, component, client, deviceMapping?.macAddress, deviceMapping?.ipAddress);
   }
 }

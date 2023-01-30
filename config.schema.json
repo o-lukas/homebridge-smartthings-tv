@@ -15,7 +15,7 @@
         "type": "array",
         "items": {
           "type": "object",
-          "description": "Use the device mappings when turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device.",
+          "description": "Use the device mappings when e.g. turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device. If status does not show up properly you can use the ping functionality to determine the device status. To make use of it you must enter the SmartThings device ID and the ip address of the device.",
           "properties": {
             "deviceId": {
               "type": "string",
@@ -23,7 +23,11 @@
             },
             "macAddress": {
               "type": "string",
-              "description": "The mac address of the device."
+              "description": "The mac address of the device to turn device on using wake-on-lan functionality."
+            },
+            "ipAddress": {
+              "type": "string",
+              "description": "The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping."
             }
           }
         }

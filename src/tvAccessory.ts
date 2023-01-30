@@ -3,6 +3,7 @@ import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 import { SmartThingsPlatform } from './platform';
 import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
 import { wake } from 'wol';
+import ping from 'ping';
 
 class SamsungVdMediaInputSource {
   public readonly id: string;
@@ -27,6 +28,7 @@ export class TvAccessory {
     private readonly component: Component,
     private readonly client: SmartThingsClient,
     private readonly macAddress: string | undefined = undefined,
+    private readonly ipAddress: string | undefined = undefined,
   ) {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId)
@@ -156,6 +158,18 @@ export class TvAccessory {
   }
 
   async getActive(): Promise<CharacteristicValue> {
+    if (this.ipAddress) {
+      try {
+        return ping.promise.probe(this.ipAddress).then(status => {
+          this.platform.log.debug('ping status:', status);
+          return !!status;
+        });
+      } catch (exc) {
+        this.platform.log.error('error when pinging device:', exc
+          , '\nping command fails mostly because of permission issues - falling back to SmartThings API for getting active state');
+      }
+    }
+
     return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'switch').then(status => {
       this.platform.log.debug('switch status:', status);
       return status.switch.value === 'on' ? true : false;
