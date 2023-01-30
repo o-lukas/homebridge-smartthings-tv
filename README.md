@@ -1,25 +1,12 @@
-
-<p align="center">
-
-<img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
-
-</p>
-
-[![npm version](https://img.shields.io/npm/v/homebridge-smartthings-tv?style=flat-square)](https://www.npmjs.com/package/homebridge-smartthings-tv)
-[![Dependencies Status](https://img.shields.io/o-lukas/homebridge-smartthings-tv?style=flat-square)](https://github.com/o-lukas/homebridge-smartthings-tv)
-[![Issues Status](https://img.shields.io/github/issues/o-lukas/homebridge-smartthings-tv?style=flat-square)](https://github.com/o-lukas/homebridge-smartthings-tv)
-
-[!Build status](https://img.shields.io/github/actions/workflow/status/o-lukas/homebridge-smartthings-tv/)](https://github.com/o-lukas/homebridge-smartthings-tv)
-
 # Homebridge SmartThings TV
 
 This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It offers some basic functions to control Samsung TVs using the SmartThings API.
 
 # Configuration
 
-The easiest way to configure the plugin is to use homebridge-config-ui-x which should contain a description for every needed property. The only property needed to make the plugin work is the SmartThings API token. The other properties enable some additional functions but are not mandatory for the plugin to work.
+The easiest way to configure the plugin is to use [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x) which should contain a description for every needed property. The only property needed to make the plugin work is the SmartThings API token. The other properties enable some additional functions but are not mandatory for the plugin to work.
 
-If you don't use the the homebridge-config-ui-x see the following example for configuration:
+If you don't use the [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x) see the following example for configuration:
 
 ```json
 {
