@@ -115,7 +115,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for HomeBridge accessory Active property.
+   * Setter for Homebridge accessory Active property.
    *
    * @param value the CharacteristicValue
    */
@@ -140,7 +140,7 @@ export class TvAccessory {
   }
 
   /**
-   * Getter for HomeBridge accessory Active property.
+   * Getter for Homebridge accessory Active property.
    *
    * @returns the CharacteristicValue
    */
@@ -164,7 +164,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for HomeBridge accessory Volume property.
+   * Setter for Homebridge accessory Volume property.
    *
    * @param value the CharacteristicValue
    */
@@ -178,7 +178,7 @@ export class TvAccessory {
   }
 
   /**
-   * Getter for HomeBridge accessory Volume property.
+   * Getter for Homebridge accessory Volume property.
    *
    * @returns the CharacteristicValue
    */
@@ -191,7 +191,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for HomeBridge accessory Mute property.
+   * Setter for Homebridge accessory Mute property.
    *
    * @param value the CharacteristicValue
    */
@@ -204,7 +204,7 @@ export class TvAccessory {
   }
 
   /**
-   * Getter for HomeBridge accessory Mute property.
+   * Getter for Homebridge accessory Mute property.
    *
    * @returns the CharacteristicValue
    */
@@ -217,7 +217,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for HomeBridge accessory ActiveIdentifier property.
+   * Setter for Homebridge accessory ActiveIdentifier property.
    *
    * @param value the CharacteristicValue
    */
@@ -231,7 +231,7 @@ export class TvAccessory {
   }
 
   /**
-   * Getter for HomeBridge accessory ActiveIdentifier property.
+   * Getter for Homebridge accessory ActiveIdentifier property.
    *
    * @returns the CharacteristicValue
    */
@@ -244,7 +244,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for HomeBridge accessory RemoteKey property.
+   * Setter for Homebridge accessory RemoteKey property.
    *
    * @param value the CharacteristicValue
    */

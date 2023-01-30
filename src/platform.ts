@@ -67,7 +67,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   }
 
   /**
-   * Registers a SmartThings Device for HomeBridge.
+   * Registers a SmartThings Device for Homebridge.
    *
    * @param client the SmartThingsClient used to send API calls
    * @param device the SmartThings Device
@@ -88,7 +88,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   }
 
   /**
-   * Registers a SmartThings TV Device for HomeBridge.
+   * Registers a SmartThings TV Device for Homebridge.
    *
    * @param client the SmartThingsClient used to send API calls
    * @param device the SmartThings Device
