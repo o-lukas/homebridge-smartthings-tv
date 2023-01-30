@@ -162,7 +162,7 @@ export class TvAccessory {
       try {
         return ping.promise.probe(this.ipAddress).then(status => {
           this.platform.log.debug('ping status:', status);
-          return !!status;
+          return status?.alive;
         });
       } catch (exc) {
         this.platform.log.error('error when pinging device:', exc
