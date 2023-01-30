@@ -2,7 +2,7 @@
   "private": true,
   "displayName": "SmartThings TV",
   "name": "homebridge-smartthings-tv",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Plugin to access samsung TVs using the SmartThings API",
   "license": "Apache-2.0",
   "repository": {
