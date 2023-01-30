@@ -28,13 +28,13 @@
   ],
   "dependencies": {
     "@smartthings/core-sdk": "^5.2.0",
-    "@types/ping": "^0.4.1",
-    "@types/wol": "^1.0.1",
     "ping": "^0.4.2",
     "wol": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^16.10.9",
+    "@types/ping": "^0.4.1",
+    "@types/wol": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
