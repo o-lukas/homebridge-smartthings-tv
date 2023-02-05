@@ -186,7 +186,7 @@ export class TvAccessory {
     return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'audioVolume')
       .then(status => {
         this.platform.log.debug('audioVolume status:', status);
-        return 0;
+        return status.volume.value as number;
       });
   }
 
