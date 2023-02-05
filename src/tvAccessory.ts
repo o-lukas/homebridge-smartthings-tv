@@ -92,7 +92,7 @@ export class TvAccessory {
         this.logInfo('Registering capability:', capability.name);
         this.speakerService
           .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE)
-          .setCharacteristic(this.platform.Characteristic.VolumeControlType, this.platform.Characteristic.VolumeControlType.ABSOLUTE);
+          .setCharacteristic(this.platform.Characteristic.VolumeControlType, this.platform.Characteristic.VolumeControlType.RELATIVE);
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
           .onSet(this.setVolume.bind(this))
           .onGet(this.getVolume.bind(this));
