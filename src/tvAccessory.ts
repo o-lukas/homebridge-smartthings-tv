@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
 import { SmartThingsPlatform } from './platform';
 import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
@@ -25,6 +25,7 @@ export class TvAccessory {
   private capabilities: string[] = [];
 
   constructor(
+    private readonly log: Logger,
     private readonly platform: SmartThingsPlatform,
     private readonly accessory: PlatformAccessory,
     private readonly device: Device,
@@ -61,7 +62,7 @@ export class TvAccessory {
    * @param component the SmartThings Component
    */
   private async registerCapabilities(component: Component) {
-    this.platform.log.info('Registering capabilities for component:', component.id);
+    this.logInfo('Registering capabilities for component:', component.id);
 
     component.capabilities.forEach(reference => {
       this.client.capabilities.get(reference.id, reference.version ?? 0)
@@ -81,14 +82,14 @@ export class TvAccessory {
 
     switch (capability.id) {
       case 'switch':
-        this.platform.log.info('Registering capability:', capability.name);
+        this.logInfo('Registering capability:', capability.name);
         this.service.getCharacteristic(this.platform.Characteristic.Active)
           .onSet(this.setActive.bind(this))
           .onGet(this.getActive.bind(this));
         break;
 
       case 'audioVolume':
-        this.platform.log.info('Registering capability:', capability.name);
+        this.logInfo('Registering capability:', capability.name);
         this.speakerService
           .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE)
           .setCharacteristic(this.platform.Characteristic.VolumeControlType, this.platform.Characteristic.VolumeControlType.ABSOLUTE);
@@ -98,14 +99,14 @@ export class TvAccessory {
         break;
 
       case 'audioMute':
-        this.platform.log.info('Registering capability:', capability.name);
+        this.logInfo('Registering capability:', capability.name);
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
         break;
 
       case 'samsungvd.mediaInputSource':
-        this.platform.log.info('Registering capability:', capability.name);
+        this.logInfo('Registering capability:', capability.name);
         this.registerInputSources();
         this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
           .onSet(this.setActiveIdentifier.bind(this))
@@ -120,10 +121,10 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setActive(value: CharacteristicValue) {
-    this.platform.log.debug('Set active to:', value);
+    this.logDebug('Set active to:', value);
     if (value) {
       if (this.macAddress) {
-        this.platform.log.debug('Use wake-on-lan functionality because mac-address has been configured');
+        this.logDebug('Use wake-on-lan functionality because mac-address has been configured');
         wake(this.macAddress);
       } else {
         this.executeCommand('switch', 'on');
@@ -142,11 +143,11 @@ export class TvAccessory {
     if (this.ipAddress) {
       try {
         return ping.promise.probe(this.ipAddress).then(status => {
-          this.platform.log.debug('ping status:', status);
+          this.logDebug('ping status:', status);
           return status?.alive;
         });
       } catch (exc) {
-        this.platform.log.error('error when pinging device:', exc
+        this.logError('error when pinging device:', exc
           , '\nping command fails mostly because of permission issues - falling back to SmartThings API for getting active state');
       }
     }
@@ -161,7 +162,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setVolume(value: CharacteristicValue) {
-    this.platform.log.debug('Set volume to:', value);
+    this.logDebug('Set volume to:', value);
     this.executeCommand('audioVolume', 'setVolume', [value as number]);
   }
 
@@ -181,7 +182,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setMute(value: CharacteristicValue) {
-    this.platform.log.debug('Set mute to:', value);
+    this.logDebug('Set mute to:', value);
     this.executeCommand('audioMute', value as boolean ? 'mute' : 'unmute');
   }
 
@@ -201,7 +202,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setActiveIdentifier(value: CharacteristicValue) {
-    this.platform.log.debug('Set active identifier to:', value);
+    this.logDebug('Set active identifier to:', value);
     this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [this.inputSources[value as number].name ?? '']);
   }
 
@@ -313,7 +314,7 @@ export class TvAccessory {
     if (this.capabilities.includes(capabilityId)) {
       return true;
     } else {
-      this.platform.log.error('can\'t handle RemoteKey', remoteKey, 'because', capabilityId, 'capability is not available');
+      this.logError('can\'t handle RemoteKey', remoteKey, 'because', capabilityId, 'capability is not available');
       return false;
     }
   }
@@ -331,7 +332,7 @@ export class TvAccessory {
 
         for (let i = 0; i < supportedInputSources.length; i++) {
           const inputSource = supportedInputSources[i];
-          this.platform.log.info('Registering input source:', inputSource.name);
+          this.logInfo('Registering input source:', inputSource.name);
 
           const inputSourceService = this.accessory.getService(inputSource.id)
             || this.accessory.addService(this.platform.Service.InputSource, inputSource.id, inputSource.id);
@@ -377,9 +378,9 @@ export class TvAccessory {
       command: command,
       arguments: args,
     }).then(() => {
-      this.platform.log.debug('Successfully executed command', capability, '.', command);
+      this.logDebug('Successfully executed command', capability, '.', command);
     }).catch(error => {
-      this.platform.log.error('Error when executing', capability, '.', command, ':', error);
+      this.logError('Error when executing', capability, '.', command, ':', error);
     });
   }
 
@@ -393,12 +394,28 @@ export class TvAccessory {
   private async getCapabilityStatus(capability: string) {
     return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability)
       .then(status => {
-        this.platform.log.debug('Successfully get status of ', capability, ':', status);
+        this.logDebug('Successfully get status of ', capability, ':', status);
         return status;
       })
       .catch(error => {
-        this.platform.log.error('Error when getting status of', capability, ':', error);
+        this.logError('Error when getting status of', capability, ':', error);
         return undefined;
       });
+  }
+
+  private logInfo(message: string, ...parameters: unknown[]): void {
+    this.log.debug('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
+  }
+
+  private logWarn(message: string, ...parameters: unknown[]): void {
+    this.log.warn('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
+  }
+
+  private logError(message: string, ...parameters: unknown[]): void {
+    this.log.error('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
+  }
+
+  private logDebug(message: string, ...parameters: unknown[]): void {
+    this.log.debug('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
   }
 }
