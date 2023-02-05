@@ -126,16 +126,10 @@ export class TvAccessory {
         this.platform.log.debug('Use wake-on-lan functionality because mac-address has been configured');
         wake(this.macAddress);
       } else {
-        this.client.devices.executeCommand(this.device.deviceId, {
-          capability: 'switch',
-          command: 'on',
-        });
+        this.executeCommand('switch', 'on');
       }
     } else {
-      this.client.devices.executeCommand(this.device.deviceId, {
-        capability: 'switch',
-        command: 'off',
-      });
+      this.executeCommand('switch', 'off');
     }
   }
 
@@ -157,10 +151,8 @@ export class TvAccessory {
       }
     }
 
-    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'switch').then(status => {
-      this.platform.log.debug('switch status:', status);
-      return status.switch.value === 'on' ? true : false;
-    });
+    const status = await this.getCapabilityStatus('switch');
+    return status?.switch.value === 'on' ? true : false;
   }
 
   /**
@@ -170,11 +162,7 @@ export class TvAccessory {
    */
   private async setVolume(value: CharacteristicValue) {
     this.platform.log.debug('Set volume to:', value);
-    this.client.devices.executeCommand(this.device.deviceId, {
-      capability: 'audioVolume',
-      command: 'setVolume',
-      arguments: [value as number],
-    });
+    this.executeCommand('audioVolume', 'setVolume', [value as number]);
   }
 
   /**
@@ -183,11 +171,8 @@ export class TvAccessory {
    * @returns the CharacteristicValue
    */
   private async getVolume(): Promise<CharacteristicValue> {
-    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'audioVolume')
-      .then(status => {
-        this.platform.log.debug('audioVolume status:', status);
-        return status.volume.value as number;
-      });
+    const status = await this.getCapabilityStatus('audioVolume');
+    return status?.volume.value as number;
   }
 
   /**
@@ -197,10 +182,7 @@ export class TvAccessory {
    */
   private async setMute(value: CharacteristicValue) {
     this.platform.log.debug('Set mute to:', value);
-    this.client.devices.executeCommand(this.device.deviceId, {
-      capability: 'audioMute',
-      command: value as boolean ? 'mute' : 'unmute',
-    });
+    this.executeCommand('audioMute', value as boolean ? 'mute' : 'unmute');
   }
 
   /**
@@ -209,11 +191,8 @@ export class TvAccessory {
    * @returns the CharacteristicValue
    */
   private async getMute(): Promise<CharacteristicValue> {
-    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'audioMute')
-      .then(status => {
-        this.platform.log.debug('audioMute status:', status);
-        return status.mute.value === 'muted' ? true : false;
-      });
+    const status = await this.getCapabilityStatus('audioMute');
+    return status?.mute.value === 'muted' ? true : false;
   }
 
   /**
@@ -223,11 +202,7 @@ export class TvAccessory {
    */
   private async setActiveIdentifier(value: CharacteristicValue) {
     this.platform.log.debug('Set active identifier to:', value);
-    this.client.devices.executeCommand(this.device.deviceId, {
-      capability: 'samsungvd.mediaInputSource',
-      command: 'setInputSource',
-      arguments: [this.inputSources[value as number].name ?? ''],
-    });
+    this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [this.inputSources[value as number].name ?? '']);
   }
 
   /**
@@ -236,11 +211,8 @@ export class TvAccessory {
    * @returns the CharacteristicValue
    */
   private async getActiveIdentifier(): Promise<CharacteristicValue> {
-    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
-      .then(status => {
-        this.platform.log.debug('samsungvd.mediaInputSource status:', status);
-        return this.inputSources.findIndex(inputSource => inputSource.name === status.inputSource.value);
-      });
+    const status = await this.getCapabilityStatus('samsungvd.mediaInputSource');
+    return this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
   }
 
   /**
@@ -252,127 +224,79 @@ export class TvAccessory {
     switch (value) {
       case this.platform.Characteristic.RemoteKey.REWIND:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'REWIND')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'mediaPlayback',
-            command: 'rewind',
-          });
+          this.executeCommand('mediaPlayback', 'rewind');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.FAST_FORWARD:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'FAST_FORWARD')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'mediaPlayback',
-            command: 'fastForward',
-          });
+          this.executeCommand('mediaPlayback', 'fastForward');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.NEXT_TRACK:
         if (this.validateRemoteKeyCapability('mediaTrackControl', 'NEXT_TRACK')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'mediaTrackControl',
-            command: 'nextTrack',
-          });
+          this.executeCommand('mediaTrackControl', 'nextTrack');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK:
         if (this.validateRemoteKeyCapability('mediaTrackControl', 'PREVIOUS_TRACK')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'mediaTrackControl',
-            command: 'previousTrack',
-          });
+          this.executeCommand('mediaTrackControl', 'previousTrack');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_UP:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_UP')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['UP'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['UP']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_DOWN:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_DOWN')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['DOWN'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['DOWN']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_LEFT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_LEFT')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['LEFT'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['LEFT']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_RIGHT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_RIGHT')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['RIGHT'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['RIGHT']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.SELECT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'SELECT')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['OK'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['OK']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.BACK:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'BACK')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['BACK'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['BACK']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.EXIT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'EXIT')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['HOME'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['HOME']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.PLAY_PAUSE:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'PLAY_PAUSE')) {
-          this.client.devices.executeCommand(this.device.deviceId,
-            {
-              capability: 'mediaPlayback',
-              command: 'play',
-            });
+          this.executeCommand('mediaPlayback', 'play');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.INFORMATION:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'INFORMATION')) {
-          this.client.devices.executeCommand(this.device.deviceId, {
-            capability: 'samsungvd.remoteControl',
-            command: 'send',
-            arguments: ['MENU'],
-          });
+          this.executeCommand('samsungvd.remoteControl', 'send', ['MENU']);
         }
         break;
     }
@@ -437,5 +361,44 @@ export class TvAccessory {
     } else {
       return this.platform.Characteristic.InputSourceType.APPLICATION;
     }
+  }
+
+  /**
+   * Executes the command of the capability passed in using the arguments passed in.
+   * Handles error values returned by api.
+   *
+   * @param capability the capability identifier
+   * @param command the command identifier
+   * @param args the command arguments
+   */
+  private async executeCommand(capability: string, command: string, args: Array<string | number | object> = []) {
+    this.client.devices.executeCommand(this.device.deviceId, {
+      capability: capability,
+      command: command,
+      arguments: args,
+    }).then(() => {
+      this.platform.log.debug('Successfully executed command', capability, '.', command);
+    }).catch(error => {
+      this.platform.log.error('Error when executing', capability, '.', command, ':', error);
+    });
+  }
+
+  /**
+   * Returns the status of the capability passed in.
+   * Handles error values returned by api.
+   *
+   * @param capability the capability identifier
+   * @returns the capability status or undefined for errors returned by API
+   */
+  private async getCapabilityStatus(capability: string) {
+    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability)
+      .then(status => {
+        this.platform.log.debug('Successfully get status of ', capability, ':', status);
+        return status;
+      })
+      .catch(error => {
+        this.platform.log.error('Error when getting status of', capability, ':', error);
+        return undefined;
+      });
   }
 }
