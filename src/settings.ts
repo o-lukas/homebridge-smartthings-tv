@@ -6,4 +6,4 @@ export const PLATFORM_NAME = 'smartthings-tv';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-smartthings-tv';
+export const PLUGIN_NAME = '@o-lukas/homebridge-smartthings-tv';

@@ -1,7 +1,7 @@
 {
   "displayName": "SmartThings TV",
   "name": "@o-lukas/homebridge-smartthings-tv",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "description": "Plugin to access samsung TVs using the SmartThings API",
   "license": "MIT",
   "repository": {
