@@ -91,11 +91,15 @@ export class TvAccessory {
       case 'audioVolume':
         this.logInfo('Registering capability:', capability.name);
         this.speakerService
-          .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE)
-          .setCharacteristic(this.platform.Characteristic.VolumeControlType, this.platform.Characteristic.VolumeControlType.RELATIVE);
+          .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE);
+        this.speakerService
+          .setCharacteristic(this.platform.Characteristic.VolumeControlType, this.platform.Characteristic.VolumeControlType.ABSOLUTE);
+        this.speakerService
+          .getCharacteristic(this.platform.Characteristic.Volume)
+          .onGet(this.getVolume.bind(this))
+          .onSet(this.setVolume.bind(this));
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
-          .onSet(this.setVolume.bind(this))
-          .onGet(this.getVolume.bind(this));
+          .onSet(this.setVolumeSelector.bind(this));
         break;
 
       case 'audioMute':
@@ -157,14 +161,24 @@ export class TvAccessory {
   }
 
   /**
+   * Setter for Homebridge accessory VolumeSelector property.
+   *
+   * @param value the CharacteristicValue
+   */
+  private async setVolumeSelector(value: CharacteristicValue) {
+    const increment = value === this.platform.Characteristic.VolumeSelector.INCREMENT;
+    this.logDebug(increment ? 'Increasing' : 'Decreasing' + ' volume');
+    this.executeCommand('audioVolume', value ? 'volumeUp' : 'volumeDown');
+  }
+
+  /**
    * Setter for Homebridge accessory Volume property.
    *
    * @param value the CharacteristicValue
    */
   private async setVolume(value: CharacteristicValue) {
-    const increment = value === this.platform.Characteristic.VolumeSelector.INCREMENT;
-    this.logDebug(increment ? 'Increasing' : 'Decreasing' + ' volume');
-    this.executeCommand('audioVolume', value ? 'volumeUp' : 'volumeDown');
+    this.logDebug('Set volume to:', value);
+    this.executeCommand('audioVolume', 'setVolume', [value as number]);
   }
 
   /**
