@@ -168,7 +168,7 @@ export class TvAccessory {
   private async setVolumeSelector(value: CharacteristicValue) {
     const increment = value === this.platform.Characteristic.VolumeSelector.INCREMENT;
     this.logDebug(increment ? 'Increasing' : 'Decreasing' + ' volume');
-    this.executeCommand('audioVolume', value ? 'volumeUp' : 'volumeDown');
+    this.executeCommand('audioVolume', increment ? 'volumeUp' : 'volumeDown');
   }
 
   /**
