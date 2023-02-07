@@ -11,6 +11,12 @@
         "required": true,
         "description": "The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open https://account.smartthings.com/tokens and generate a new one (make sure at least devices is selected)."
       },
+      "capabilityLogging": {
+        "title": "Capability Logging",
+        "type": "boolean",
+        "required": false,
+        "description": "The SmartThings API returns the list of supported actions of a device as capabilities. For implementing new features it is neccessary to know the scheme the capability uses. Enable this property to log all capabilities of supported SmartThings devices."
+      },
       "deviceMappings": {
         "type": "array",
         "items": {

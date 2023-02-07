@@ -26,6 +26,7 @@ export class TvAccessory {
 
   constructor(
     private readonly log: Logger,
+    private readonly logCapabilities: boolean,
     private readonly platform: SmartThingsPlatform,
     private readonly accessory: PlatformAccessory,
     private readonly device: Device,
@@ -76,6 +77,10 @@ export class TvAccessory {
    * @param capability the Capability
    */
   private registerCapability(capability: Capability) {
+    if (this.logCapabilities) {
+      this.logDebug('Available capability:', JSON.stringify(capability, null, 2));
+    }
+
     if (capability.id && !this.capabilities.includes(capability.id)) {
       this.capabilities.push(capability.id);
     }
