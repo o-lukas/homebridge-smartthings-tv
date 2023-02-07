@@ -409,7 +409,7 @@ export class TvAccessory {
   private async getCapabilityStatus(capability: string) {
     return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability)
       .then(status => {
-        this.logDebug('Successfully get status of ', capability, ':', status);
+        this.logDebug('Successfully get status of', capability, ':', JSON.stringify(status, null, 4));
         return status;
       })
       .catch(error => {
