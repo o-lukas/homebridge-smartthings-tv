@@ -467,9 +467,9 @@ export class TvAccessory {
       command: command,
       arguments: args,
     }).then(() => {
-      this.logDebug('Successfully executed command', capability, '.', command);
+      this.logDebug('Successfully executed command', command, 'of capability', capability);
     }).catch(error => {
-      this.logError('Error when executing', capability, '.', command, ':', error);
+      this.logError('Error when executing', command, 'of capability', capability, ':', error.response.statusText);
     });
   }
 
@@ -487,7 +487,7 @@ export class TvAccessory {
         return status;
       })
       .catch(error => {
-        this.logError('Error when getting status of', capability, ':', error);
+        this.logError('Error when getting status of', capability, ':', error.response.statusText);
         return undefined;
       });
   }
