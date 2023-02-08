@@ -493,7 +493,7 @@ export class TvAccessory {
   }
 
   private logInfo(message: string, ...parameters: unknown[]): void {
-    this.log.debug('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
+    this.log.info('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
   }
 
   private logWarn(message: string, ...parameters: unknown[]): void {
