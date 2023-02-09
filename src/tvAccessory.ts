@@ -5,6 +5,8 @@ import { SmartThingsClient, Device, Component, Capability } from '@smartthings/c
 import { wake } from 'wol';
 import ping from 'ping';
 
+import data from './res/apps.json';
+
 class SamsungVdMediaInputSource {
   public readonly id: string;
   public readonly name: string;
@@ -116,7 +118,15 @@ export class TvAccessory {
 
       case 'samsungvd.mediaInputSource':
         this.logInfo('Registering capability:', capability.name);
-        this.registerInputSources();
+        this.registerMediaInputSources();
+        this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
+          .onSet(this.setActiveIdentifier.bind(this))
+          .onGet(this.getActiveIdentifier.bind(this));
+        break;
+
+      case 'custom.launchapp':
+        this.logInfo('Registering capability:', capability.name);
+        this.registerApplications();
         this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
           .onSet(this.setActiveIdentifier.bind(this))
           .onGet(this.getActiveIdentifier.bind(this));
@@ -223,7 +233,13 @@ export class TvAccessory {
    */
   private async setActiveIdentifier(value: CharacteristicValue) {
     this.logDebug('Set active identifier to:', value);
-    this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [this.inputSources[value as number].name ?? '']);
+    const inputSource = this.inputSources[value as number];
+    const inputSourceType = inputSource.getCharacteristic(this.platform.Characteristic.InputSourceType).value as number;
+    if (inputSourceType === this.platform.Characteristic.InputSourceType.APPLICATION) {
+      this.executeCommand('custom.launchapp', 'launchApp', [inputSource.name ?? '']);
+    } else {
+      this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [inputSource.name ?? '']);
+    }
   }
 
   /**
@@ -340,32 +356,64 @@ export class TvAccessory {
   }
 
   /**
-   * Registers all available input sources.
+   * Registers all available media input sources (e.g. HDMI inputs).
    */
-  private async registerInputSources() {
+  private async registerMediaInputSources() {
     this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
       .then(status => {
         const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
-
-        this.inputSources.forEach(inputSource => this.service.removeLinkedService(inputSource));
-        this.inputSources = [];
-
-        for (let i = 0; i < supportedInputSources.length; i++) {
-          const inputSource = supportedInputSources[i];
-          this.logInfo('Registering input source:', inputSource.name);
-
-          const inputSourceService = this.accessory.getService(inputSource.id)
-            || this.accessory.addService(this.platform.Service.InputSource, inputSource.id, inputSource.id);
-          inputSourceService.name = inputSource.id;
-          inputSourceService
-            .setCharacteristic(this.platform.Characteristic.Identifier, i)
-            .setCharacteristic(this.platform.Characteristic.ConfiguredName, inputSource.name)
-            .setCharacteristic(this.platform.Characteristic.IsConfigured, this.platform.Characteristic.IsConfigured.CONFIGURED)
-            .setCharacteristic(this.platform.Characteristic.InputSourceType, this.guessInputSourceType(inputSource.id));
-          this.service.addLinkedService(inputSourceService);
-          this.inputSources[i] = inputSourceService;
-        }
+        supportedInputSources.forEach(inputSource => this.registerInputSource(inputSource.id, inputSource.name));
       });
+  }
+
+  /**
+   * Registers all installed applications.
+   *
+   * Tests a list of known application ids by trying to open them. If opening succeeded the application is registered
+   * as an input source. If it fails the application will not be added. If multiple ids for an application are available
+   * the first successfully tested id will be used.
+   */
+  private async registerApplications() {
+    for (const i in data.apps) {
+      const app = data.apps[i];
+      for (const j in app.ids) {
+        const appId = app.ids[j];
+        try {
+          await this.client.devices.executeCommand(this.device.deviceId, {
+            capability: 'custom.launchapp',
+            command: 'launchApp',
+            arguments: [appId],
+          });
+
+          this.registerInputSource(appId, app.name);
+          break;
+        } catch (exc) {
+          continue;
+        }
+      }
+    }
+  }
+
+  /**
+   * Registers a Homebridge input source.
+   *
+   * @param id the input source id
+   * @param name the input source display name
+   */
+  private registerInputSource(id: string, name: string) {
+    this.logInfo('Registering input source:', name);
+
+    const inputSourceService = this.accessory.getService(id)
+      || this.accessory.addService(this.platform.Service.InputSource, id, id);
+    inputSourceService.name = id;
+    inputSourceService
+      .setCharacteristic(this.platform.Characteristic.Identifier, this.inputSources.length)
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, name)
+      .setCharacteristic(this.platform.Characteristic.IsConfigured, this.platform.Characteristic.IsConfigured.CONFIGURED)
+      .setCharacteristic(this.platform.Characteristic.InputSourceType, this.guessInputSourceType(id));
+    this.service.addLinkedService(inputSourceService);
+
+    this.inputSources.push(inputSourceService);
   }
 
   /**
