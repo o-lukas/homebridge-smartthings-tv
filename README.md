@@ -1,7 +1,8 @@
 # Homebridge SmartThings TV
 
 ![NPM Version](https://badgen.net/npm/v/@o-lukas/homebridge-smartthings-tv?label=stable)
-![NPM Version](https://badgen.net/npm/node/@o-lukas/homebridge-smartthings-tv)
+![NPM Node Version](https://badgen.net/npm/node/@o-lukas/homebridge-smartthings-tv)
+![NPM Total Downloads](https://badgen.net/npm/dt/@o-lukas/homebridge-smartthings-tv)
 ![GitHub issues](https://img.shields.io/github/issues/o-lukas/homebridge-smartthings-tv?label=Issues)
 [![Build and Lint](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml)
 [![Publish to NPM](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/publish.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/publish.yml)
