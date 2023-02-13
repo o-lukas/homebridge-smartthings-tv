@@ -29,13 +29,14 @@ export class TvAccessory {
   private activeIdentiiferChangeValue = 0;
 
   constructor(
-    private readonly log: Logger,
-    private readonly logCapabilities: boolean,
     private readonly platform: SmartThingsPlatform,
     private readonly accessory: PlatformAccessory,
     private readonly device: Device,
     private readonly component: Component,
     private readonly client: SmartThingsClient,
+    private readonly log: Logger,
+    private readonly logCapabilities: boolean,
+    private readonly registerApplications: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -127,11 +128,15 @@ export class TvAccessory {
         break;
 
       case 'custom.launchapp':
-        this.logInfo('Registering capability:', capability.name);
-        this.registerApplications();
-        this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-          .onSet(this.setActiveIdentifier.bind(this))
-          .onGet(this.getActiveIdentifier.bind(this));
+        if (this.registerApplications) {
+          this.logInfo('Registering capability:', capability.name);
+          this.registerLaunchApplications();
+          this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
+            .onSet(this.setActiveIdentifier.bind(this))
+            .onGet(this.getActiveIdentifier.bind(this));
+        } else {
+          this.logInfo('Not registering capability because registering of applications has been disabled:', capability.name);
+        }
         break;
     }
   }
@@ -261,7 +266,7 @@ export class TvAccessory {
       this.logDebug('ActiveIdentifier has been changed on the device - using API result:', id);
       return id;
     } else {
-      this.logDebug('ActiveIdentifier has not been changed on the device- using temporary result:', this.activeIdentiiferChangeValue);
+      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result:', this.activeIdentiiferChangeValue);
       return this.activeIdentiiferChangeValue;
     }
   }
@@ -387,7 +392,7 @@ export class TvAccessory {
    * as an input source. If it fails the application will not be added. If multiple ids for an application are available
    * the first successfully tested id will be used.
    */
-  private async registerApplications() {
+  private async registerLaunchApplications() {
     for (const i in data.apps) {
       const app = data.apps[i];
       for (const j in app.ids) {
