@@ -25,6 +25,8 @@ export class TvAccessory {
   private speakerService: Service;
   private inputSources: Service[] = [];
   private capabilities: string[] = [];
+  private activeIdentifierChangeTime = 0;
+  private activeIdentiiferChangeValue = 0;
 
   constructor(
     private readonly log: Logger,
@@ -235,6 +237,10 @@ export class TvAccessory {
     this.logDebug('Set active identifier to:', value);
     const inputSource = this.inputSources[value as number];
     const inputSourceType = inputSource.getCharacteristic(this.platform.Characteristic.InputSourceType).value as number;
+
+    this.activeIdentifierChangeTime = Date.now();
+    this.activeIdentiiferChangeValue = value as number;
+
     if (inputSourceType === this.platform.Characteristic.InputSourceType.APPLICATION) {
       this.executeCommand('custom.launchapp', 'launchApp', [inputSource.name ?? '']);
     } else {
@@ -249,7 +255,15 @@ export class TvAccessory {
    */
   private async getActiveIdentifier(): Promise<CharacteristicValue> {
     const status = await this.getCapabilityStatus('samsungvd.mediaInputSource');
-    return this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
+
+    if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
+      const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
+      this.logDebug('ActiveIdentifier has been changed on the device - using API result:', id);
+      return id;
+    } else {
+      this.logDebug('ActiveIdentifier has not been changed on the device- using temporary result:', this.activeIdentiiferChangeValue);
+      return this.activeIdentiiferChangeValue;
+    }
   }
 
   /**
