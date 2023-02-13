@@ -19,9 +19,6 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
-  // this is used to track restored cached accessories
-  public readonly accessories: PlatformAccessory[] = [];
-
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
@@ -44,10 +41,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   /**
    * @inheritdoc
    */
-  configureAccessory(accessory: PlatformAccessory) {
-    this.log.info('Loading accessory from cache:', accessory.displayName);
-
-    this.accessories.push(accessory);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  configureAccessory(_accessory: PlatformAccessory) {
+    // nothing to do...
   }
 
   /**
@@ -74,11 +70,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param deviceMappings the array of configured DeviceMapping
    */
   registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]) {
-    const existingAccessory = this.accessories.find(a => a.UUID === device.deviceId);
-
     switch (device.ocf?.ocfDeviceType) {
       case 'oic.d.tv':
-        this.registerTvDevice(client, device, existingAccessory, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
+        this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
         break;
 
       default:
@@ -95,10 +89,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
    * @param deviceMappings the array of configured DeviceMapping
    */
-  registerTvDevice(client: SmartThingsClient, device: Device, accessory: PlatformAccessory<UnknownContext> | undefined,
-    deviceMapping: DeviceMapping | undefined) {
-    this.log.info(accessory ? 'Restoring existing accessory from cache:' : 'Adding new accessory:',
-      device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+  registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
+    this.log.info('Adding new accessory:', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
     if (!component) {
@@ -106,12 +98,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    if (!accessory) {
-      accessory = new this.api.platformAccessory(device.name ?? device.deviceId, device.deviceId);
-      accessory.context.device = device;
-      accessory.category = this.api.hap.Categories.TELEVISION;
-      this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
-    }
+    const accessory = new this.api.platformAccessory(device.name ?? device.deviceId, device.deviceId);
+    accessory.context.device = device;
+    accessory.category = this.api.hap.Categories.TELEVISION;
+    this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     new TvAccessory(this, accessory, device, component, client, this.log, this.config.capabilityLogging, this.config.registerApplications,
       deviceMapping?.macAddress, deviceMapping?.ipAddress);
