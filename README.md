@@ -24,6 +24,8 @@ If you don't use the [Homebridge Config UI X](https://github.com/oznu/homebridge
         ...
         {
             "token": "your SmartThings API token",
+            "capabilityLogging": "log capabilitys implemented by device",
+            "registerApplications": "register applications as input sources",
             "deviceMappings": [
                 {
                     "deviceId": "the SmartThings device ID",
