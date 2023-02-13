@@ -359,11 +359,13 @@ export class TvAccessory {
    * Registers all available media input sources (e.g. HDMI inputs).
    */
   private async registerMediaInputSources() {
-    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
+    await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
       .then(status => {
         const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
         supportedInputSources.forEach(inputSource => this.registerInputSource(inputSource.id, inputSource.name));
       });
+
+    this.setActiveIdentifier(0);
   }
 
   /**
@@ -392,6 +394,8 @@ export class TvAccessory {
         }
       }
     }
+
+    this.setActiveIdentifier(0);
   }
 
   /**
