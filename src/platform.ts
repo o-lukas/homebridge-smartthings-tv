@@ -32,7 +32,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     }
 
     this.api.on('didFinishLaunching', () => {
-      log.debug('Executed didFinishLaunching callback');
+      this.log.debug('Executed didFinishLaunching callback');
 
       this.discoverDevices(config.token, config.deviceMappings);
     });
@@ -55,11 +55,16 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   discoverDevices(token: string, deviceMappings: [DeviceMapping]) {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
-    client.devices.list().then(devices => {
-      devices.forEach(device => {
-        this.registerDevice(client, device, deviceMappings);
+    client.devices.list()
+      .then(devices => {
+        devices.forEach(device => {
+          this.registerDevice(client, device, deviceMappings);
+        });
+      })
+      .catch(error => {
+        this.log.error('Error when getting devices:', error.response.statusText);
+        return undefined;
       });
-    });
   }
 
   /**
