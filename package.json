@@ -23,7 +23,7 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge homebridge-plugin smartthings samsung samsung-tv"
   ],
   "dependencies": {
     "@smartthings/core-sdk": "^5.2.0",
