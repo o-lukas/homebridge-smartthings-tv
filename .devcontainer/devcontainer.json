@@ -4,9 +4,7 @@
 	"name": "Homebridge",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "homebridge",
-	"features": {
-		// "ghcr.io/devcontainers/features/node:1": {}
-	},
+	"features": {},
 	"forwardPorts": [
 		51826,
 		8581
