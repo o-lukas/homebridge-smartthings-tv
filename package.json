@@ -27,7 +27,10 @@
     "homebridge-plugin",
     "smartthings",
     "samsung",
-    "samsung-tv"
+    "samsung-tv",
+    "tv",
+    "television",
+    "remote"
   ],
   "dependencies": {
     "@smartthings/core-sdk": "^5.2.0",
