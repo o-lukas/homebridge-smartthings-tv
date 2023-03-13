@@ -33,7 +33,7 @@
     "remote"
   ],
   "dependencies": {
-    "@smartthings/core-sdk": "^5.2.0",
+    "@smartthings/core-sdk": "^5.3.0",
     "ping": "^0.4.4",
     "wol": "^1.0.7"
   },
