@@ -151,7 +151,12 @@ export class TvAccessory {
     if (value) {
       if (this.macAddress) {
         this.logDebug('Use wake-on-lan functionality because mac-address has been configured');
-        wake(this.macAddress);
+
+        if (await wake(this.macAddress)) {
+          this.logDebug('Successfully woke device');
+        } else {
+          this.logError('Could not wake device - if this error keeps occuring try to disable wake-on-lan functionality');
+        }
       } else {
         this.executeCommand('switch', 'on');
       }
