@@ -32,16 +32,20 @@
     "television",
     "remote"
   ],
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/00lukas"
+  },
   "dependencies": {
     "@smartthings/core-sdk": "^5.3.0",
     "ping": "^0.4.4",
     "wol": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^18.15.3",
+    "@types/node": "^18.15.5",
     "@types/ping": "^0.4.1",
     "@types/wol": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "eslint": "^8.36.0",
     "homebridge": "^1.6.0",
