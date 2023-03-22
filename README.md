@@ -31,8 +31,8 @@ If you don't use the [Homebridge Config UI X](https://github.com/oznu/homebridge
             "deviceMappings": [
                 {
                     "deviceId": "the SmartThings device ID",
-                    "macAddress": "the mac address of the device (needed for wake-on-lan functionality)",
-                    "ipAddress": "the ip address of the device (needed for ping functionality)"
+                    "macAddress": "the mac address of the device (optionally needed for wake-on-lan functionality)",
+                    "ipAddress": "the ip address of the device (optionally needed for ping functionality)"
                 }
             ],
             "platform": "smartthings-tv"
@@ -41,6 +41,11 @@ If you don't use the [Homebridge Config UI X](https://github.com/oznu/homebridge
     ]
 }
 ```
+
+For some TVs the SmartThings API acts kind of strange for the active state. The device mappings should only be used if your TV shows a strange active state or does not turn on.
+
+- If the TV keeps being displayed as active eventhough it has been turned off add a device mapping containing the IP address. Then the plugin will try to ping your TV and display the ping result as active state of the TV.
+- If it does not turn on add a device mapping containing the mac address. Then the plugin will use wake-on-lan to turn your TV on.
 
 ***
 
