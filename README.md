@@ -14,38 +14,83 @@ This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It 
 
 The easiest way to configure the plugin is to use [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x) which should contain a description for every needed property. The only property needed to make the plugin work is the SmartThings API token. The other properties enable some additional functions but are not mandatory for the plugin to work.
 
-If you don't use the [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x) see the following example for configuration:
+## Configuration example
+
+The following snippet shows the most simple configuration you can use for the plugin:
 
 ```json
 {
     "bridge": {
-        ...
     },
     "accessories": [],
     "platforms": [
-        ...
         {
-            "token": "your SmartThings API token",
-            "capabilityLogging": "log capabilitys implemented by device",
-            "registerApplications": "register applications as input sources",
-            "deviceMappings": [
-                {
-                    "deviceId": "the SmartThings device ID",
-                    "macAddress": "the mac address of the device (optionally needed for wake-on-lan functionality)",
-                    "ipAddress": "the ip address of the device (optionally needed for ping functionality)"
-                }
-            ],
+            "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "platform": "smartthings-tv"
         }
-        ...
     ]
 }
 ```
 
-For some TVs the SmartThings API acts kind of strange for the active state. The device mappings should only be used if your TV shows a strange active state or does not turn on.
+The following snippets shows all available properties you can use for the plugin:
 
-- If the TV keeps being displayed as active eventhough it has been turned off add a device mapping containing the IP address. Then the plugin will try to ping your TV and display the ping result as active state of the TV.
-- If it does not turn on add a device mapping containing the mac address. Then the plugin will use wake-on-lan to turn your TV on.
+```json
+{
+    "bridge": {
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "capabilityLogging": true,
+            "registerApplications": true,
+            "deviceMappings": [
+                {
+                    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "macAddress": "xx:xx:xx:xx:xx:xx",
+                    "ipAddress": "xx:xx:xx:xx:xx:xx"
+                },
+                {
+                    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "macAddress": "xx:xx:xx:xx:xx:xx",
+                    "ipAddress": "xx:xx:xx:xx:xx:xx"
+                }
+            ],
+            "platform": "smartthings-tv"
+        }
+    ]
+}
+```
+
+## Available configuration properties
+
+### token
+
+The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open [SmartThings website]( https://account.smartthings.com/tokens) and generate a new one (make sure at least devices is selected).
+
+### capabilityLogging
+
+The SmartThings API returns the list of supported actions of a device as capabilities. For implementing new features it is neccessary to know the scheme the capability uses. Enable this property to log all capabilities of supported SmartThings devices.
+
+### registerApplications
+
+To use installed application as input sources, a [predefined list of applications](./src/res/apps.json) will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV).
+
+### deviceMappings
+
+Use the device mappings when e.g. turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device. If status does not show up properly you can use the ping functionality to determine the device status. To make use of it you must enter the SmartThings device ID and the ip address of the device.
+
+#### deviceId
+
+The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id.
+
+### macAddress
+
+The mac address of the device to turn device on using wake-on-lan functionality.
+
+### ipAddress
+
+The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
 
 ***
 
