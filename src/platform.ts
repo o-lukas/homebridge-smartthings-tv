@@ -77,7 +77,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]) {
     switch (device.ocf?.ocfDeviceType) {
       case 'oic.d.tv':
-        this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
+        this.registerTvDevice(client, device, deviceMappings?.find(mapping => mapping.deviceId === device.deviceId));
         break;
 
       default:
