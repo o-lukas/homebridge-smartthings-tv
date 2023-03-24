@@ -1,8 +1,8 @@
 {
   "displayName": "Homebridge SmartThings TV",
   "name": "@o-lukas/homebridge-smartthings-tv",
-  "version": "1.0.5",
-  "description": "Plugin to access samsung TVs using the SmartThings API",
+  "version": "1.0.6",
+  "description": "This is a plugin for Homebridge. It offers some basic functions to control Samsung TVs using the SmartThings API.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -10,6 +10,10 @@
   },
   "bugs": {
     "url": "https://github.com/o-lukas/homebridge-smartthings-tv/issues"
+  },
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/00lukas"
   },
   "engines": {
     "node": ">=14.18.1",
@@ -32,10 +36,6 @@
     "television",
     "remote"
   ],
-  "funding": {
-    "type": "paypal",
-    "url": "https://paypal.me/00lukas"
-  },
   "dependencies": {
     "@smartthings/core-sdk": "^5.3.0",
     "ping": "^0.4.4",
