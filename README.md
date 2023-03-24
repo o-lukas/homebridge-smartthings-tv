@@ -92,6 +92,60 @@ The mac address of the device to turn device on using wake-on-lan functionality.
 
 The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
 
+# Common issues
+
+## TV does not show in HomeKit
+
+After starting you have to add the TV manually to HomeKit because they are published as external accessory to get over the limit of only one TV per bridge.
+
+## TV does not turn on
+
+The command to turn the TV on using the SmartThings API does not work for some TVs. To solve this problem you can use the built-in wake-on-lan functionality. To activate this functionality add a device mapping containing the device id and the mac address of your TV.
+
+```json
+{
+    "bridge": {
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "deviceMappings": [
+                {
+                    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "macAddress": "xx:xx:xx:xx:xx:xx"
+                }
+            ],
+            "platform": "smartthings-tv"
+        }
+    ]
+}
+```
+
+## TV state does not match actual state
+
+Some TVs report a false active state using the SmartThings API. To get the actual state of the television you can use the build-in ping functionality. To activate this functionality add a device mapping containing the device id and the IP address of your TV.
+
+```json
+{
+    "bridge": {
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "deviceMappings": [
+                {
+                    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "ipAddress": "xx:xx:xx:xx:xx:xx"
+                }
+            ],
+            "platform": "smartthings-tv"
+        }
+    ]
+}
+```
+
 ***
 
 Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems. 
