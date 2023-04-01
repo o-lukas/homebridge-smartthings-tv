@@ -12,12 +12,16 @@ jobs:
         node-version: [14.x, 15.x, 16.x, 18.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }} 
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+          scope: 'o-lukas'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Install dependencies
         run: npm install
@@ -31,7 +35,8 @@ jobs:
           CI: true
 
       - name: Eventually create release
-        uses: cycjimmy/semantic-release-action@v3.4.2
+        if: ${{ matrix.node-version == '18.x' }}
+        run: npm run semantic-release
         env:
           CI: true
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
