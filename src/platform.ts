@@ -81,7 +81,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         break;
 
       default:
-        this.log.info('Ignoring SmartThingsDevice:',
+        this.log.debug('Ignoring SmartThingsDevice:',
           device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
           'because device type', device.ocf?.ocfDeviceType, 'is not implemented');
         break;
