@@ -6,7 +6,6 @@
 ![NPM Total Downloads](https://badgen.net/npm/dt/@o-lukas/homebridge-smartthings-tv)
 ![GitHub issues](https://img.shields.io/github/issues/o-lukas/homebridge-smartthings-tv?label=Issues)
 [![Build and Lint](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml)
-[![Publish to NPM](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/publish.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/publish.yml)
 
 This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It offers some basic functions to control Samsung TVs using the SmartThings API.
 
