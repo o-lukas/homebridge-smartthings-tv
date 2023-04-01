@@ -12,3 +12,5 @@ updates:
       time: "03:00"
     versioning-strategy: increase
     open-pull-requests-limit: 10
+    commit-message:
+      prefix: "build(npm)"
