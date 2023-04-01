@@ -29,3 +29,10 @@ jobs:
         run: npm run build
         env:
           CI: true
+
+      - name: Eventually create release
+        uses: cycjimmy/semantic-release-action@v3.4.2
+        env:
+          CI: true
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
