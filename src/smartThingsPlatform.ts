@@ -62,7 +62,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         });
       })
       .catch(error => {
-        this.log.error('Error when getting devices:', error.response?.statusText);
+        this.log.error('Error when getting devices:', error.response?.statusText ?? error);
         return undefined;
       });
   }
