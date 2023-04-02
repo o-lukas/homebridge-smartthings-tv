@@ -96,14 +96,14 @@ export class TvAccessory {
 
     switch (capability.id) {
       case 'switch':
-        this.logInfo('Registering capability:', capability.name);
+        this.logCapabilityRegistration(capability);
         this.service.getCharacteristic(this.platform.Characteristic.Active)
           .onSet(this.setActive.bind(this))
           .onGet(this.getActive.bind(this));
         break;
 
       case 'audioVolume':
-        this.logInfo('Registering capability:', capability.name);
+        this.logCapabilityRegistration(capability);
         this.speakerService
           .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE);
         this.speakerService
@@ -117,14 +117,14 @@ export class TvAccessory {
         break;
 
       case 'audioMute':
-        this.logInfo('Registering capability:', capability.name);
+        this.logCapabilityRegistration(capability);
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
         break;
 
       case 'samsungvd.mediaInputSource':
-        this.logInfo('Registering capability:', capability.name);
+        this.logCapabilityRegistration(capability);
         this.registerAvailableMediaInputSources();
         this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
           .onSet(this.setActiveIdentifier.bind(this))
@@ -133,7 +133,7 @@ export class TvAccessory {
 
       case 'custom.launchapp':
         if (this.registerApplications) {
-          this.logInfo('Registering capability:', capability.name);
+          this.logCapabilityRegistration(capability);
           this.registerAvailableLaunchApplications();
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
@@ -145,7 +145,7 @@ export class TvAccessory {
 
       case 'custom.picturemode':
         if (this.registerPictureModes) {
-          this.logInfo('Registering capability:', capability.name);
+          this.logCapabilityRegistration(capability);
           this.registerAvailablePictureModes();
         } else {
           this.logInfo('Not register capability because registering of picture modes has been disabled:', capability.name);
@@ -154,7 +154,7 @@ export class TvAccessory {
 
       case 'custom.soundmode':
         if (this.registerSoundModes) {
-          this.logInfo('Registering capability:', capability.name);
+          this.logCapabilityRegistration(capability);
           this.registerAvailableSoundModes();
         } else {
           this.logInfo('Not register capability because registering of sound modes has been disabled:', capability.name);
@@ -636,6 +636,13 @@ export class TvAccessory {
         this.logError('Error when getting status of', capability, ':', error.response.statusText);
         return undefined;
       });
+  }
+
+  private logCapabilityRegistration(capability: Capability) {
+    this.logInfo('Registering capability:', capability.name);
+    if (capability.status !== 'live') {
+      this.logWarn('Capability', capability.name, 'might not work as expected because it\'s status is:', capability.status);
+    }
   }
 
   private logInfo(message: string, ...parameters: unknown[]): void {
