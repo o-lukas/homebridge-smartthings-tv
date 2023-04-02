@@ -29,6 +29,12 @@
         "required": false,
         "description": "Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API."
       },
+      "registerSoundModes": {
+        "title": "Register sound modes",
+        "type": "boolean",
+        "required": false,
+        "description": "Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API."
+      },
       "deviceMappings": {
         "type": "array",
         "items": {

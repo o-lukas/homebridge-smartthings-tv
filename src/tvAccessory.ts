@@ -28,6 +28,7 @@ export class TvAccessory {
   private activeIdentifierChangeTime = 0;
   private activeIdentiiferChangeValue = 0;
   private pictureModes: Service[] = [];
+  private soundModes: Service[] = [];
 
   constructor(
     private readonly platform: SmartThingsPlatform,
@@ -39,6 +40,7 @@ export class TvAccessory {
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
     private readonly registerPictureModes: boolean,
+    private readonly registerSoundModes: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -149,6 +151,14 @@ export class TvAccessory {
           this.logInfo('Not register capability because registering of picture modes has been disabled:', capability.name);
         }
         break;
+
+      case 'custom.soundmode':
+        if (this.registerSoundModes) {
+          this.logInfo('Registering capability:', capability.name);
+          this.registerAvailableSoundModes();
+        } else {
+          this.logInfo('Not register capability because registering of sound modes has been disabled:', capability.name);
+        }
     }
   }
 
@@ -288,7 +298,7 @@ export class TvAccessory {
   }
 
   /**
-   * Setter for Homebridge accessory ActiveIdentifier property.
+   * Setter for Homebridge accessory PictureMode property.
    *
    * @param value the CharacteristicValue
    */
@@ -303,13 +313,38 @@ export class TvAccessory {
   }
 
   /**
-   * Getter for Homebridge accessory ActiveIdentifier property.
+   * Getter for Homebridge accessory PictureMode property.
    *
    * @returns the CharacteristicValue
    */
   private async getPictureMode(name: string): Promise<CharacteristicValue> {
     const status = await this.getCapabilityStatus('custom.picturemode');
     return status?.pictureMode.value as string === name;
+  }
+
+  /**
+   * Setter for Homebridge accessory SoundMode property.
+   *
+   * @param value the CharacteristicValue
+   */
+  private async setSoundMode(value: CharacteristicValue) {
+    this.logDebug('Set sound mode to:', value);
+    this.executeCommand('custom.soundmode', 'setSoundMode', [value as string]);
+
+    this.soundModes.forEach(soundModeService => {
+      soundModeService.updateCharacteristic(this.platform.Characteristic.On,
+        soundModeService.name === value as string);
+    });
+  }
+
+  /**
+   * Getter for Homebridge accessory SoundMode property.
+   *
+   * @returns the CharacteristicValue
+   */
+  private async getSoundMode(name: string): Promise<CharacteristicValue> {
+    const status = await this.getCapabilityStatus('custom.soundmode');
+    return status?.soundMode.value as string === name;
   }
 
   /**
@@ -500,9 +535,9 @@ export class TvAccessory {
   private async registerAvailablePictureModes() {
     this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode')
       .then(status => {
-        const supportedPictureMode = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
-        supportedPictureMode.forEach(pictureMode => {
-          this.registerPictureMode(pictureMode.id, pictureMode.name);
+        const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
+        supportedPictureModes.forEach(pictureMode => {
+          this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture: ' + pictureMode.name);
         });
       });
   }
@@ -510,22 +545,58 @@ export class TvAccessory {
   /**
    * Registers a picture mode as Homebridge switch.
    *
-   * @param id the picture id
+   * @param id the picture mode id
+   * @param name the picture mode name
    * @param name the picture mode display name
    */
-  private async registerPictureMode(id: string, name: string) {
+  private async registerPictureMode(id: string, name: string, displayName: string) {
     this.logInfo('Registering picture mode', name);
 
     const pictureModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
     pictureModeService.name = name;
-    pictureModeService.setCharacteristic(this.platform.Characteristic.Name, name);
+    pictureModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
     pictureModeService.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setPictureMode.bind(this, name))
       .onGet(this.getPictureMode.bind(this, name));
     this.service.addLinkedService(pictureModeService);
 
     this.pictureModes.push(pictureModeService);
+  }
+
+  /**
+   * Registers all available sound modes.
+   */
+  private async registerAvailableSoundModes() {
+    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode')
+      .then(status => {
+        const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
+        supportedSoundModes.forEach(soundMode => {
+          this.registerSoundMode(soundMode.id, soundMode.name, 'Sound: ' + soundMode.name);
+        });
+      });
+  }
+
+  /**
+   * Registers a sound mode as Homebridge switch.
+   *
+   * @param id the sound mode id
+   * @param name the sound mode name
+   * @param name the sound mode display name
+   */
+  private async registerSoundMode(id: string, name: string, displayName: string) {
+    this.logInfo('Registering sound mode', name);
+
+    const soundModeService = this.accessory.getService(id)
+      || this.accessory.addService(this.platform.Service.Switch, id, id);
+    soundModeService.name = name;
+    soundModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
+    soundModeService.getCharacteristic(this.platform.Characteristic.On)
+      .onSet(this.setSoundMode.bind(this, name))
+      .onGet(this.getSoundMode.bind(this, name));
+    this.service.addLinkedService(soundModeService);
+
+    this.pictureModes.push(soundModeService);
   }
 
   /**

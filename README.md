@@ -45,6 +45,7 @@ The following snippets shows all available properties you can use for the plugin
             "capabilityLogging": true,
             "registerApplications": true,
             "registerPictureModes": true,
+            "registerSoundModes": true,
             "deviceMappings": [
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -80,6 +81,10 @@ To use installed application as input sources, a [predefined list of application
 ### registerPictureModes
 
 Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API.
+
+### registerSoundModes
+
+Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API.
 
 ### deviceMappings
 
@@ -151,9 +156,9 @@ Some TVs report a false active state using the SmartThings API. To get the actua
 }
 ```
 
-## Picture mode switches do not match TV picture mode settings
+## Picture/sound mode switches do not match TV picture mode settings
 
-Some TVs always report the same picture mode. This will cause the exposed switches to not match the actual picture mode state. I have not found a proper solution for this problem yet. But toggling the buttons will still work.
+Some TVs always report the same picture & sound mode. This will cause the exposed switches to not match the actual picture/sound mode state. I have not found a proper solution for this problem yet. But toggling the buttons will still work.
 
 ***
 
