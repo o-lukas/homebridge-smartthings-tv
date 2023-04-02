@@ -151,6 +151,10 @@ Some TVs report a false active state using the SmartThings API. To get the actua
 }
 ```
 
+## Picture mode switches do not match TV picture mode settings
+
+Some TVs always report the same picture mode. This will cause the exposed switches to not match the actual picture mode state. I have not found a proper solution for this problem yet. But toggling the buttons will still work.
+
 ***
 
 Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems. 
