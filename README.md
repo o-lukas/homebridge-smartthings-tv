@@ -44,6 +44,7 @@ The following snippets shows all available properties you can use for the plugin
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "capabilityLogging": true,
             "registerApplications": true,
+            "registerPictureModes": true,
             "deviceMappings": [
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -75,6 +76,10 @@ The SmartThings API returns the list of supported actions of a device as capabil
 ### registerApplications
 
 To use installed application as input sources, a [predefined list of applications](./src/res/apps.json) will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV).
+
+### registerPictureModes
+
+Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API.
 
 ### deviceMappings
 

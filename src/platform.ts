@@ -111,6 +111,6 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     new TvAccessory(this, accessory, device, component, client, this.log, this.config.capabilityLogging, this.config.registerApplications,
-      deviceMapping?.macAddress, deviceMapping?.ipAddress);
+      this.config.registerPictureModes, deviceMapping?.macAddress, deviceMapping?.ipAddress);
   }
 }
