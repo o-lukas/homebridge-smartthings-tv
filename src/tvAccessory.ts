@@ -38,6 +38,7 @@ export class TvAccessory {
     private readonly log: Logger,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
+    private readonly registerPictureModes: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -122,7 +123,7 @@ export class TvAccessory {
 
       case 'samsungvd.mediaInputSource':
         this.logInfo('Registering capability:', capability.name);
-        this.registerMediaInputSources();
+        this.registerAvailableMediaInputSources();
         this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
           .onSet(this.setActiveIdentifier.bind(this))
           .onGet(this.getActiveIdentifier.bind(this));
@@ -131,7 +132,7 @@ export class TvAccessory {
       case 'custom.launchapp':
         if (this.registerApplications) {
           this.logInfo('Registering capability:', capability.name);
-          this.registerLaunchApplications();
+          this.registerAvailableLaunchApplications();
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
@@ -141,8 +142,12 @@ export class TvAccessory {
         break;
 
       case 'custom.picturemode':
-        this.logInfo('Registering capability:', capability.name);
-        this.registerPictureModes();
+        if (this.registerPictureModes) {
+          this.logInfo('Registering capability:', capability.name);
+          this.registerAvailablePictureModes();
+        } else {
+          this.logInfo('Not register capability because registering of picture modes has been disabled:', capability.name);
+        }
         break;
     }
   }
@@ -408,7 +413,7 @@ export class TvAccessory {
   /**
    * Registers all available media input sources (e.g. HDMI inputs).
    */
-  private async registerMediaInputSources() {
+  private async registerAvailableMediaInputSources() {
     this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
       .then(status => {
         const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
@@ -423,7 +428,7 @@ export class TvAccessory {
    * as an input source. If it fails the application will not be added. If multiple ids for an application are available
    * the first successfully tested id will be used.
    */
-  private async registerLaunchApplications() {
+  private async registerAvailableLaunchApplications() {
     for (const i in data.apps) {
       const app = data.apps[i];
       for (const j in app.ids) {
@@ -487,7 +492,7 @@ export class TvAccessory {
   /**
    * Registers all available picture modes.
    */
-  private async registerPictureModes() {
+  private async registerAvailablePictureModes() {
     this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode')
       .then(status => {
         const supportedPictureMode = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
