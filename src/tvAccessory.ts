@@ -27,6 +27,7 @@ export class TvAccessory {
   private capabilities: string[] = [];
   private activeIdentifierChangeTime = 0;
   private activeIdentiiferChangeValue = 0;
+  private pictureModes: Service[] = [];
 
   constructor(
     private readonly platform: SmartThingsPlatform,
@@ -137,6 +138,11 @@ export class TvAccessory {
         } else {
           this.logInfo('Not registering capability because registering of applications has been disabled:', capability.name);
         }
+        break;
+
+      case 'custom.picturemode':
+        this.logInfo('Registering capability:', capability.name);
+        this.registerPictureModes();
         break;
     }
   }
@@ -274,6 +280,26 @@ export class TvAccessory {
       this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result:', this.activeIdentiiferChangeValue);
       return this.activeIdentiiferChangeValue;
     }
+  }
+
+  /**
+   * Setter for Homebridge accessory ActiveIdentifier property.
+   *
+   * @param value the CharacteristicValue
+   */
+  private async setPictureMode(value: CharacteristicValue) {
+    this.logDebug('Set picture mode to:', value);
+    this.executeCommand('custom.picturemode', 'setPictureMode', [value as string]);
+  }
+
+  /**
+   * Getter for Homebridge accessory ActiveIdentifier property.
+   *
+   * @returns the CharacteristicValue
+   */
+  private async getPictureMode(name: string): Promise<CharacteristicValue> {
+    const status = await this.getCapabilityStatus('custom.picturemode');
+    return status?.pictureMode.value as string === name;
   }
 
   /**
@@ -456,6 +482,40 @@ export class TvAccessory {
     } else {
       return this.platform.Characteristic.InputSourceType.APPLICATION;
     }
+  }
+
+  /**
+   * Registers all available picture modes.
+   */
+  private async registerPictureModes() {
+    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode')
+      .then(status => {
+        const supportedPictureMode = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
+        supportedPictureMode.forEach(pictureMode => {
+          this.registerPictureMode(pictureMode.id, pictureMode.name);
+        });
+      });
+  }
+
+  /**
+   * Registers a picture mode as Homebridge switch.
+   *
+   * @param id the picture id
+   * @param name the picture mode display name
+   */
+  private async registerPictureMode(id: string, name: string) {
+    this.logInfo('Registering picture mode', name);
+
+    const pictureModeService = this.accessory.getService(id)
+      || this.accessory.addService(this.platform.Service.Switch, id, id);
+    pictureModeService.name = name;
+    pictureModeService.setCharacteristic(this.platform.Characteristic.Name, name);
+    pictureModeService.getCharacteristic(this.platform.Characteristic.On)
+      .onSet(this.setPictureMode.bind(this, name))
+      .onGet(this.getPictureMode.bind(this, name));
+    this.service.addLinkedService(pictureModeService);
+
+    this.pictureModes.push(pictureModeService);
   }
 
   /**
