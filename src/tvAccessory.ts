@@ -295,6 +295,11 @@ export class TvAccessory {
   private async setPictureMode(value: CharacteristicValue) {
     this.logDebug('Set picture mode to:', value);
     this.executeCommand('custom.picturemode', 'setPictureMode', [value as string]);
+
+    this.pictureModes.forEach(pictureModeService => {
+      pictureModeService.updateCharacteristic(this.platform.Characteristic.On,
+        pictureModeService.name === value as string);
+    });
   }
 
   /**
