@@ -1,6 +1,6 @@
 import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
-import { SmartThingsPlatform } from './platform';
+import { SmartThingsPlatform } from './smartThingsPlatform';
 import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
 import { wake } from 'wol';
 import ping from 'ping';
