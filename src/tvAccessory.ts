@@ -555,6 +555,7 @@ export class TvAccessory {
     const pictureModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
     pictureModeService.name = name;
+    pictureModeService.displayName = name;
     pictureModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
     pictureModeService.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setPictureMode.bind(this, name))
@@ -590,6 +591,7 @@ export class TvAccessory {
     const soundModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
     soundModeService.name = name;
+    soundModeService.displayName = name;
     soundModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
     soundModeService.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setSoundMode.bind(this, name))
