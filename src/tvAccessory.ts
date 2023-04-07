@@ -72,7 +72,7 @@ export class TvAccessory {
    * @param component the SmartThings Component
    */
   private async registerCapabilities(component: Component) {
-    this.logInfo('Registering capabilities for component:', component.id);
+    this.logInfo('Registering capabilities for component %s', component.id);
 
     component.capabilities.forEach(reference => {
       this.client.capabilities.get(reference.id, reference.version ?? 0)
@@ -87,7 +87,7 @@ export class TvAccessory {
    */
   private registerCapability(capability: Capability) {
     if (this.logCapabilities) {
-      this.logDebug('Available capability:', JSON.stringify(capability, null, 2));
+      this.logDebug('Available capability: %s', JSON.stringify(capability, null, 2));
     }
 
     if (capability.id && !this.capabilities.includes(capability.id)) {
@@ -139,7 +139,7 @@ export class TvAccessory {
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
         } else {
-          this.logInfo('Not registering capability because registering of applications has been disabled:', capability.name);
+          this.logInfo('Not registering capability because registering of applications has been disabled: %s', capability.name);
         }
         break;
 
@@ -148,7 +148,7 @@ export class TvAccessory {
           this.logCapabilityRegistration(capability);
           this.registerAvailablePictureModes();
         } else {
-          this.logInfo('Not register capability because registering of picture modes has been disabled:', capability.name);
+          this.logInfo('Not register capability because registering of picture modes has been disabled: %s', capability.name);
         }
         break;
 
@@ -157,7 +157,7 @@ export class TvAccessory {
           this.logCapabilityRegistration(capability);
           this.registerAvailableSoundModes();
         } else {
-          this.logInfo('Not register capability because registering of sound modes has been disabled:', capability.name);
+          this.logInfo('Not register capability because registering of sound modes has been disabled: %s', capability.name);
         }
     }
   }
@@ -168,7 +168,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setActive(value: CharacteristicValue) {
-    this.logDebug('Set active to:', value);
+    this.logDebug('Set active to: %s', value);
     if (value) {
       if (this.macAddress) {
         this.logDebug('Use wake-on-lan functionality because mac-address has been configured');
@@ -195,12 +195,12 @@ export class TvAccessory {
     if (this.ipAddress) {
       try {
         return ping.promise.probe(this.ipAddress).then(status => {
-          this.logDebug('ping status:', status);
+          this.logDebug('ping status: %s', status);
           return status?.alive;
         });
       } catch (exc) {
-        this.logError('error when pinging device:', exc
-          , '\nping command fails mostly because of permission issues - falling back to SmartThings API for getting active state');
+        this.logError('error when pinging device: %s\n\
+ping command fails mostly because of permission issues - falling back to SmartThings API for getting active state', exc);
       }
     }
 
@@ -215,7 +215,7 @@ export class TvAccessory {
    */
   private async setVolumeSelector(value: CharacteristicValue) {
     const increment = value === this.platform.Characteristic.VolumeSelector.INCREMENT;
-    this.logDebug(increment ? 'Increasing' : 'Decreasing' + ' volume');
+    this.logDebug('%s volume', increment ? 'Increasing' : 'Decreasing');
     this.executeCommand('audioVolume', increment ? 'volumeUp' : 'volumeDown');
   }
 
@@ -225,7 +225,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setVolume(value: CharacteristicValue) {
-    this.logDebug('Set volume to:', value);
+    this.logDebug('Set volume to: %s', value);
     this.executeCommand('audioVolume', 'setVolume', [value as number]);
   }
 
@@ -245,7 +245,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setMute(value: CharacteristicValue) {
-    this.logDebug('Set mute to:', value);
+    this.logDebug('Set mute to: %s', value);
     this.executeCommand('audioMute', value as boolean ? 'mute' : 'unmute');
   }
 
@@ -265,7 +265,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setActiveIdentifier(value: CharacteristicValue) {
-    this.logDebug('Set active identifier to:', value);
+    this.logDebug('Set active identifier to: %s', value);
     const inputSource = this.inputSources[value as number];
     const inputSourceType = inputSource.getCharacteristic(this.platform.Characteristic.InputSourceType).value as number;
 
@@ -289,10 +289,10 @@ export class TvAccessory {
 
     if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
       const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
-      this.logDebug('ActiveIdentifier has been changed on the device - using API result:', id);
+      this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
       return id;
     } else {
-      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result:', this.activeIdentiiferChangeValue);
+      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentiiferChangeValue);
       return this.activeIdentiiferChangeValue;
     }
   }
@@ -303,7 +303,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setPictureMode(value: CharacteristicValue) {
-    this.logDebug('Set picture mode to:', value);
+    this.logDebug('Set picture mode to: %s', value);
     this.executeCommand('custom.picturemode', 'setPictureMode', [value as string]);
 
     this.pictureModes.forEach(pictureModeService => {
@@ -328,7 +328,7 @@ export class TvAccessory {
    * @param value the CharacteristicValue
    */
   private async setSoundMode(value: CharacteristicValue) {
-    this.logDebug('Set sound mode to:', value);
+    this.logDebug('Set sound mode to: %s', value);
     this.executeCommand('custom.soundmode', 'setSoundMode', [value as string]);
 
     this.soundModes.forEach(soundModeService => {
@@ -445,7 +445,7 @@ export class TvAccessory {
     if (this.capabilities.includes(capabilityId)) {
       return true;
     } else {
-      this.logError('can\'t handle RemoteKey', remoteKey, 'because', capabilityId, 'capability is not available');
+      this.logError('can\'t handle RemoteKey %s because %s capability is not available', remoteKey, capabilityId);
       return false;
     }
   }
@@ -498,7 +498,7 @@ export class TvAccessory {
    * @param name the input source display name
    */
   private registerInputSource(id: string, name: string) {
-    this.logInfo('Registering input source:', name);
+    this.logInfo('Registering input source: %s', name);
 
     const inputSourceService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.InputSource, id, id);
@@ -550,7 +550,7 @@ export class TvAccessory {
    * @param name the picture mode display name
    */
   private async registerPictureMode(id: string, name: string, displayName: string) {
-    this.logInfo('Registering picture mode', name);
+    this.logInfo('Registering picture mode: %s', name);
 
     const pictureModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
@@ -586,7 +586,7 @@ export class TvAccessory {
    * @param name the sound mode display name
    */
   private async registerSoundMode(id: string, name: string, displayName: string) {
-    this.logInfo('Registering sound mode', name);
+    this.logInfo('Registering sound mode: %s', name);
 
     const soundModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
@@ -615,9 +615,9 @@ export class TvAccessory {
       command: command,
       arguments: args,
     }).then(() => {
-      this.logDebug('Successfully executed command', command, 'of capability', capability);
+      this.logDebug('Successfully executed command %s of capability %s', command, capability);
     }).catch(error => {
-      this.logError('Error when executing', command, 'of capability', capability, ':', error.response.statusText);
+      this.logError('Error when executing %s of capability %s: %s', command, capability, error.response.statusText);
     });
   }
 
@@ -631,11 +631,11 @@ export class TvAccessory {
   private async getCapabilityStatus(capability: string) {
     return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability)
       .then(status => {
-        this.logDebug('Successfully get status of', capability, ':', JSON.stringify(status, null, 4));
+        this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
         return status;
       })
       .catch(error => {
-        this.logError('Error when getting status of', capability, ':', error.response.statusText);
+        this.logError('Error when getting status of %s: %s', capability, error.response.statusText);
         return undefined;
       });
   }
@@ -643,7 +643,7 @@ export class TvAccessory {
   private logCapabilityRegistration(capability: Capability) {
     this.logInfo('Registering capability:', capability.name);
     if (capability.status !== 'live') {
-      this.logWarn('Capability', capability.name, 'might not work as expected because it\'s status is:', capability.status);
+      this.logWarn('Capability %s might not work as expected because it\'s status is: %s', capability.name, capability.status);
     }
   }
 

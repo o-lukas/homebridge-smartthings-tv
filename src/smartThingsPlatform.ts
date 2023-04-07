@@ -24,7 +24,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
-    this.log.debug('Finished initializing platform:', this.config.name);
+    this.log.debug('Finished initializing platform: %s', this.config.name);
 
     if (!config.token) {
       this.log.error('SmartThings API token must be configured');
@@ -62,7 +62,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         });
       })
       .catch(error => {
-        this.log.error('Error when getting devices:', error.response?.statusText ?? error);
+        this.log.error('Error when getting devices: %s', error.response?.statusText ?? error);
         return undefined;
       });
   }
@@ -81,9 +81,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         break;
 
       default:
-        this.log.debug('Ignoring SmartThingsDevice:',
+        this.log.debug('Ignoring SmartThingsDevice %s because device type %s is not implemented',
           device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
-          'because device type', device.ocf?.ocfDeviceType, 'is not implemented');
+          device.ocf?.ocfDeviceType);
         break;
     }
   }
@@ -97,7 +97,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param deviceMappings the array of configured DeviceMapping
    */
   registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
-    this.log.info('Adding new accessory:', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+    this.log.info('Adding new accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
     if (!component) {
