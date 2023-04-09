@@ -31,7 +31,8 @@
     "samsung-tv",
     "tv",
     "television",
-    "remote"
+    "remote",
+    "tizen"
   ],
   "dependencies": {
     "@smartthings/core-sdk": "^7.0.0",
