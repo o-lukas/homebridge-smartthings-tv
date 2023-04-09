@@ -49,12 +49,21 @@ The following snippets shows all available properties you can use for the plugin
             "deviceMappings": [
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "wol": true,
                     "macAddress": "xx:xx:xx:xx:xx:xx",
+                    "ping": true,
                     "ipAddress": "xx:xx:xx:xx:xx:xx"
                 },
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "wol": true,
                     "macAddress": "xx:xx:xx:xx:xx:xx",
+                    "ping": false
+                },
+                {
+                    "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "wol": false,
+                    "ping": true,
                     "ipAddress": "xx:xx:xx:xx:xx:xx"
                 }
             ],
@@ -94,9 +103,17 @@ Use the device mappings when e.g. turning on the accessory does not work as expe
 
 The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id.
 
+### wol
+
+Enables usage of wake-on-lan functionality to turn the device on. Use only if using the SmartThings API does not work for your device.
+
 ### macAddress
 
 The mac address of the device to turn device on using wake-on-lan functionality.
+
+### ping 
+
+Enables usage of ping functionality to determine if device is turned on. Use only if using the SmartThings API does not work for your device.
 
 ### ipAddress
 
