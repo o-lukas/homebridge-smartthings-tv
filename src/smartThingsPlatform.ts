@@ -56,9 +56,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
     try {
-      (await client.devices.list()).forEach(device => {
+      for (const device of await client.devices.list()) {
         this.registerDevice(client, device, deviceMappings);
-      });
+      }
     } catch (error) {
       let errorMessage = 'unknown';
       if (error instanceof Error) {

@@ -74,9 +74,9 @@ export class TvAccessory {
   private async registerCapabilities(component: Component) {
     this.logInfo('Registering capabilities for component %s', component.id);
 
-    component.capabilities.forEach(async reference => {
+    for (const reference of component.capabilities) {
       await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
-    });
+    }
   }
 
   /**
@@ -194,8 +194,8 @@ export class TvAccessory {
     if (this.ipAddress) {
       try {
         const status = await ping.promise.probe(this.ipAddress);
-          this.logDebug('ping status: %s', status);
-          return status?.alive;
+        this.logDebug('ping status: %s', status);
+        return status?.alive;
       } catch (exc) {
         this.logError('error when pinging device: %s\n\
 ping command fails mostly because of permission issues - falling back to SmartThings API for getting active state', exc);
@@ -305,10 +305,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.logDebug('Set picture mode to: %s', value);
     this.executeCommand('custom.picturemode', 'setPictureMode', [value as string]);
 
-    this.pictureModes.forEach(pictureModeService => {
+    for (const pictureModeService of this.pictureModes) {
       pictureModeService.updateCharacteristic(this.platform.Characteristic.On,
         pictureModeService.name === value as string);
-    });
+    }
   }
 
   /**
@@ -330,10 +330,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.logDebug('Set sound mode to: %s', value);
     this.executeCommand('custom.soundmode', 'setSoundMode', [value as string]);
 
-    this.soundModes.forEach(soundModeService => {
+    for (const soundModeService of this.soundModes) {
       soundModeService.updateCharacteristic(this.platform.Characteristic.On,
         soundModeService.name === value as string);
-    });
+    }
   }
 
   /**
@@ -454,8 +454,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
-        const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
-        supportedInputSources.forEach(inputSource => this.registerInputSource(inputSource.id, inputSource.name));
+    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
+    for (const inputSource of supportedInputSources) {
+      this.registerInputSource(inputSource.id, inputSource.name);
+    }
   }
 
   /**
@@ -529,12 +531,12 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   /**
    * Registers all available picture modes.
    */
-  private async registerAvailablePictureModes() {
+  private async registerAvailablePictureModes(): Promise<void> {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode');
-        const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
-        supportedPictureModes.forEach(pictureMode => {
-          this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture: ' + pictureMode.name);
-        });
+    const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
+    for (const pictureMode of supportedPictureModes) {
+      this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture: ' + pictureMode.name);
+    }
   }
 
   /**
@@ -544,7 +546,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @param name the picture mode name
    * @param name the picture mode display name
    */
-  private async registerPictureMode(id: string, name: string, displayName: string) {
+  private registerPictureMode(id: string, name: string, displayName: string) {
     this.logInfo('Registering picture mode: %s', name);
 
     const pictureModeService = this.accessory.getService(id)
@@ -563,12 +565,12 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   /**
    * Registers all available sound modes.
    */
-  private async registerAvailableSoundModes() {
+  private async registerAvailableSoundModes(): Promise<void> {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode');
-        const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
-        supportedSoundModes.forEach(soundMode => {
-          this.registerSoundMode(soundMode.id, soundMode.name, 'Sound: ' + soundMode.name);
-        });
+    const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
+    for (const soundMode of supportedSoundModes) {
+      this.registerSoundMode(soundMode.id, soundMode.name, 'Sound: ' + soundMode.name);
+    }
   }
 
   /**
@@ -578,7 +580,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @param name the sound mode name
    * @param name the sound mode display name
    */
-  private async registerSoundMode(id: string, name: string, displayName: string) {
+  private registerSoundMode(id: string, name: string, displayName: string) {
     this.logInfo('Registering sound mode: %s', name);
 
     const soundModeService = this.accessory.getService(id)
@@ -605,9 +607,9 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   private async executeCommand(capability: string, command: string, args: Array<string | number | object> = []) {
     try {
       await this.client.devices.executeCommand(this.device.deviceId, {
-      capability: capability,
-      command: command,
-      arguments: args,
+        capability: capability,
+        command: command,
+        arguments: args,
       });
       this.logDebug('Successfully executed command %s of capability %s', command, capability);
     } catch (error) {
@@ -629,8 +631,8 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   private async getCapabilityStatus(capability: string): Promise<CapabilityStatus | null> {
     try {
       const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
-        this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
-        return status;
+      this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
+      return status;
     } catch (error) {
       let errorMessage = 'unknown';
       if (error instanceof Error) {
