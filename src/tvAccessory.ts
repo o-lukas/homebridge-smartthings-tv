@@ -1,7 +1,7 @@
 import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
 import { SmartThingsPlatform } from './smartThingsPlatform';
-import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
+import { SmartThingsClient, Device, Component, Capability, CapabilityStatus } from '@smartthings/core-sdk';
 import { wake } from 'wol';
 import ping from 'ping';
 
@@ -193,13 +193,13 @@ export class TvAccessory {
   private async getActive(): Promise<CharacteristicValue> {
     if (this.ipAddress) {
       try {
-        return ping.promise.probe(this.ipAddress).then(status => {
+        const status = await ping.promise.probe(this.ipAddress);
           this.logDebug('ping status: %s', status);
           return status?.alive;
-        });
       } catch (exc) {
         this.logError('error when pinging device: %s\n\
 ping command fails mostly because of permission issues - falling back to SmartThings API for getting active state', exc);
+        return false;
       }
     }
 
@@ -603,15 +603,20 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @param args the command arguments
    */
   private async executeCommand(capability: string, command: string, args: Array<string | number | object> = []) {
-    this.client.devices.executeCommand(this.device.deviceId, {
+    try {
+      await this.client.devices.executeCommand(this.device.deviceId, {
       capability: capability,
       command: command,
       arguments: args,
-    }).then(() => {
+      });
       this.logDebug('Successfully executed command %s of capability %s', command, capability);
-    }).catch(error => {
-      this.logError('Error when executing %s of capability %s: %s', command, capability, error.response.statusText);
-    });
+    } catch (error) {
+      let errorMessage = 'unknown';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      this.logError('Error when executing %s of capability %s: %s', command, capability, errorMessage);
+    }
   }
 
   /**
@@ -621,16 +626,19 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @param capability the capability identifier
    * @returns the capability status or undefined for errors returned by API
    */
-  private async getCapabilityStatus(capability: string) {
-    return this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability)
-      .then(status => {
+  private async getCapabilityStatus(capability: string): Promise<CapabilityStatus | null> {
+    try {
+      const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
         this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
         return status;
-      })
-      .catch(error => {
-        this.logError('Error when getting status of %s: %s', capability, error.response.statusText);
-        return undefined;
-      });
+    } catch (error) {
+      let errorMessage = 'unknown';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      this.logError('Error when getting status of %s: %s', capability, errorMessage);
+      return null;
+    }
   }
 
   private logCapabilityRegistration(capability: Capability) {

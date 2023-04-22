@@ -52,19 +52,20 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param token the SmartThings API token
    * @param deviceMappings the array of configured DeviceMapping
    */
-  discoverDevices(token: string, deviceMappings: [DeviceMapping]) {
+  async discoverDevices(token: string, deviceMappings: [DeviceMapping]) {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
-    client.devices.list()
-      .then(devices => {
-        devices.forEach(device => {
-          this.registerDevice(client, device, deviceMappings);
-        });
-      })
-      .catch(error => {
-        this.log.error('Error when getting devices: %s', error.response?.statusText ?? error);
-        return undefined;
+    try {
+      (await client.devices.list()).forEach(device => {
+        this.registerDevice(client, device, deviceMappings);
       });
+    } catch (error) {
+      let errorMessage = 'unknown';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      this.log.error('Error when getting devices: %s', errorMessage);
+    }
   }
 
   /**
@@ -89,13 +90,13 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   }
 
   /**
-   * Registers a SmartThings TV Device for Homebridge.
-   *
-   * @param client the SmartThingsClient used to send API calls
-   * @param device the SmartThings Device
-   * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
-   * @param deviceMappings the array of configured DeviceMapping
-   */
+     * Registers a SmartThings TV Device for Homebridge.
+     *
+     * @param client the SmartThingsClient used to send API calls
+     * @param device the SmartThings Device
+     * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
+     * @param deviceMappings the array of configured DeviceMapping
+     */
   registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
     this.log.info('Adding new accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
