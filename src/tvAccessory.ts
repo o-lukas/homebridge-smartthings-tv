@@ -74,9 +74,8 @@ export class TvAccessory {
   private async registerCapabilities(component: Component) {
     this.logInfo('Registering capabilities for component %s', component.id);
 
-    component.capabilities.forEach(reference => {
-      this.client.capabilities.get(reference.id, reference.version ?? 0)
-        .then(capability => this.registerCapability(capability));
+    component.capabilities.forEach(async reference => {
+      await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
     });
   }
 
@@ -85,7 +84,7 @@ export class TvAccessory {
    *
    * @param capability the Capability
    */
-  private registerCapability(capability: Capability) {
+  private async registerCapability(capability: Capability) {
     if (this.logCapabilities) {
       this.logDebug('Available capability: %s', JSON.stringify(capability, null, 2));
     }
@@ -125,7 +124,7 @@ export class TvAccessory {
 
       case 'samsungvd.mediaInputSource':
         this.logCapabilityRegistration(capability);
-        this.registerAvailableMediaInputSources();
+        await this.registerAvailableMediaInputSources();
         this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
           .onSet(this.setActiveIdentifier.bind(this))
           .onGet(this.getActiveIdentifier.bind(this));
@@ -134,7 +133,7 @@ export class TvAccessory {
       case 'custom.launchapp':
         if (this.registerApplications) {
           this.logCapabilityRegistration(capability);
-          this.registerAvailableLaunchApplications();
+          await this.registerAvailableLaunchApplications();
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
@@ -146,7 +145,7 @@ export class TvAccessory {
       case 'custom.picturemode':
         if (this.registerPictureModes) {
           this.logCapabilityRegistration(capability);
-          this.registerAvailablePictureModes();
+          await this.registerAvailablePictureModes();
         } else {
           this.logInfo('Not register capability because registering of picture modes has been disabled: %s', capability.name);
         }
@@ -155,7 +154,7 @@ export class TvAccessory {
       case 'custom.soundmode':
         if (this.registerSoundModes) {
           this.logCapabilityRegistration(capability);
-          this.registerAvailableSoundModes();
+          await this.registerAvailableSoundModes();
         } else {
           this.logInfo('Not register capability because registering of sound modes has been disabled: %s', capability.name);
         }
@@ -454,11 +453,9 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * Registers all available media input sources (e.g. HDMI inputs).
    */
   private async registerAvailableMediaInputSources() {
-    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource')
-      .then(status => {
+    const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
         const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
         supportedInputSources.forEach(inputSource => this.registerInputSource(inputSource.id, inputSource.name));
-      });
   }
 
   /**
@@ -533,13 +530,11 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * Registers all available picture modes.
    */
   private async registerAvailablePictureModes() {
-    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode')
-      .then(status => {
+    const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode');
         const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
         supportedPictureModes.forEach(pictureMode => {
           this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture: ' + pictureMode.name);
         });
-      });
   }
 
   /**
@@ -569,13 +564,11 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * Registers all available sound modes.
    */
   private async registerAvailableSoundModes() {
-    this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode')
-      .then(status => {
+    const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode');
         const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
         supportedSoundModes.forEach(soundMode => {
           this.registerSoundMode(soundMode.id, soundMode.name, 'Sound: ' + soundMode.name);
         });
-      });
   }
 
   /**
