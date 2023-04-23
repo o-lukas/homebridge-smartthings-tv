@@ -73,6 +73,12 @@ export class TvAccessory {
     for (const reference of this.component.capabilities) {
       await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
     }
+
+    if (this.registerApplications && this.inputSources.length > 0) {
+      this.logInfo('Resetting active identifier to %s because application registration needed to open all applications',
+        this.inputSources[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
+      await this.setActiveIdentifier(0);
+    }
   }
 
   /**
@@ -482,8 +488,6 @@ ping command fails mostly because of permission issues - falling back to SmartTh
         }
       }
     }
-
-    this.setActiveIdentifier(0);
   }
 
   /**
