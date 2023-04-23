@@ -470,6 +470,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * the first successfully tested id will be used.
    */
   private async registerAvailableLaunchApplications() {
+    if (!await this.getActive()) {
+      this.logWarn('Registering applications will probably not work because TV is not turned on');
+    }
+
     for (const i in data.apps) {
       const app = data.apps[i];
       for (const j in app.ids) {
