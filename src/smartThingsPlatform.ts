@@ -31,10 +31,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.api.on('didFinishLaunching', () => {
+    this.api.on('didFinishLaunching', async () => {
       this.log.debug('Executed didFinishLaunching callback');
-
-      this.discoverDevices(config.token, config.deviceMappings);
+      await this.discoverDevices(config.token, config.deviceMappings);
     });
   }
 
@@ -57,7 +56,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     try {
       for (const device of await client.devices.list()) {
-        this.registerDevice(client, device, deviceMappings);
+        await this.registerDevice(client, device, deviceMappings);
       }
     } catch (error) {
       let errorMessage = 'unknown';
@@ -75,10 +74,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param device the SmartThings Device
    * @param deviceMappings the array of configured DeviceMapping
    */
-  registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]) {
+  async registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]) {
     switch (device.ocf?.ocfDeviceType) {
       case 'oic.d.tv':
-        this.registerTvDevice(client, device, deviceMappings?.find(mapping => mapping.deviceId === device.deviceId));
+        await this.registerTvDevice(client, device, deviceMappings?.find(mapping => mapping.deviceId === device.deviceId));
         break;
 
       default:
@@ -97,7 +96,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
      * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
      * @param deviceMappings the array of configured DeviceMapping
      */
-  registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
+  async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
     this.log.info('Adding new accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
@@ -111,7 +110,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     accessory.category = this.api.hap.Categories.TELEVISION;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
-    new TvAccessory(this, accessory, device, component, client, this.log, this.config.capabilityLogging, this.config.registerApplications,
-      this.config.registerPictureModes, this.config.registerSoundModes, deviceMapping?.macAddress, deviceMapping?.ipAddress);
+    const tv = new TvAccessory(this, accessory, device, component, client, this.log, this.config.capabilityLogging,
+      this.config.registerApplications, this.config.registerPictureModes, this.config.registerSoundModes,
+      deviceMapping?.macAddress, deviceMapping?.ipAddress);
+    await tv.registerCapabilities();
   }
 }

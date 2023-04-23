@@ -62,19 +62,15 @@ export class TvAccessory {
     this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
       || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
     this.service.addLinkedService(this.speakerService);
-
-    this.registerCapabilities(component);
   }
 
   /**
    * Registers all available capabilities of the SmartThings Component.
-   *
-   * @param component the SmartThings Component
    */
-  private async registerCapabilities(component: Component) {
-    this.logInfo('Registering capabilities for component %s', component.id);
+  public async registerCapabilities() {
+    this.logInfo('Registering capabilities for component %s', this.component.id);
 
-    for (const reference of component.capabilities) {
+    for (const reference of this.component.capabilities) {
       await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
     }
   }
