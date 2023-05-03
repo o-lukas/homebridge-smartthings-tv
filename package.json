@@ -35,7 +35,7 @@
     "tizen"
   ],
   "dependencies": {
-    "@smartthings/core-sdk": "^7.0.0",
+    "@smartthings/core-sdk": "^7.1.0",
     "ping": "^0.4.4",
     "wol": "^1.0.7"
   },
