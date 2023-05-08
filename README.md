@@ -177,6 +177,10 @@ Some TVs report a false active state using the SmartThings API. To get the actua
 
 Some TVs always report the same picture & sound mode. This will cause the exposed switches to not match the actual picture/sound mode state. I have not found a proper solution for this problem yet. But toggling the buttons will still work.
 
+## Error `invalid device state`
+
+Sometimes the SmartThings API seems to loose the contact to the device and does not update it's state so every request will end up with an error message like `invalid device state`. To fix this try to remove the device from your SmartThings account and add it again. This seems to fix the problem.
+
 ***
 
 Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems. 
