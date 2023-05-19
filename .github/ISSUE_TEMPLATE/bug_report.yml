@@ -1,0 +1,64 @@
+name: Bug Report
+description: Create a report to help us improve
+labels: ["bug"]
+assignees: ["o-lukas"]
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before opening the issue, have you...?
+      description: This is to minimize the amount of duplicate issues.
+      options:
+        - label: Searched for existing issues
+          required: true
+        - label: Looked through common issues 
+          required: true
+        - label: Updated plugin to the latest version (if applicable)
+          required: true
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+  - type: textarea
+    id: reproduction
+    validations:
+      required: true
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+  - type: textarea
+    id: expected
+    validations:
+      required: true
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+  - type: textarea
+    id: log
+    validations:
+      required: true
+    attributes:
+      label: Logs
+      description: Show the Homebridge logs here, remove any sensitive information.
+  - type: textarea
+    id: config
+    validations:
+      required: true
+    attributes:
+      label: Logs
+      description: Show your Homebridge config.json here, remove any sensitive information.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Environment Information
+      value: |
+        - Plugin Version:
+        - Homebridge Version: <!-- homebridge -V -->
+        - Node.js version: <!-- node -v -->
+        - NPM version: <!-- npm -v -->
+        - Operating System: <!-- Raspbian / Ubuntu / Debian / Windows / macOS / Docker / hb-service -->
+      render: markdown
