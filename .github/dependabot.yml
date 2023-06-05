@@ -11,6 +11,7 @@ updates:
       interval: "daily"
       time: "03:00"
     versioning-strategy: increase
+    target-branch: "next"
     open-pull-requests-limit: 10
     commit-message:
-      prefix: "build(npm)"
+      prefix: "fix"
