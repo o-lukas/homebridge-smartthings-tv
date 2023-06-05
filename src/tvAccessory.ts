@@ -540,7 +540,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode');
     const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
     for (const pictureMode of supportedPictureModes) {
-      this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture: ' + pictureMode.name);
+      this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture ' + pictureMode.name);
     }
   }
 
@@ -557,8 +557,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const pictureModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
     pictureModeService.name = name;
-    pictureModeService.displayName = name;
-    pictureModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
+    pictureModeService.displayName = displayName;
+    pictureModeService
+      .setCharacteristic(this.platform.Characteristic.Name, displayName)
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, displayName);
     pictureModeService.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setPictureMode.bind(this, name))
       .onGet(this.getPictureMode.bind(this, name));
@@ -574,7 +576,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode');
     const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
     for (const soundMode of supportedSoundModes) {
-      this.registerSoundMode(soundMode.id, soundMode.name, 'Sound: ' + soundMode.name);
+      this.registerSoundMode(soundMode.id, soundMode.name, 'Sound ' + soundMode.name);
     }
   }
 
@@ -591,8 +593,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const soundModeService = this.accessory.getService(id)
       || this.accessory.addService(this.platform.Service.Switch, id, id);
     soundModeService.name = name;
-    soundModeService.displayName = name;
-    soundModeService.setCharacteristic(this.platform.Characteristic.Name, displayName);
+    soundModeService.displayName = displayName;
+    soundModeService
+      .setCharacteristic(this.platform.Characteristic.Name, displayName)
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, displayName);
     soundModeService.getCharacteristic(this.platform.Characteristic.On)
       .onSet(this.setSoundMode.bind(this, name))
       .onGet(this.getSoundMode.bind(this, name));
