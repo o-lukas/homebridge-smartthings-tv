@@ -8,16 +8,6 @@ import { SmartThingsAccessory } from './smartThingsAccessory';
 
 import data from './res/apps.json';
 
-class SamsungVdMediaInputSource {
-  public readonly id: string;
-  public readonly name: string;
-
-  constructor(id: string, name: string) {
-    this.id = id;
-    this.name = name;
-  }
-}
-
 /**
  * Class implements a SmartThings TV accessory.
  */
@@ -460,7 +450,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
-    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<SamsungVdMediaInputSource>)];
+    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<{id: string; name: string}>)];
     for (const inputSource of supportedInputSources) {
       this.registerInputSource(inputSource.id, inputSource.name);
     }
@@ -541,7 +531,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailablePictureModes(): Promise<void> {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode');
-    const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<SamsungVdMediaInputSource>)];
+    const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<{id: string; name: string}>)];
     for (const pictureMode of supportedPictureModes) {
       this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture ' + pictureMode.name);
     }
@@ -577,7 +567,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailableSoundModes(): Promise<void> {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode');
-    const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<SamsungVdMediaInputSource>)];
+    const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<{id: string; name: string}>)];
     for (const soundMode of supportedSoundModes) {
       this.registerSoundMode(soundMode.id, soundMode.name, 'Sound ' + soundMode.name);
     }
