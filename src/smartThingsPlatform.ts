@@ -89,13 +89,13 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   }
 
   /**
-     * Registers a SmartThings TV Device for Homebridge.
-     *
-     * @param client the SmartThingsClient used to send API calls
-     * @param device the SmartThings Device
-     * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
-     * @param deviceMappings the array of configured DeviceMapping
-     */
+   * Registers a SmartThings TV Device for Homebridge.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
+   * @param deviceMappings the array of configured DeviceMapping
+   */
   async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
     this.log.info('Adding new accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
@@ -110,7 +110,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     accessory.category = this.api.hap.Categories.TELEVISION;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
-    const tv = new TvAccessory(this, accessory, device, component, client, this.log, this.config.capabilityLogging,
+    const tv = new TvAccessory(device, component, client, this.log, this, accessory, this.config.capabilityLogging,
       this.config.registerApplications, this.config.registerPictureModes, this.config.registerSoundModes,
       deviceMapping?.macAddress, deviceMapping?.ipAddress);
     await tv.registerCapabilities();
