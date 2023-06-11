@@ -1,9 +1,10 @@
 import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
 import { SmartThingsPlatform } from './smartThingsPlatform';
-import { SmartThingsClient, Device, Component, Capability, CapabilityStatus } from '@smartthings/core-sdk';
+import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
 import { wake } from 'wol';
 import ping from 'ping';
+import { SmartThingsAccessory } from './smartThingsAccessory';
 
 import data from './res/apps.json';
 
@@ -20,7 +21,7 @@ class SamsungVdMediaInputSource {
 /**
  * Class implements a SmartThings TV accessory.
  */
-export class TvAccessory {
+export class TvAccessory extends SmartThingsAccessory {
   private service: Service;
   private speakerService: Service;
   private inputSources: Service[] = [];
@@ -31,12 +32,12 @@ export class TvAccessory {
   private soundModes: Service[] = [];
 
   constructor(
+    device: Device,
+    component: Component,
+    client: SmartThingsClient,
+    log: Logger,
     private readonly platform: SmartThingsPlatform,
     private readonly accessory: PlatformAccessory,
-    private readonly device: Device,
-    private readonly component: Component,
-    private readonly client: SmartThingsClient,
-    private readonly log: Logger,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
     private readonly registerPictureModes: boolean,
@@ -44,6 +45,8 @@ export class TvAccessory {
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
+    super(device, component, client, log);
+
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId)
       .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
@@ -603,75 +606,5 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.service.addLinkedService(soundModeService);
 
     this.pictureModes.push(soundModeService);
-  }
-
-  /**
-   * Executes the command of the capability passed in using the arguments passed in.
-   * Handles error values returned by api.
-   *
-   * @param capability the capability identifier
-   * @param command the command identifier
-   * @param args the command arguments
-   */
-  private async executeCommand(capability: string, command: string, args: Array<string | number | object> = []) {
-    try {
-      await this.client.devices.executeCommand(this.device.deviceId, {
-        capability: capability,
-        command: command,
-        arguments: args,
-      });
-      this.logDebug('Successfully executed command %s of capability %s', command, capability);
-    } catch (error) {
-      let errorMessage = 'unknown';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      this.logError('Error when executing %s of capability %s: %s', command, capability, errorMessage);
-    }
-  }
-
-  /**
-   * Returns the status of the capability passed in.
-   * Handles error values returned by api.
-   *
-   * @param capability the capability identifier
-   * @returns the capability status or undefined for errors returned by API
-   */
-  private async getCapabilityStatus(capability: string): Promise<CapabilityStatus | null> {
-    try {
-      const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
-      this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
-      return status;
-    } catch (error) {
-      let errorMessage = 'unknown';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      this.logError('Error when getting status of %s: %s', capability, errorMessage);
-      return null;
-    }
-  }
-
-  private logCapabilityRegistration(capability: Capability) {
-    this.logInfo('Registering capability:', capability.name);
-    if (capability.status !== 'live') {
-      this.logWarn('Capability %s might not work as expected because it\'s status is: %s', capability.name, capability.status);
-    }
-  }
-
-  private logInfo(message: string, ...parameters: unknown[]): void {
-    this.log.info('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
-  }
-
-  private logWarn(message: string, ...parameters: unknown[]): void {
-    this.log.warn('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
-  }
-
-  private logError(message: string, ...parameters: unknown[]): void {
-    this.log.error('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
-  }
-
-  private logDebug(message: string, ...parameters: unknown[]): void {
-    this.log.debug('[' + (this.device.name ?? this.device.deviceId) + '] ' + message, ...parameters);
   }
 }
