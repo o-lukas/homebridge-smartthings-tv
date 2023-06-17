@@ -18,8 +18,6 @@ export class TvAccessory extends SmartThingsAccessory {
   private capabilities: string[] = [];
   private activeIdentifierChangeTime = 0;
   private activeIdentiiferChangeValue = 0;
-  private pictureModes: Service[] = [];
-  private soundModes: Service[] = [];
 
   constructor(
     device: Device,
@@ -30,8 +28,6 @@ export class TvAccessory extends SmartThingsAccessory {
     accessory: PlatformAccessory,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
-    private readonly registerPictureModes: boolean,
-    private readonly registerSoundModes: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -69,6 +65,48 @@ export class TvAccessory extends SmartThingsAccessory {
         this.inputSources[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
       await this.setActiveIdentifier(0);
     }
+  }
+
+  /**
+   * Returns all available picture modes for the current device.
+   *
+   * @returns the available picture modes or undefined
+   */
+  public async getPictureModes(): Promise<{
+    capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+  } | undefined> {
+    const status = await this.getCapabilityStatus('custom.picturemode');
+    if (!status) {
+      return undefined;
+    }
+
+    return {
+      capability: 'custom.picturemode',
+      command: 'setPictureMode',
+      prefix: 'Picture',
+      modes: [...new Set(status?.supportedPictureModesMap.value as Array<{id: string; name: string}>)],
+    };
+  }
+
+  /**
+   * Returns all available sound modes for the current device.
+   *
+   * @returns the available sound modes or undefined
+   */
+  public async getSoundModes(): Promise<{
+      capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+    } | undefined> {
+    const status = await this.getCapabilityStatus('custom.soundmode');
+    if (!status) {
+      return undefined;
+    }
+
+    return {
+      capability: 'custom.soundmode',
+      command: 'setSoundMode',
+      prefix: 'Sound',
+      modes: [...new Set(status?.supportedSoundModesMap.value as Array<{id: string; name: string}>)],
+    };
   }
 
   /**
@@ -133,23 +171,6 @@ export class TvAccessory extends SmartThingsAccessory {
           this.logInfo('Not registering capability because registering of applications has been disabled: %s', capability.name);
         }
         break;
-
-      case 'custom.picturemode':
-        if (this.registerPictureModes) {
-          this.logCapabilityRegistration(capability);
-          await this.registerAvailablePictureModes();
-        } else {
-          this.logInfo('Not register capability because registering of picture modes has been disabled: %s', capability.name);
-        }
-        break;
-
-      case 'custom.soundmode':
-        if (this.registerSoundModes) {
-          this.logCapabilityRegistration(capability);
-          await this.registerAvailableSoundModes();
-        } else {
-          this.logInfo('Not register capability because registering of sound modes has been disabled: %s', capability.name);
-        }
     }
   }
 
@@ -286,56 +307,6 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentiiferChangeValue);
       return this.activeIdentiiferChangeValue;
     }
-  }
-
-  /**
-   * Setter for Homebridge accessory PictureMode property.
-   *
-   * @param value the CharacteristicValue
-   */
-  private async setPictureMode(value: CharacteristicValue) {
-    this.logDebug('Set picture mode to: %s', value);
-    this.executeCommand('custom.picturemode', 'setPictureMode', [value as string]);
-
-    for (const pictureModeService of this.pictureModes) {
-      pictureModeService.updateCharacteristic(this.platform.Characteristic.On,
-        pictureModeService.name === value as string);
-    }
-  }
-
-  /**
-   * Getter for Homebridge accessory PictureMode property.
-   *
-   * @returns the CharacteristicValue
-   */
-  private async getPictureMode(name: string): Promise<CharacteristicValue> {
-    const status = await this.getCapabilityStatus('custom.picturemode');
-    return status?.pictureMode.value as string === name;
-  }
-
-  /**
-   * Setter for Homebridge accessory SoundMode property.
-   *
-   * @param value the CharacteristicValue
-   */
-  private async setSoundMode(value: CharacteristicValue) {
-    this.logDebug('Set sound mode to: %s', value);
-    this.executeCommand('custom.soundmode', 'setSoundMode', [value as string]);
-
-    for (const soundModeService of this.soundModes) {
-      soundModeService.updateCharacteristic(this.platform.Characteristic.On,
-        soundModeService.name === value as string);
-    }
-  }
-
-  /**
-   * Getter for Homebridge accessory SoundMode property.
-   *
-   * @returns the CharacteristicValue
-   */
-  private async getSoundMode(name: string): Promise<CharacteristicValue> {
-    const status = await this.getCapabilityStatus('custom.soundmode');
-    return status?.soundMode.value as string === name;
   }
 
   /**
@@ -520,77 +491,5 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     } else {
       return this.platform.Characteristic.InputSourceType.APPLICATION;
     }
-  }
-
-  /**
-   * Registers all available picture modes.
-   */
-  private async registerAvailablePictureModes(): Promise<void> {
-    const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.picturemode');
-    const supportedPictureModes = [...new Set(status.supportedPictureModesMap.value as Array<{id: string; name: string}>)];
-    for (const pictureMode of supportedPictureModes) {
-      this.registerPictureMode(pictureMode.id, pictureMode.name, 'Picture ' + pictureMode.name);
-    }
-  }
-
-  /**
-   * Registers a picture mode as Homebridge switch.
-   *
-   * @param id the picture mode id
-   * @param name the picture mode name
-   * @param name the picture mode display name
-   */
-  private registerPictureMode(id: string, name: string, displayName: string) {
-    this.logInfo('Registering picture mode: %s', name);
-
-    const pictureModeService = this.accessory.getService(id)
-      || this.accessory.addService(this.platform.Service.Switch, id, id);
-    pictureModeService.name = name;
-    pictureModeService.displayName = displayName;
-    pictureModeService
-      .setCharacteristic(this.platform.Characteristic.Name, displayName)
-      .setCharacteristic(this.platform.Characteristic.ConfiguredName, displayName);
-    pictureModeService.getCharacteristic(this.platform.Characteristic.On)
-      .onSet(this.setPictureMode.bind(this, name))
-      .onGet(this.getPictureMode.bind(this, name));
-    this.service.addLinkedService(pictureModeService);
-
-    this.pictureModes.push(pictureModeService);
-  }
-
-  /**
-   * Registers all available sound modes.
-   */
-  private async registerAvailableSoundModes(): Promise<void> {
-    const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'custom.soundmode');
-    const supportedSoundModes = [...new Set(status.supportedSoundModesMap.value as Array<{id: string; name: string}>)];
-    for (const soundMode of supportedSoundModes) {
-      this.registerSoundMode(soundMode.id, soundMode.name, 'Sound ' + soundMode.name);
-    }
-  }
-
-  /**
-   * Registers a sound mode as Homebridge switch.
-   *
-   * @param id the sound mode id
-   * @param name the sound mode name
-   * @param name the sound mode display name
-   */
-  private registerSoundMode(id: string, name: string, displayName: string) {
-    this.logInfo('Registering sound mode: %s', name);
-
-    const soundModeService = this.accessory.getService(id)
-      || this.accessory.addService(this.platform.Service.Switch, id, id);
-    soundModeService.name = name;
-    soundModeService.displayName = displayName;
-    soundModeService
-      .setCharacteristic(this.platform.Characteristic.Name, displayName)
-      .setCharacteristic(this.platform.Characteristic.ConfiguredName, displayName);
-    soundModeService.getCharacteristic(this.platform.Characteristic.On)
-      .onSet(this.setSoundMode.bind(this, name))
-      .onGet(this.getSoundMode.bind(this, name));
-    this.service.addLinkedService(soundModeService);
-
-    this.pictureModes.push(soundModeService);
   }
 }
