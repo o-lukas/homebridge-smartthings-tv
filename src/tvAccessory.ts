@@ -26,8 +26,8 @@ export class TvAccessory extends SmartThingsAccessory {
     component: Component,
     client: SmartThingsClient,
     log: Logger,
-    private readonly platform: SmartThingsPlatform,
-    private readonly accessory: PlatformAccessory,
+    platform: SmartThingsPlatform,
+    accessory: PlatformAccessory,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
     private readonly registerPictureModes: boolean,
@@ -35,14 +35,10 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
-    super(device, component, client, log);
+    super(device, component, client, platform, accessory, log);
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId)
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, device.manufacturerName)
-      .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId);
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       || this.accessory.addService(this.platform.Service.Television);
