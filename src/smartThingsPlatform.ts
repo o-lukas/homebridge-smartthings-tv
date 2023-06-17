@@ -19,6 +19,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
+  // this is used to track restored cached accessories
+  public readonly accessories: PlatformAccessory[] = [];
+
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
@@ -41,8 +44,11 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @inheritdoc
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  configureAccessory(_accessory: PlatformAccessory) {
-    // nothing to do...
+  configureAccessory(accessory: PlatformAccessory) {
+    this.log.info('Loading accessory from cache: %s', accessory.displayName);
+
+    // add the restored accessory to the accessories cache so we can track if it has already been registered
+    this.accessories.push(accessory);
   }
 
   /**
