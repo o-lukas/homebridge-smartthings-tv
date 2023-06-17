@@ -1,5 +1,6 @@
-import { Logger } from 'homebridge';
+import { Logger, PlatformAccessory } from 'homebridge';
 
+import { SmartThingsPlatform } from './smartThingsPlatform';
 import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } from '@smartthings/core-sdk';
 
 /**
@@ -10,8 +11,16 @@ export abstract class SmartThingsAccessory {
         protected readonly device: Device,
         protected readonly component: Component,
         protected readonly client: SmartThingsClient,
+        protected readonly platform: SmartThingsPlatform,
+        protected readonly accessory: PlatformAccessory,
         private readonly log: Logger,
-  ) { }
+  ) {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, device.manufacturerName)
+      .setCharacteristic(this.platform.Characteristic.Model, device.ocf?.modelNumber ?? 'Unknown')
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, device.deviceId);
+  }
 
   /**
    * Executes the command of the capability passed in using the arguments passed in.
