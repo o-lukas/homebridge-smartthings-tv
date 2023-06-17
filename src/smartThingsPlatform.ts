@@ -1,8 +1,9 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
-import { PLUGIN_NAME } from './settings';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TvAccessory } from './tvAccessory';
-import { SmartThingsClient, BearerTokenAuthenticator, Device } from '@smartthings/core-sdk';
+import { SmartThingsClient, BearerTokenAuthenticator, Device, Component } from '@smartthings/core-sdk';
+import { SwitchAccessory } from './switchAccessory';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -117,8 +118,57 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new TvAccessory(device, component, client, this.log, this, accessory, this.config.capabilityLogging,
-      this.config.registerApplications, this.config.registerPictureModes, this.config.registerSoundModes,
-      deviceMapping?.macAddress, deviceMapping?.ipAddress);
+      this.config.registerApplications, deviceMapping?.macAddress, deviceMapping?.ipAddress);
     await tv.registerCapabilities();
+
+    if (this.config.registerPictureModes) {
+      const modes = await tv.getPictureModes();
+      if(modes){
+        this.registerModeSwitches(client, device, component, modes);
+      }
+    }
+
+    if (this.config.registerSoundModes) {
+      const modes = await tv.getSoundModes();
+      if(modes){
+        this.registerModeSwitches(client, device, component, modes);
+      }
+    }
+  }
+
+  /**
+   * Register the modes of the device passed in as platform accessories.
+   * Handles caching of accessories as well.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param component the SmartThings Device's Component
+   * @param modes the modes to register
+   */
+  registerModeSwitches(client: SmartThingsClient, device: Device, component: Component,
+    modes: {
+      capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+    }) {
+    for (const mode of modes.modes) {
+      const id = this.api.hap.uuid.generate(`${modes.prefix}${mode.id}`);
+      const name = `${modes.prefix} ${mode.name}`;
+
+      const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
+      if(existingAccessory){
+        this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
+
+        new SwitchAccessory(device, component, client, this.log, this, existingAccessory, modes.capability,
+          modes.command, mode.name);
+      } else{
+        const accessory = new this.api.platformAccessory(name, id);
+        accessory.context.device = device;
+        accessory.category = this.api.hap.Categories.SWITCH;
+
+        new SwitchAccessory(device, component, client, this.log, this, accessory, modes.capability,
+          modes.command, mode.name);
+
+        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      }
+    }
   }
 }
