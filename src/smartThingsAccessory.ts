@@ -57,7 +57,7 @@ export abstract class SmartThingsAccessory {
   protected async getCapabilityStatus(capability: string): Promise<CapabilityStatus | null> {
     try {
       const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
-      this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 4));
+      this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 2));
       return status;
     } catch (error) {
       let errorMessage = 'unknown';
