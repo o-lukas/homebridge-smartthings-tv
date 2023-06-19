@@ -17,7 +17,7 @@ export class TvAccessory extends SmartThingsAccessory {
   private inputSources: Service[] = [];
   private capabilities: string[] = [];
   private activeIdentifierChangeTime = 0;
-  private activeIdentiiferChangeValue = 0;
+  private activeIdentifierChangeValue = 0;
 
   constructor(
     device: Device,
@@ -282,7 +282,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const inputSourceType = inputSource.getCharacteristic(this.platform.Characteristic.InputSourceType).value as number;
 
     this.activeIdentifierChangeTime = Date.now();
-    this.activeIdentiiferChangeValue = value as number;
+    this.activeIdentifierChangeValue = value as number;
 
     if (inputSourceType === this.platform.Characteristic.InputSourceType.APPLICATION) {
       this.executeCommand('custom.launchapp', 'launchApp', [inputSource.name ?? '']);
@@ -304,8 +304,8 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
       return id;
     } else {
-      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentiiferChangeValue);
-      return this.activeIdentiiferChangeValue;
+      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentifierChangeValue);
+      return this.activeIdentifierChangeValue;
     }
   }
 
