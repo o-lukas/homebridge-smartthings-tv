@@ -302,6 +302,13 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
       const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
       this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
+
+      if(id < 0){
+        this.logWarn('Could not find input source for name \'%s\' - using first input source \'%s\' as active identifier',
+          status?.inputSource.value, this.inputSources[0].name);
+        return 0;
+      }
+
       return id;
     } else {
       this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentifierChangeValue);
