@@ -95,7 +95,7 @@ export class TvAccessory extends SmartThingsAccessory {
    */
   public async getSoundModes(): Promise<{
       capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
-    } | undefined> {
+  } | undefined> {
     const status = await this.getCapabilityStatus('custom.soundmode');
     if (!status) {
       return undefined;
@@ -155,18 +155,22 @@ export class TvAccessory extends SmartThingsAccessory {
       case 'samsungvd.mediaInputSource':
         this.logCapabilityRegistration(capability);
         await this.registerAvailableMediaInputSources();
-        this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-          .onSet(this.setActiveIdentifier.bind(this))
-          .onGet(this.getActiveIdentifier.bind(this));
+        if (this.inputSources.length > 0) {
+          this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
+            .onSet(this.setActiveIdentifier.bind(this))
+            .onGet(this.getActiveIdentifier.bind(this));
+        }
         break;
 
       case 'custom.launchapp':
         if (this.registerApplications) {
           this.logCapabilityRegistration(capability);
           await this.registerAvailableLaunchApplications();
-          this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
-            .onSet(this.setActiveIdentifier.bind(this))
-            .onGet(this.getActiveIdentifier.bind(this));
+          if (this.inputSources.length > 0) {
+            this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
+              .onSet(this.setActiveIdentifier.bind(this))
+              .onGet(this.getActiveIdentifier.bind(this));
+          }
         } else {
           this.logInfo('Not registering capability because registering of applications has been disabled: %s', capability.name);
         }
