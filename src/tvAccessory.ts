@@ -73,7 +73,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available picture modes or undefined
    */
   public async getPictureModes(): Promise<{
-    capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+    capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.picturemode');
     if (!status) {
@@ -84,7 +84,7 @@ export class TvAccessory extends SmartThingsAccessory {
       capability: 'custom.picturemode',
       command: 'setPictureMode',
       prefix: 'Picture',
-      modes: [...new Set(status?.supportedPictureModesMap.value as Array<{id: string; name: string}>)],
+      modes: [...new Set(status?.supportedPictureModesMap.value as Array<{ id: string; name: string }>)],
     };
   }
 
@@ -94,7 +94,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available sound modes or undefined
    */
   public async getSoundModes(): Promise<{
-      capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+    capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.soundmode');
     if (!status) {
@@ -105,7 +105,7 @@ export class TvAccessory extends SmartThingsAccessory {
       capability: 'custom.soundmode',
       command: 'setSoundMode',
       prefix: 'Sound',
-      modes: [...new Set(status?.supportedSoundModesMap.value as Array<{id: string; name: string}>)],
+      modes: [...new Set(status?.supportedSoundModesMap.value as Array<{ id: string; name: string }>)],
     };
   }
 
@@ -307,7 +307,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
       this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
 
-      if(id < 0){
+      if (id < 0) {
         this.logWarn('Could not find input source for name \'%s\' - using first input source \'%s\' as active identifier',
           status?.inputSource.value, this.inputSources[0].name);
         return 0;
@@ -428,7 +428,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
-    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<{id: string; name: string}>)];
+    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<{ id: string; name: string }>)];
     for (const inputSource of supportedInputSources) {
       this.registerInputSource(inputSource.id, inputSource.name);
     }

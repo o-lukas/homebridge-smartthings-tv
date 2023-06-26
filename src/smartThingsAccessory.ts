@@ -8,12 +8,12 @@ import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } fr
  */
 export abstract class SmartThingsAccessory {
   protected constructor(
-        protected readonly device: Device,
-        protected readonly component: Component,
-        protected readonly client: SmartThingsClient,
-        protected readonly platform: SmartThingsPlatform,
-        protected readonly accessory: PlatformAccessory,
-        private readonly log: Logger,
+    protected readonly device: Device,
+    protected readonly component: Component,
+    protected readonly client: SmartThingsClient,
+    protected readonly platform: SmartThingsPlatform,
+    protected readonly accessory: PlatformAccessory,
+    private readonly log: Logger,
   ) {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.FirmwareRevision, device.ocf?.firmwareVersion ?? 'Unknown')

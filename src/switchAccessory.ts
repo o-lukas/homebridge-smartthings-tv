@@ -35,7 +35,7 @@ export class SwitchAccessory extends SmartThingsAccessory {
   }
 
   private async handleSet(value: CharacteristicValue) {
-    if(value === true){
+    if (value === true) {
       this.logDebug('Set %s mode to: %s', this.capability, this.value);
       await this.executeCommand(this.capability, this.command, [this.value]);
 

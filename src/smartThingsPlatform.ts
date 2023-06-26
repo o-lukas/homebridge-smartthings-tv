@@ -124,14 +124,14 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     if (this.config.registerPictureModes) {
       const modes = await tv.getPictureModes();
-      if(modes){
+      if (modes) {
         this.registerModeSwitches(client, device, component, modes);
       }
     }
 
     if (this.config.registerSoundModes) {
       const modes = await tv.getSoundModes();
-      if(modes){
+      if (modes) {
         this.registerModeSwitches(client, device, component, modes);
       }
     }
@@ -148,19 +148,19 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    */
   registerModeSwitches(client: SmartThingsClient, device: Device, component: Component,
     modes: {
-      capability: string; command: string; prefix: string; modes: Array<{id: string; name: string}>;
+      capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
     }) {
     for (const mode of modes.modes) {
       const id = this.api.hap.uuid.generate(`${modes.prefix}${mode.id}`);
       const name = `${modes.prefix} ${mode.name}`;
 
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
-      if(existingAccessory){
+      if (existingAccessory) {
         this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
 
         new SwitchAccessory(device, component, client, this.log, this, existingAccessory, modes.capability,
           modes.command, mode.name);
-      } else{
+      } else {
         const accessory = new this.api.platformAccessory(name, id);
         accessory.context.device = device;
         accessory.category = this.api.hap.Categories.SWITCH;
