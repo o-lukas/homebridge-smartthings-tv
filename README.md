@@ -111,7 +111,7 @@ Enables usage of wake-on-lan functionality to turn the device on. Use only if us
 
 The mac address of the device to turn device on using wake-on-lan functionality.
 
-### ping 
+### ping
 
 Enables usage of ping functionality to determine if device is turned on. Use only if using the SmartThings API does not work for your device.
 
@@ -183,6 +183,6 @@ Sometimes the SmartThings API seems to loose the contact to the device and does 
 
 ***
 
-Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems. 
+Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems.
 
-But since this plugin is developed in my spare time don't expect a quick fix. 
+But since this plugin is developed in my spare time don't expect a quick fix.
