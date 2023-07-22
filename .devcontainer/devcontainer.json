@@ -17,5 +17,6 @@
 			]
 		}
 	},
-	"workspaceFolder": "/workspace"
+	"workspaceFolder": "/workspace",
+	"onCreateCommand": "pre-commit install"
 }
