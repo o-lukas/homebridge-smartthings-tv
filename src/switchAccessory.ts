@@ -23,7 +23,7 @@ export class SwitchAccessory extends SmartThingsAccessory {
   ) {
     super(device, component, client, platform, accessory, log);
 
-    this.service = this.accessory.getService(this.platform.Service.Switch) ||
+    this.service = this.accessory.getService(this.platform.Service.Switch) ??
       this.accessory.addService(this.platform.Service.Switch);
     this.service.getCharacteristic(this.platform.Characteristic.On)
       .onGet(this.handleGet.bind(this))

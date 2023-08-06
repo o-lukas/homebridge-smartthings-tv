@@ -35,9 +35,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.api.on('didFinishLaunching', async () => {
+    this.api.on('didFinishLaunching', () => {
       this.log.debug('Executed didFinishLaunching callback');
-      await this.discoverDevices(config.token, config.deviceMappings);
+      void this.discoverDevices(config.token as string, config.deviceMappings as [DeviceMapping]);
     });
   }
 
@@ -118,8 +118,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     accessory.category = this.api.hap.Categories.TELEVISION;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
-    const tv = new TvAccessory(device, component, client, this.log, this, accessory, this.config.capabilityLogging,
-      this.config.registerApplications, deviceMapping?.macAddress, deviceMapping?.ipAddress);
+    const tv = new TvAccessory(device, component, client, this.log, this, accessory,
+      this.config.capabilityLogging as boolean, this.config.registerApplications as boolean,
+      deviceMapping?.macAddress, deviceMapping?.ipAddress);
     await tv.registerCapabilities();
 
     if (this.config.registerPictureModes) {
@@ -148,7 +149,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    */
   registerModeSwitches(client: SmartThingsClient, device: Device, component: Component,
     modes: {
-      capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
+      capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
     }) {
     for (const mode of modes.modes) {
       const id = this.api.hap.uuid.generate(`${modes.prefix}${mode.id}`);
