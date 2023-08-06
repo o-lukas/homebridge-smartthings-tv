@@ -37,7 +37,7 @@ export class TvAccessory extends SmartThingsAccessory {
       .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId);
 
     this.service = this.accessory.getService(this.platform.Service.Television)
-      || this.accessory.addService(this.platform.Service.Television);
+      ?? this.accessory.addService(this.platform.Service.Television);
     this.service
       .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
         this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE)
@@ -46,7 +46,7 @@ export class TvAccessory extends SmartThingsAccessory {
       .onSet(this.setRemoteKey.bind(this));
 
     this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
-      || this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+      ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
     this.service.addLinkedService(this.speakerService);
   }
 
@@ -73,7 +73,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available picture modes or undefined
    */
   public async getPictureModes(): Promise<{
-    capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
+    capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.picturemode');
     if (!status) {
@@ -84,7 +84,7 @@ export class TvAccessory extends SmartThingsAccessory {
       capability: 'custom.picturemode',
       command: 'setPictureMode',
       prefix: 'Picture',
-      modes: [...new Set(status?.supportedPictureModesMap.value as Array<{ id: string; name: string }>)],
+      modes: [...new Set(status?.supportedPictureModesMap.value as { id: string; name: string }[])],
     };
   }
 
@@ -94,7 +94,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available sound modes or undefined
    */
   public async getSoundModes(): Promise<{
-    capability: string; command: string; prefix: string; modes: Array<{ id: string; name: string }>;
+    capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.soundmode');
     if (!status) {
@@ -105,7 +105,7 @@ export class TvAccessory extends SmartThingsAccessory {
       capability: 'custom.soundmode',
       command: 'setSoundMode',
       prefix: 'Sound',
-      modes: [...new Set(status?.supportedSoundModesMap.value as Array<{ id: string; name: string }>)],
+      modes: [...new Set(status?.supportedSoundModesMap.value as { id: string; name: string }[])],
     };
   }
 
@@ -195,10 +195,10 @@ export class TvAccessory extends SmartThingsAccessory {
           this.logError('Could not wake device - if this error keeps occuring try to disable wake-on-lan functionality');
         }
       } else {
-        this.executeCommand('switch', 'on');
+        await this.executeCommand('switch', 'on');
       }
     } else {
-      this.executeCommand('switch', 'off');
+      await this.executeCommand('switch', 'off');
     }
   }
 
@@ -232,7 +232,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   private async setVolumeSelector(value: CharacteristicValue) {
     const increment = value === this.platform.Characteristic.VolumeSelector.INCREMENT;
     this.logDebug('%s volume', increment ? 'Increasing' : 'Decreasing');
-    this.executeCommand('audioVolume', increment ? 'volumeUp' : 'volumeDown');
+    await this.executeCommand('audioVolume', increment ? 'volumeUp' : 'volumeDown');
   }
 
   /**
@@ -242,7 +242,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async setVolume(value: CharacteristicValue) {
     this.logDebug('Set volume to: %s', value);
-    this.executeCommand('audioVolume', 'setVolume', [value as number]);
+    await this.executeCommand('audioVolume', 'setVolume', [value as number]);
   }
 
   /**
@@ -262,7 +262,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async setMute(value: CharacteristicValue) {
     this.logDebug('Set mute to: %s', value);
-    this.executeCommand('audioMute', value as boolean ? 'mute' : 'unmute');
+    await this.executeCommand('audioMute', value as boolean ? 'mute' : 'unmute');
   }
 
   /**
@@ -289,9 +289,9 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.activeIdentifierChangeValue = value as number;
 
     if (inputSourceType === this.platform.Characteristic.InputSourceType.APPLICATION) {
-      this.executeCommand('custom.launchapp', 'launchApp', [inputSource.name ?? '']);
+      await this.executeCommand('custom.launchapp', 'launchApp', [inputSource.name ?? '']);
     } else {
-      this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [inputSource.name ?? '']);
+      await this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [inputSource.name ?? '']);
     }
   }
 
@@ -329,79 +329,79 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     switch (value) {
       case this.platform.Characteristic.RemoteKey.REWIND:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'REWIND')) {
-          this.executeCommand('mediaPlayback', 'rewind');
+          await this.executeCommand('mediaPlayback', 'rewind');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.FAST_FORWARD:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'FAST_FORWARD')) {
-          this.executeCommand('mediaPlayback', 'fastForward');
+          await this.executeCommand('mediaPlayback', 'fastForward');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.NEXT_TRACK:
         if (this.validateRemoteKeyCapability('mediaTrackControl', 'NEXT_TRACK')) {
-          this.executeCommand('mediaTrackControl', 'nextTrack');
+          await this.executeCommand('mediaTrackControl', 'nextTrack');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.PREVIOUS_TRACK:
         if (this.validateRemoteKeyCapability('mediaTrackControl', 'PREVIOUS_TRACK')) {
-          this.executeCommand('mediaTrackControl', 'previousTrack');
+          await this.executeCommand('mediaTrackControl', 'previousTrack');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_UP:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_UP')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['UP']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['UP']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_DOWN:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_DOWN')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['DOWN']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['DOWN']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_LEFT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_LEFT')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['LEFT']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['LEFT']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.ARROW_RIGHT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'ARROW_RIGHT')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['RIGHT']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['RIGHT']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.SELECT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'SELECT')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['OK']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['OK']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.BACK:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'BACK')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['BACK']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['BACK']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.EXIT:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'EXIT')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['HOME']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['HOME']);
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.PLAY_PAUSE:
         if (this.validateRemoteKeyCapability('mediaPlayback', 'PLAY_PAUSE')) {
-          this.executeCommand('mediaPlayback', 'play');
+          await this.executeCommand('mediaPlayback', 'play');
         }
         break;
 
       case this.platform.Characteristic.RemoteKey.INFORMATION:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'INFORMATION')) {
-          this.executeCommand('samsungvd.remoteControl', 'send', ['MENU']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', ['MENU']);
         }
         break;
     }
@@ -428,7 +428,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
-    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as Array<{ id: string; name: string }>)];
+    const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as { id: string; name: string }[])];
     for (const inputSource of supportedInputSources) {
       this.registerInputSource(inputSource.id, inputSource.name);
     }
@@ -446,10 +446,8 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       this.logWarn('Registering applications will probably not work because TV is not turned on');
     }
 
-    for (const i in data.apps) {
-      const app = data.apps[i];
-      for (const j in app.ids) {
-        const appId = app.ids[j];
+    for (const app of data.apps) {
+      for (const appId of app.ids) {
         try {
           await this.client.devices.executeCommand(this.device.deviceId, {
             capability: 'custom.launchapp',
@@ -476,7 +474,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.logInfo('Registering input source: %s', name);
 
     const inputSourceService = this.accessory.getService(id)
-      || this.accessory.addService(this.platform.Service.InputSource, id, id);
+      ?? this.accessory.addService(this.platform.Service.InputSource, id, id);
     inputSourceService.name = id;
     inputSourceService
       .setCharacteristic(this.platform.Characteristic.Identifier, this.inputSources.length)

@@ -2,6 +2,7 @@ import { Logger, PlatformAccessory } from 'homebridge';
 
 import { SmartThingsPlatform } from './smartThingsPlatform';
 import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } from '@smartthings/core-sdk';
+import { CustomCapabilityStatus } from '@smartthings/core-sdk';
 
 /**
  * Class implements a base class for SmartThings accessories.
@@ -30,7 +31,7 @@ export abstract class SmartThingsAccessory {
    * @param command the command identifier
    * @param args the command arguments
    */
-  protected async executeCommand(capability: string, command: string, args: Array<string | number | object> = []) {
+  protected async executeCommand(capability: string, command: string, args: (string | number | object)[] = []) {
     try {
       await this.client.devices.executeCommand(this.device.deviceId, {
         capability: capability,
@@ -71,7 +72,7 @@ export abstract class SmartThingsAccessory {
 
   protected logCapabilityRegistration(capability: Capability) {
     this.logInfo('Registering capability:', capability.name);
-    if (capability.status !== 'live') {
+    if (capability.status !== CustomCapabilityStatus.LIVE) {
       this.logWarn('Capability %s might not work as expected because it\'s status is: %s', capability.name, capability.status);
     }
   }
