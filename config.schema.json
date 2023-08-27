@@ -35,6 +35,12 @@
         "required": false,
         "description": "Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API."
       },
+      "registerVolumeSlider": {
+        "title": "Register volume slider",
+        "type": "boolean",
+        "required": false,
+        "description": "Registers a separate volume slider accessorry that will be exposed as a light build accessory (because there is currently no option to change a speaker volume directly using Home)."
+      },
       "deviceMappings": {
         "type": "array",
         "items": {
