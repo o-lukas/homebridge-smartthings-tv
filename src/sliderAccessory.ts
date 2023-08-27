@@ -53,9 +53,9 @@ export class SliderAccessory extends SmartThingsAccessory {
   }
 
   private async handleGetBrightness(): Promise<CharacteristicValue> {
-    const apiValue = await this.getCapabilityStatus(this.capability);
+    const apiValue = this.onGet(await this.getCapabilityStatus(this.capability));
     this.logDebug('Get %s value: %s', this.capability, apiValue);
-    return this.onGet(apiValue);
+    return apiValue;
   }
 
   private async handleSetBrightness(value: CharacteristicValue) {
