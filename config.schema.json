@@ -39,7 +39,7 @@
         "title": "Register volume slider",
         "type": "boolean",
         "required": false,
-        "description": "Registers a separate volume slider accessorry that will be exposed as a light build accessory (because there is currently no option to change a speaker volume directly using Home)."
+        "description": "Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home)."
       },
       "deviceMappings": {
         "type": "array",
