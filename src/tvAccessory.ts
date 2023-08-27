@@ -13,7 +13,7 @@ import data from './res/apps.json';
  */
 export class TvAccessory extends SmartThingsAccessory {
   private service: Service;
-  private speakerService: Service;
+  private speakerService: Service | undefined = undefined;
   private inputSources: Service[] = [];
   private capabilities: string[] = [];
   private activeIdentifierChangeTime = 0;
@@ -44,10 +44,6 @@ export class TvAccessory extends SmartThingsAccessory {
       .setCharacteristic(this.platform.Characteristic.ConfiguredName, device.name ?? device.deviceId);
     this.service.getCharacteristic(this.platform.Characteristic.RemoteKey)
       .onSet(this.setRemoteKey.bind(this));
-
-    this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
-      ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
-    this.service.addLinkedService(this.speakerService);
   }
 
   /**
@@ -110,6 +106,15 @@ export class TvAccessory extends SmartThingsAccessory {
   }
 
   /**
+   * Returns whether the speaker service is available.
+   *
+   * @returns TRUE in case speaker service is available - FALSE otherwise
+   */
+  public hasSpeakerService(): boolean {
+    return this.speakerService !== undefined;
+  }
+
+  /**
    * Registers the SmartThings Capablity if it's functionality is implemented.
    *
    * @param capability the Capability
@@ -132,6 +137,12 @@ export class TvAccessory extends SmartThingsAccessory {
         break;
 
       case 'audioVolume':
+        if(!this.speakerService){
+          this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
+            ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+          this.service.addLinkedService(this.speakerService);
+        }
+
         this.logCapabilityRegistration(capability);
         this.speakerService
           .setCharacteristic(this.platform.Characteristic.Active, this.platform.Characteristic.Active.ACTIVE);
@@ -146,6 +157,12 @@ export class TvAccessory extends SmartThingsAccessory {
         break;
 
       case 'audioMute':
+        if(!this.speakerService){
+          this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
+          ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+          this.service.addLinkedService(this.speakerService);
+        }
+
         this.logCapabilityRegistration(capability);
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
