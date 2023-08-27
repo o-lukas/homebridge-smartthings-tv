@@ -170,7 +170,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
     }) {
     for (const mode of modes.modes) {
-      const id = this.api.hap.uuid.generate(`${modes.prefix}${mode.id}`);
+      const id = this.api.hap.uuid.generate(`${device.deviceId}${modes.prefix}${mode.id}`);
       const name = `${modes.prefix} ${mode.name}`;
 
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
@@ -201,7 +201,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param component the SmartThings Device's Component
    */
   registerVolumeSlider(client: SmartThingsClient, device: Device, component: Component) {
-    const id = this.api.hap.uuid.generate('volume');
+    const id = this.api.hap.uuid.generate(`${device.deviceId}volume`);
     const name = 'Volume';
 
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
