@@ -1,9 +1,19 @@
-import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
+import {
+  API,
+  DynamicPlatformPlugin,
+  Logger,
+  PlatformAccessory,
+  PlatformConfig,
+  Service,
+  Characteristic,
+  CharacteristicValue,
+} from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TvAccessory } from './tvAccessory';
-import { SmartThingsClient, BearerTokenAuthenticator, Device, Component } from '@smartthings/core-sdk';
+import { SmartThingsClient, BearerTokenAuthenticator, Device, Component, CapabilityStatus } from '@smartthings/core-sdk';
 import { SwitchAccessory } from './switchAccessory';
+import { SliderAccessory } from './sliderAccessory';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -136,6 +146,14 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         this.registerModeSwitches(client, device, component, modes);
       }
     }
+
+    if(this.config.registerVolumeSlider){
+      if(tv.hasSpeakerService()){
+        this.registerVolumeSlider(client, device, component);
+      } else {
+        this.log.warn('Volume slider can not be registered because TV has no volume capabilities');
+      }
+    }
   }
 
   /**
@@ -171,6 +189,48 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
+    }
+  }
+
+  /**
+   * Register the volume of the device passed in as platform accessory.
+   * Handles caching of accessories as well.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param component the SmartThings Device's Component
+   */
+  registerVolumeSlider(client: SmartThingsClient, device: Device, component: Component) {
+    const id = this.api.hap.uuid.generate('volume');
+    const name = 'Volume';
+
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
+    if (existingAccessory) {
+      this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
+
+      new SliderAccessory(device, component, client, this.log, this, existingAccessory, 'audioVolume', 'setVolume',
+        (value: CapabilityStatus | null) : CharacteristicValue => {
+          return value?.volume.value as number;
+        },
+        (value: CharacteristicValue) : (string | number | object)[]=> {
+          return [value as number];
+        },
+      );
+    } else {
+      const accessory = new this.api.platformAccessory(name, id);
+      accessory.context.device = device;
+      accessory.category = this.api.hap.Categories.LIGHTBULB;
+
+      new SliderAccessory(device, component, client, this.log, this, accessory, 'audioVolume', 'setVolume',
+        (value: CapabilityStatus | null) : CharacteristicValue => {
+          return value?.volume.value as number;
+        },
+        (value: CharacteristicValue) : (string | number | object)[]=> {
+          return [value as number];
+        },
+      );
+
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 }
