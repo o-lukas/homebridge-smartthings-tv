@@ -45,6 +45,7 @@ export abstract class SmartThingsAccessory {
         errorMessage = error.message;
       }
       this.logError('Error when executing %s of capability %s: %s', command, capability, errorMessage);
+      throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
     }
   }
 
