@@ -47,7 +47,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     this.api.on('didFinishLaunching', () => {
       this.log.debug('Executed didFinishLaunching callback');
-      void this.discoverDevices(config.token as string, config.deviceMappings as [DeviceMapping]);
+      void this.discoverDevices(config.token as string, config.deviceMappings as [DeviceMapping] ?? []);
     });
   }
 
@@ -95,11 +95,11 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     switch (device.ocf?.ocfDeviceType) {
       case 'oic.d.tv':
       case 'x.com.st.d.monitor':
-        await this.registerTvDevice(client, device, deviceMappings?.find(mapping => mapping.deviceId === device.deviceId));
+        await this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
         break;
 
       default:
-        this.log.debug('Ignoring SmartThingsDevice %s because device type %s is not implemented: %s',
+        this.log.debug('Ignoring SmartThings device %s because device type %s is not implemented: %s',
           device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
           device.ocf?.ocfDeviceType, JSON.stringify(device, null, 2));
         break;
