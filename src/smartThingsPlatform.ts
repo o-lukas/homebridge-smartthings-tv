@@ -47,7 +47,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     this.api.on('didFinishLaunching', () => {
       this.log.debug('Executed didFinishLaunching callback');
-      void this.discoverDevices(config.token as string, config.deviceMappings as [DeviceMapping] ?? []);
+      void this.discoverDevices(config.token as string,
+        config.deviceBlacklist as [string] ?? [],
+        config.deviceMappings as [DeviceMapping] ?? []);
     });
   }
 
@@ -66,14 +68,20 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * Uses the SmartThings API to discover and register the available devices.
    *
    * @param token the SmartThings API token
+   * @param deviceBlacklist the device ids to be ignored
    * @param deviceMappings the array of configured DeviceMapping
    */
-  async discoverDevices(token: string, deviceMappings: [DeviceMapping]) {
+  async discoverDevices(token: string, deviceBlacklist: [string], deviceMappings: [DeviceMapping]) {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
     try {
       for (const device of await client.devices.list()) {
-        await this.registerDevice(client, device, deviceMappings);
+        if(deviceBlacklist.includes(device.deviceId)) {
+          this.log.debug('Ignoring SmartThings device %s because it is on the blacklist',
+            device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+        } else {
+          await this.registerDevice(client, device, deviceMappings);
+        }
       }
     } catch (error) {
       let errorMessage = 'unknown';
