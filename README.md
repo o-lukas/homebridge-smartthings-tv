@@ -47,6 +47,10 @@ The following snippets shows all available properties you can use for the plugin
             "registerPictureModes": true,
             "registerSoundModes": true,
             "registerVolumeSlider": true,
+            "deviceBlacklist": [
+                "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            ],
             "deviceMappings": [
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -99,6 +103,10 @@ Registers all available sound modes as separate switches that can be toggled to 
 ### registerVolumeSlider
 
 Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home).
+
+### deviceBlacklist
+
+Devices not to be registered.
 
 ### deviceMappings
 
