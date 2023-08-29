@@ -41,6 +41,15 @@
         "required": false,
         "description": "Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home)."
       },
+      "deviceBlacklist": {
+        "description": "Devices not to be registered.",
+        "type": "array",
+        "items": {
+          "title": "Device Id",
+          "type": "string",
+          "description": "The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id."
+        }
+      },
       "deviceMappings": {
         "description": "Use the device mappings when e.g. turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device. If status does not show up properly you can use the ping functionality to determine the device status. To make use of it you must enter the SmartThings device ID and the ip address of the device.",
         "type": "array",
