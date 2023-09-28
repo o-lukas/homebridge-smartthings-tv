@@ -48,7 +48,7 @@
     "eslint": "^8.50.0",
     "homebridge": "^1.6.1",
     "nodemon": "^3.0.1",
-    "rimraf": "^5.0.4",
+    "rimraf": "^5.0.5",
     "semantic-release": "^22.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
