@@ -91,7 +91,6 @@ export abstract class SmartThingsAccessory {
     setInterval(() => {
       getter()
         .then((value) => {
-          this.logDebug('Update capability state %s to: %s', capability, value);
           service.updateCharacteristic(characteristic, value);
         })
         .catch((reason) => {
