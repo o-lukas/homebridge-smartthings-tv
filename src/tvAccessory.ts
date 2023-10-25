@@ -135,6 +135,8 @@ export class TvAccessory extends SmartThingsAccessory {
         this.service.getCharacteristic(this.platform.Characteristic.Active)
           .onSet(this.setActive.bind(this))
           .onGet(this.getActive.bind(this));
+        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Active,
+          this.getActive.bind(this), this.pollingInterval);
         break;
 
       case 'audioVolume':
@@ -155,6 +157,8 @@ export class TvAccessory extends SmartThingsAccessory {
           .onSet(this.setVolume.bind(this));
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
           .onSet(this.setVolumeSelector.bind(this));
+        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Volume,
+          this.getVolume.bind(this), this.pollingInterval);
         break;
 
       case 'audioMute':
@@ -168,6 +172,8 @@ export class TvAccessory extends SmartThingsAccessory {
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
+        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Mute,
+          this.getMute.bind(this), this.pollingInterval);
         break;
 
       case 'samsungvd.mediaInputSource':
