@@ -28,6 +28,7 @@ export class TvAccessory extends SmartThingsAccessory {
     accessory: PlatformAccessory,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
+    private readonly pollingInterval: number | undefined,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {

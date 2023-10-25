@@ -24,6 +24,7 @@ export class SliderAccessory extends SmartThingsAccessory {
     private readonly command: string,
     private readonly onGet: (value: CapabilityStatus | null) => CharacteristicValue,
     private readonly onSet: (value: CharacteristicValue) => (string | number | object)[],
+    private readonly pollingInterval: number | undefined,
   ) {
     super(device, component, client, platform, accessory, log);
 

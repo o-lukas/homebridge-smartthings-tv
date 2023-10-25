@@ -41,6 +41,12 @@
         "required": false,
         "description": "Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home)."
       },
+      "pollInterval": {
+        "title": "State polling interval [ms]",
+        "type": "number",
+        "required": false,
+        "description": "Some characteristics are not updated automatically (e.g. power state). To enable polling these characteristics automatically set this value to the desired polling interval in milliseconds. Leave empty to disable this functionality."
+      },
       "deviceBlacklist": {
         "description": "Devices not to be registered.",
         "type": "array",
