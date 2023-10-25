@@ -1,4 +1,4 @@
-import { Logger, PlatformAccessory } from 'homebridge';
+import { Characteristic, CharacteristicValue, Logger, PlatformAccessory, Service, WithUUID } from 'homebridge';
 
 import { SmartThingsPlatform } from './smartThingsPlatform';
 import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } from '@smartthings/core-sdk';
@@ -69,6 +69,36 @@ export abstract class SmartThingsAccessory {
       this.logError('Error when getting status of %s: %s', capability, errorMessage);
       return null;
     }
+  }
+
+  /**
+   * Starts polling the status of the capability passed in using the parameters passed in.
+   * Must only be used on capabilities that are not updated cyclical automatically.
+   *
+   * @param capability the capability that will be updated
+   * @param service the service containing the characteristic
+   * @param characteristic the characteristic that will be updated
+   * @param getter the function to be used to get the new value
+   * @param interval the interval in milliseconds (if set to undefined polling will not be started)
+   */
+  protected startStatusPolling<T extends WithUUID<new () => Characteristic>>(
+    capability: string, service: Service,
+    characteristic: T, getter: () => Promise<CharacteristicValue>, interval: number | undefined) {
+    if(interval === undefined) {
+      return;
+    }
+
+    setInterval(() => {
+      getter()
+        .then((value) => {
+          this.logDebug('Update capability state %s to: %s', capability, value);
+          service.updateCharacteristic(characteristic, value);
+        })
+        .catch((reason) => {
+          this.logError('Error in cyclic update of capability %s: %s', capability, reason);
+        });
+      service.updateCharacteristic(characteristic, 1);
+    }, interval);
   }
 
   protected logCapabilityRegistration(capability: Capability) {
