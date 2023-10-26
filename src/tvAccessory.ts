@@ -159,14 +159,14 @@ export class TvAccessory extends SmartThingsAccessory {
           .onSet(this.setVolume.bind(this));
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
           .onSet(this.setVolumeSelector.bind(this));
-        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Volume,
+        this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Volume,
           this.getVolume.bind(this, false), this.pollingInterval);
         break;
 
       case 'audioMute':
         if(!this.speakerService){
           this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
-          ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+            ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
           this.service.addLinkedService(this.speakerService);
         }
 
@@ -174,7 +174,7 @@ export class TvAccessory extends SmartThingsAccessory {
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
-        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Mute,
+        this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Mute,
           this.getMute.bind(this, false), this.pollingInterval);
         break;
 
