@@ -137,8 +137,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new TvAccessory(device, component, client, this.log, this, accessory,
-      this.config.capabilityLogging as boolean, this.config.registerApplications as boolean,
+      this.config.capabilityLogging as boolean ?? false,
+      this.config.registerApplications as boolean ?? false,
       this.config.pollInterval as number ?? undefined,
+      this.config.cyclicCallsLogging as boolean ?? false,
       deviceMapping?.macAddress, deviceMapping?.ipAddress);
     await tv.registerCapabilities();
 
@@ -225,6 +227,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
           return [value as number];
         },
         this.config.pollInterval as number ?? undefined,
+        this.config.cyclicCallsLogging as boolean ?? false,
       );
     } else {
       const accessory = new this.api.platformAccessory(name, id);
@@ -239,6 +242,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
           return [value as number];
         },
         this.config.pollInterval as number ?? undefined,
+        this.config.cyclicCallsLogging as boolean ?? false,
       );
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);

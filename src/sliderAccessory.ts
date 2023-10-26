@@ -25,6 +25,7 @@ export class SliderAccessory extends SmartThingsAccessory {
     private readonly onGet: (value: CapabilityStatus | null) => CharacteristicValue,
     private readonly onSet: (value: CharacteristicValue) => (string | number | object)[],
     private readonly pollingInterval: number | undefined,
+    private readonly cyclicCallsLogging: boolean,
   ) {
     super(device, component, client, platform, accessory, log);
 
@@ -37,9 +38,9 @@ export class SliderAccessory extends SmartThingsAccessory {
       .onGet(this.handleGetBrightness.bind(this))
       .onSet(this.handleSetBrightness.bind(this));
     this.startStatusPolling(this.capability + '_on', this.service, this.platform.Characteristic.On,
-      this.handleGetOn.bind(this, false), this.pollingInterval);
+      this.handleGetOn.bind(this, this.cyclicCallsLogging), this.pollingInterval);
     this.startStatusPolling(this.capability + '_brightness', this.service, this.platform.Characteristic.Brightness,
-      this.handleGetBrightness.bind(this, false), this.pollingInterval);
+      this.handleGetBrightness.bind(this, this.cyclicCallsLogging), this.pollingInterval);
   }
 
   private async handleGetOn(log = true) : Promise<CharacteristicValue> {

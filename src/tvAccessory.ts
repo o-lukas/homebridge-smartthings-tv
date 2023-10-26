@@ -29,6 +29,7 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
     private readonly pollingInterval: number | undefined,
+    private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -138,7 +139,7 @@ export class TvAccessory extends SmartThingsAccessory {
           .onSet(this.setActive.bind(this))
           .onGet(this.getActive.bind(this));
         this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Active,
-          this.getActive.bind(this, false), this.pollingInterval);
+          this.getActive.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'audioVolume':
@@ -160,7 +161,7 @@ export class TvAccessory extends SmartThingsAccessory {
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
           .onSet(this.setVolumeSelector.bind(this));
         this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Volume,
-          this.getVolume.bind(this, false), this.pollingInterval);
+          this.getVolume.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'audioMute':
@@ -175,7 +176,7 @@ export class TvAccessory extends SmartThingsAccessory {
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
         this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Mute,
-          this.getMute.bind(this, false), this.pollingInterval);
+          this.getMute.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'samsungvd.mediaInputSource':
@@ -189,7 +190,7 @@ export class TvAccessory extends SmartThingsAccessory {
           if(!inputSourcePollingStarted){
             inputSourcePollingStarted = true;
             this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
-              this.getActiveIdentifier.bind(this, false), this.pollingInterval);
+              this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
           }
         }
         break;
@@ -206,7 +207,7 @@ export class TvAccessory extends SmartThingsAccessory {
             if(!inputSourcePollingStarted){
               inputSourcePollingStarted = true;
               this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
-                this.getActiveIdentifier.bind(this, false), this.pollingInterval);
+                this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
             }
           }
         } else {

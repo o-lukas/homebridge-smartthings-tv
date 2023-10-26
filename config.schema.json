@@ -17,6 +17,12 @@
         "required": false,
         "description": "The SmartThings API returns the list of supported actions of a device as capabilities. For implementing new features it is neccessary to know the scheme the capability uses. Enable this property to log all capabilities of supported SmartThings devices."
       },
+      "cyclicCallsLogging": {
+        "title": "Cyclic calls Logging",
+        "type": "boolean",
+        "required": false,
+        "description": "Enable debug logging for cyclic calls (e.g. polling)."
+      },
       "registerApplications": {
         "title": "Register applications",
         "type": "boolean",
