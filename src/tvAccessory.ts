@@ -28,6 +28,8 @@ export class TvAccessory extends SmartThingsAccessory {
     accessory: PlatformAccessory,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
+    private readonly pollingInterval: number | undefined,
+    private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
   ) {
@@ -71,7 +73,7 @@ export class TvAccessory extends SmartThingsAccessory {
   public async getPictureModes(): Promise<{
     capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
   } | undefined> {
-    const status = await this.getCapabilityStatus('custom.picturemode');
+    const status = await this.getCapabilityStatus('custom.picturemode', true);
     if (!status) {
       return undefined;
     }
@@ -92,7 +94,7 @@ export class TvAccessory extends SmartThingsAccessory {
   public async getSoundModes(): Promise<{
     capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
   } | undefined> {
-    const status = await this.getCapabilityStatus('custom.soundmode');
+    const status = await this.getCapabilityStatus('custom.soundmode', true);
     if (!status) {
       return undefined;
     }
@@ -120,6 +122,8 @@ export class TvAccessory extends SmartThingsAccessory {
    * @param capability the Capability
    */
   private async registerCapability(capability: Capability) {
+    let inputSourcePollingStarted = false;
+
     if (this.logCapabilities) {
       this.logDebug('Available capability: %s', JSON.stringify(capability, null, 2));
     }
@@ -134,6 +138,8 @@ export class TvAccessory extends SmartThingsAccessory {
         this.service.getCharacteristic(this.platform.Characteristic.Active)
           .onSet(this.setActive.bind(this))
           .onGet(this.getActive.bind(this));
+        this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.Active,
+          this.getActive.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'audioVolume':
@@ -154,12 +160,14 @@ export class TvAccessory extends SmartThingsAccessory {
           .onSet(this.setVolume.bind(this));
         this.speakerService.getCharacteristic(this.platform.Characteristic.VolumeSelector)
           .onSet(this.setVolumeSelector.bind(this));
+        this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Volume,
+          this.getVolume.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'audioMute':
         if(!this.speakerService){
           this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
-          ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
+            ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
           this.service.addLinkedService(this.speakerService);
         }
 
@@ -167,6 +175,8 @@ export class TvAccessory extends SmartThingsAccessory {
         this.speakerService.getCharacteristic(this.platform.Characteristic.Mute)
           .onSet(this.setMute.bind(this))
           .onGet(this.getMute.bind(this));
+        this.startStatusPolling(capability.name, this.speakerService, this.platform.Characteristic.Mute,
+          this.getMute.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         break;
 
       case 'samsungvd.mediaInputSource':
@@ -176,6 +186,12 @@ export class TvAccessory extends SmartThingsAccessory {
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
+
+          if(!inputSourcePollingStarted){
+            inputSourcePollingStarted = true;
+            this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
+              this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
+          }
         }
         break;
 
@@ -187,6 +203,12 @@ export class TvAccessory extends SmartThingsAccessory {
             this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
               .onSet(this.setActiveIdentifier.bind(this))
               .onGet(this.getActiveIdentifier.bind(this));
+
+            if(!inputSourcePollingStarted){
+              inputSourcePollingStarted = true;
+              this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
+                this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
+            }
           }
         } else {
           this.logInfo('Not registering capability because registering of applications has been disabled: %s', capability.name);
@@ -222,13 +244,17 @@ export class TvAccessory extends SmartThingsAccessory {
   /**
    * Getter for Homebridge accessory Active property.
    *
+   * @param log flag to turn logging on/off
    * @returns the CharacteristicValue
    */
-  private async getActive(): Promise<CharacteristicValue> {
+  private async getActive(log = true): Promise<CharacteristicValue> {
     if (this.ipAddress) {
       try {
         const status = await ping.promise.probe(this.ipAddress);
-        this.logDebug('ping status: %s', status);
+        if(log) {
+          this.logDebug('ping status: %s', status);
+        }
+
         return status?.alive;
       } catch (exc) {
         this.logError('error when pinging device: %s\n\
@@ -237,7 +263,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       }
     }
 
-    const status = await this.getCapabilityStatus('switch');
+    const status = await this.getCapabilityStatus('switch', log);
     return status?.switch.value === 'on' ? true : false;
   }
 
@@ -265,10 +291,11 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   /**
    * Getter for Homebridge accessory Volume property.
    *
+   * @param log flag to turn logging on/off
    * @returns the CharacteristicValue
    */
-  private async getVolume(): Promise<CharacteristicValue> {
-    const status = await this.getCapabilityStatus('audioVolume');
+  private async getVolume(log = true): Promise<CharacteristicValue> {
+    const status = await this.getCapabilityStatus('audioVolume', log);
     return status?.volume.value as number;
   }
 
@@ -285,10 +312,11 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   /**
    * Getter for Homebridge accessory Mute property.
    *
+   * @param log flag to turn logging on/off
    * @returns the CharacteristicValue
    */
-  private async getMute(): Promise<CharacteristicValue> {
-    const status = await this.getCapabilityStatus('audioMute');
+  private async getMute(log = true): Promise<CharacteristicValue> {
+    const status = await this.getCapabilityStatus('audioMute', log);
     return status?.mute.value === 'muted' ? true : false;
   }
 
@@ -315,14 +343,17 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   /**
    * Getter for Homebridge accessory ActiveIdentifier property.
    *
+   * @param log flag to turn logging on/off
    * @returns the CharacteristicValue
    */
-  private async getActiveIdentifier(): Promise<CharacteristicValue> {
-    const status = await this.getCapabilityStatus('samsungvd.mediaInputSource');
+  private async getActiveIdentifier(log = true): Promise<CharacteristicValue> {
+    const status = await this.getCapabilityStatus('samsungvd.mediaInputSource', log);
 
     if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
       const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
-      this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
+      if(log){
+        this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
+      }
 
       if (id < 0) {
         this.logWarn('Could not find input source for name \'%s\' - using first input source \'%s\' as active identifier',
@@ -332,7 +363,10 @@ ping command fails mostly because of permission issues - falling back to SmartTh
 
       return id;
     } else {
-      this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s', this.activeIdentifierChangeValue);
+      if(log){
+        this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s',
+          this.activeIdentifierChangeValue);
+      }
       return this.activeIdentifierChangeValue;
     }
   }
@@ -459,7 +493,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * the first successfully tested id will be used.
    */
   private async registerAvailableLaunchApplications() {
-    if (!await this.getActive()) {
+    if (!await this.getActive(false)) {
       this.logWarn('Registering applications will probably not work because TV is not turned on');
     }
 
