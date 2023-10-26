@@ -188,7 +188,7 @@ export class TvAccessory extends SmartThingsAccessory {
 
           if(!inputSourcePollingStarted){
             inputSourcePollingStarted = true;
-            this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.ActiveIdentifier,
+            this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
               this.getActiveIdentifier.bind(this, false), this.pollingInterval);
           }
         }
@@ -205,7 +205,7 @@ export class TvAccessory extends SmartThingsAccessory {
 
             if(!inputSourcePollingStarted){
               inputSourcePollingStarted = true;
-              this.startStatusPolling(capability.name, this.service, this.platform.Characteristic.ActiveIdentifier,
+              this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
                 this.getActiveIdentifier.bind(this, false), this.pollingInterval);
             }
           }

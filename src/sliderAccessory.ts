@@ -36,9 +36,9 @@ export class SliderAccessory extends SmartThingsAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.Brightness)
       .onGet(this.handleGetBrightness.bind(this))
       .onSet(this.handleSetBrightness.bind(this));
-    this.startStatusPolling(this.capability, this.service, this.platform.Characteristic.On,
+    this.startStatusPolling(this.capability + '_on', this.service, this.platform.Characteristic.On,
       this.handleGetOn.bind(this, false), this.pollingInterval);
-    this.startStatusPolling(this.capability, this.service, this.platform.Characteristic.Brightness,
+    this.startStatusPolling(this.capability + '_brightness', this.service, this.platform.Characteristic.Brightness,
       this.handleGetBrightness.bind(this, false), this.pollingInterval);
   }
 
