@@ -37,13 +37,13 @@ export class SliderAccessory extends SmartThingsAccessory {
       .onGet(this.handleGetBrightness.bind(this))
       .onSet(this.handleSetBrightness.bind(this));
     this.startStatusPolling(this.capability, this.service, this.platform.Characteristic.On,
-      this.handleGetOn.bind(this), this.pollingInterval);
+      this.handleGetOn.bind(this, false), this.pollingInterval);
     this.startStatusPolling(this.capability, this.service, this.platform.Characteristic.Brightness,
-      this.handleGetBrightness.bind(this), this.pollingInterval);
+      this.handleGetBrightness.bind(this, false), this.pollingInterval);
   }
 
-  private async handleGetOn() : Promise<CharacteristicValue> {
-    return (await this.handleGetBrightness() as number) > 0;
+  private async handleGetOn(log = true) : Promise<CharacteristicValue> {
+    return (await this.handleGetBrightness(log) as number) > 0;
   }
 
   private async handleSetOn(value: CharacteristicValue) {
@@ -57,9 +57,11 @@ export class SliderAccessory extends SmartThingsAccessory {
     }
   }
 
-  private async handleGetBrightness(): Promise<CharacteristicValue> {
-    const apiValue = this.onGet(await this.getCapabilityStatus(this.capability));
-    this.logDebug('Get %s value: %s', this.capability, apiValue);
+  private async handleGetBrightness(log = true): Promise<CharacteristicValue> {
+    const apiValue = this.onGet(await this.getCapabilityStatus(this.capability, log));
+    if(log){
+      this.logDebug('Get %s value: %s', this.capability, apiValue);
+    }
     return apiValue;
   }
 

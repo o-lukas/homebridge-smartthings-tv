@@ -54,12 +54,15 @@ export abstract class SmartThingsAccessory {
    * Handles error values returned by api.
    *
    * @param capability the capability identifier
+   * @param log flag to turn logging on/off
    * @returns the capability status or undefined for errors returned by API
    */
-  protected async getCapabilityStatus(capability: string): Promise<CapabilityStatus | null> {
+  protected async getCapabilityStatus(capability: string, log = true): Promise<CapabilityStatus | null> {
     try {
       const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
-      this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 2));
+      if(log){
+        this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 2));
+      }
       return status;
     } catch (error) {
       let errorMessage = 'unknown';
