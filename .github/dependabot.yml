@@ -8,7 +8,8 @@ updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "sunday"
       time: "03:00"
     versioning-strategy: increase
     target-branch: "main"
