@@ -43,10 +43,12 @@ The following snippets shows all available properties you can use for the plugin
         {
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "capabilityLogging": true,
+            "cyclicCallsLogging": true,
             "registerApplications": true,
             "registerPictureModes": true,
             "registerSoundModes": true,
             "registerVolumeSlider": true,
+            "pollInterval": 5000,
             "deviceBlacklist": [
                 "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                 "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -88,6 +90,10 @@ The SmartThings API token is needed to authenticate the requests sent to the Sma
 
 The SmartThings API returns the list of supported actions of a device as capabilities. For implementing new features it is neccessary to know the scheme the capability uses. Enable this property to log all capabilities of supported SmartThings devices.
 
+### cyclicCallsLogging
+
+Enable debug logging for cyclic calls (e.g. polling).
+
 ### registerApplications
 
 To use installed application as input sources, a [predefined list of applications](./src/res/apps.json) will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV).
@@ -103,6 +109,10 @@ Registers all available sound modes as separate switches that can be toggled to 
 ### registerVolumeSlider
 
 Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home).
+
+### pollInterval
+
+Some characteristics are not updated automatically (e.g. power state). To enable polling these characteristics automatically set this value to the desired polling interval in milliseconds. Leave empty to disable this functionality.
 
 ### deviceBlacklist
 
