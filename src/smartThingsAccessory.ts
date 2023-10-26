@@ -101,7 +101,6 @@ export abstract class SmartThingsAccessory {
         .catch((reason) => {
           this.logError('Error in cyclic update of capability %s: %s', capability, reason);
         });
-      service.updateCharacteristic(characteristic, 1);
     }, interval);
   }
 
