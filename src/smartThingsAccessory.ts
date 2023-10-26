@@ -91,6 +91,8 @@ export abstract class SmartThingsAccessory {
       return;
     }
 
+    this.logInfo('Start status polling for %s with interval of %ims', capability, interval);
+
     setInterval(() => {
       getter()
         .then((value) => {
