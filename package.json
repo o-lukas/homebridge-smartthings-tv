@@ -43,7 +43,7 @@
     "@types/node": "^20.9.2",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "eslint": "^8.53.0",
     "homebridge": "^1.7.0",
