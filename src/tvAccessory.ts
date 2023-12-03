@@ -515,7 +515,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
             arguments: [appId],
           });
 
-          this.registerInputSource(appId, app.name);
+          this.registerInputSource(appId, app.name, this.platform.Characteristic.InputSourceType.APPLICATION);
           break;
         } catch (exc) {
           continue;
@@ -529,9 +529,17 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    *
    * @param id the input source id
    * @param name the input source display name
+   * @param inputSource the InputSourceType or @code undefined @endcode to use @link guessInputSourceType @endlink
+   * to determine InputSourceType
    */
-  private registerInputSource(id: string, name: string) {
+  private registerInputSource(id: string, name: string, inputSource: number | undefined = undefined) {
     this.logInfo('Registering input source: %s (%s)', name, id);
+
+    let inputSourceType = inputSource;
+    if(inputSourceType === undefined){
+      inputSourceType = this.guessInputSourceType(id);
+      this.logDebug('Guessed input source type for %s is: %i', name, inputSourceType);
+    }
 
     const inputSourceService = this.accessory.getService(id)
       ?? this.accessory.addService(this.platform.Service.InputSource, id, id);
@@ -540,7 +548,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       .setCharacteristic(this.platform.Characteristic.Identifier, this.inputSourceServices.length)
       .setCharacteristic(this.platform.Characteristic.ConfiguredName, name)
       .setCharacteristic(this.platform.Characteristic.IsConfigured, this.platform.Characteristic.IsConfigured.CONFIGURED)
-      .setCharacteristic(this.platform.Characteristic.InputSourceType, this.guessInputSourceType(id));
+      .setCharacteristic(this.platform.Characteristic.InputSourceType, inputSourceType);
     this.service.addLinkedService(inputSourceService);
 
     this.inputSourceServices.push(inputSourceService);
@@ -550,7 +558,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * Guesses the InputSourceType from the identifier of the input source.
    *
    * @param inputSourceId the identifier of the input source
-   * @returns the InputSourceType (HDMI|TUNER|APPLICATION)
+   * @returns the InputSourceType (HDMI|TUNER|OTHER)
    */
   private guessInputSourceType(inputSourceId: string): number {
     if (inputSourceId.startsWith('HDMI')) {
@@ -558,7 +566,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     } else if (inputSourceId === 'dtv') {
       return this.platform.Characteristic.InputSourceType.TUNER;
     } else {
-      return this.platform.Characteristic.InputSourceType.APPLICATION;
+      return this.platform.Characteristic.InputSourceType.OTHER;
     }
   }
 }
