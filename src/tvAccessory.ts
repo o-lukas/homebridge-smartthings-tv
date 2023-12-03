@@ -32,6 +32,7 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
+    private readonly applications: [{name: string; ids: [string]}] | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
 
@@ -497,7 +498,9 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       this.logWarn('Registering applications will probably not work because TV is not turned on');
     }
 
-    for (const app of data.apps) {
+    for (const app of this.applications ?? data.apps) {
+      this.logDebug('Try to register application %s with ids: %s', app.name, app.ids.join(', '));
+
       for (const appId of app.ids) {
         try {
           await this.client.devices.executeCommand(this.device.deviceId, {

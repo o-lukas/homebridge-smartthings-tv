@@ -100,6 +100,30 @@
               "condition": {
                 "functionBody": "return model.deviceMappings[arrayIndices].ping === true;"
               }
+            },
+            "applications": {
+              "title": "Custom application list",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Application name",
+                    "type": "string"
+                  },
+                  "ids": {
+                    "title": "Application IDs",
+                    "type": "array",
+                    "items": {
+                      "title": "Application ID",
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    }
+                  }
+                }
+              },
+              "required": false,
+              "description": "Overrides the default application mapping list to add custom applications."
             }
           }
         }

@@ -19,7 +19,10 @@ import { SliderAccessory } from './sliderAccessory';
  * Class implements the configured Device to mac and ip address mappings.
  */
 class DeviceMapping {
-  constructor(public readonly deviceId: string, public readonly macAddress: string, public readonly ipAddress: string) {
+  constructor(public readonly deviceId: string,
+    public readonly macAddress: string,
+    public readonly ipAddress: string,
+    public readonly applications: [{name: string; ids: [string]}]) {
   }
 }
 
@@ -141,7 +144,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       this.config.registerApplications as boolean ?? false,
       this.config.pollInterval as number ?? undefined,
       this.config.cyclicCallsLogging as boolean ?? false,
-      deviceMapping?.macAddress, deviceMapping?.ipAddress);
+      deviceMapping?.macAddress,
+      deviceMapping?.ipAddress,
+      deviceMapping?.applications);
     await tv.registerCapabilities();
 
     if (this.config.registerPictureModes) {

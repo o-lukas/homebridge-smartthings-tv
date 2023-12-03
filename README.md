@@ -59,7 +59,16 @@ The following snippets shows all available properties you can use for the plugin
                     "wol": true,
                     "macAddress": "xx:xx:xx:xx:xx:xx",
                     "ping": true,
-                    "ipAddress": "xx:xx:xx:xx:xx:xx"
+                    "ipAddress": "xx:xx:xx:xx:xx:xx",
+                    "applications": [
+                        {
+                            "name": "xxxx",
+                            "ids": [
+                                "xxxx",
+                                "xxxx"
+                            ]
+                        }
+                    ]
                 },
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -141,6 +150,18 @@ Enables usage of ping functionality to determine if device is turned on. Use onl
 ### ipAddress
 
 The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
+
+### applications
+
+Overrides the default application mapping list to add custom applications. See [registerApplications](#registerapplications) for more details about application registration.
+
+#### name
+
+The application's name.
+
+#### ids
+
+The application's possible ids. Since some applications have different ids for different versions of TVs you can provide a list here so the plugin will try every id and use the one that's working.
 
 # Common issues
 
