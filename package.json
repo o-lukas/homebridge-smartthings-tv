@@ -53,6 +53,11 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
   },
+  "overrides": {
+    "@smartthings/core-sdk": {
+      "axios": "~>1.6.0"
+    }
+  },
   "release": {
     "branches": [
       "main"
