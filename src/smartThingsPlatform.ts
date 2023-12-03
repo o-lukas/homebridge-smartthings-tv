@@ -22,6 +22,7 @@ class DeviceMapping {
   constructor(public readonly deviceId: string,
     public readonly macAddress: string,
     public readonly ipAddress: string,
+    public readonly inputSources: [{name: string; id: string}],
     public readonly applications: [{name: string; ids: [string]}]) {
   }
 }
@@ -146,6 +147,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       this.config.cyclicCallsLogging as boolean ?? false,
       deviceMapping?.macAddress,
       deviceMapping?.ipAddress,
+      deviceMapping?.inputSources,
       deviceMapping?.applications);
     await tv.registerCapabilities();
 

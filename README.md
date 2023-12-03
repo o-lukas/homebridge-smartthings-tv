@@ -60,6 +60,12 @@ The following snippets shows all available properties you can use for the plugin
                     "macAddress": "xx:xx:xx:xx:xx:xx",
                     "ping": true,
                     "ipAddress": "xx:xx:xx:xx:xx:xx",
+                    "inputSources": [
+                      {
+                        "name": "xxxx",
+                        "id": "xxxx"
+                      }
+                    ],
                     "applications": [
                         {
                             "name": "xxxx",
@@ -150,6 +156,18 @@ Enables usage of ping functionality to determine if device is turned on. Use onl
 ### ipAddress
 
 The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
+
+### inputSources
+
+Overrides the device's default input sources map to add custom input sources. Check the log for information about the default input sources.
+
+#### name
+
+The input source's name.
+
+#### id
+
+The input source's id.
 
 ### applications
 

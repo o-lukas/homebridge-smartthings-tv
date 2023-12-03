@@ -14,7 +14,7 @@ import data from './res/apps.json';
 export class TvAccessory extends SmartThingsAccessory {
   private service: Service;
   private speakerService: Service | undefined = undefined;
-  private inputSources: Service[] = [];
+  private inputSourceServices: Service[] = [];
   private capabilities: string[] = [];
   private activeIdentifierChangeTime = 0;
   private activeIdentifierChangeValue = 0;
@@ -32,6 +32,7 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
+    private readonly inputSources: [{name: string; id: string}] | undefined = undefined,
     private readonly applications: [{name: string; ids: [string]}] | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
@@ -59,9 +60,9 @@ export class TvAccessory extends SmartThingsAccessory {
       await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
     }
 
-    if (this.registerApplications && this.inputSources.length > 0) {
+    if (this.registerApplications && this.inputSourceServices.length > 0) {
       this.logInfo('Resetting active identifier to %s because application registration needed to open all applications',
-        this.inputSources[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
+        this.inputSourceServices[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
       await this.setActiveIdentifier(0);
     }
   }
@@ -183,7 +184,7 @@ export class TvAccessory extends SmartThingsAccessory {
       case 'samsungvd.mediaInputSource':
         this.logCapabilityRegistration(capability);
         await this.registerAvailableMediaInputSources();
-        if (this.inputSources.length > 0) {
+        if (this.inputSourceServices.length > 0) {
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
@@ -200,7 +201,7 @@ export class TvAccessory extends SmartThingsAccessory {
         if (this.registerApplications) {
           this.logCapabilityRegistration(capability);
           await this.registerAvailableLaunchApplications();
-          if (this.inputSources.length > 0) {
+          if (this.inputSourceServices.length > 0) {
             this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
               .onSet(this.setActiveIdentifier.bind(this))
               .onGet(this.getActiveIdentifier.bind(this));
@@ -328,7 +329,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async setActiveIdentifier(value: CharacteristicValue) {
     this.logDebug('Set active identifier to: %s', value);
-    const inputSource = this.inputSources[value as number];
+    const inputSource = this.inputSourceServices[value as number];
     const inputSourceType = inputSource.getCharacteristic(this.platform.Characteristic.InputSourceType).value as number;
 
     this.activeIdentifierChangeTime = Date.now();
@@ -351,14 +352,14 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     const status = await this.getCapabilityStatus('samsungvd.mediaInputSource', log);
 
     if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
-      const id = this.inputSources.findIndex(inputSource => inputSource.name === status?.inputSource.value);
+      const id = this.inputSourceServices.findIndex(inputSource => inputSource.name === status?.inputSource.value);
       if(log){
         this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
       }
 
       if (id < 0) {
         this.logWarn('Could not find input source for name \'%s\' - using first input source \'%s\' as active identifier',
-          status?.inputSource.value, this.inputSources[0].name);
+          status?.inputSource.value, this.inputSourceServices[0].name);
         return 0;
       }
 
@@ -481,7 +482,12 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
     const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as { id: string; name: string }[])];
-    for (const inputSource of supportedInputSources) {
+    if(this.inputSources){
+      this.logInfo('Overriding default input sources map "%s" with custom map "%s"',
+        JSON.stringify(supportedInputSources, null, 2),
+        JSON.stringify(this.inputSources, null, 2));
+    }
+    for (const inputSource of this.inputSources ?? supportedInputSources) {
       this.registerInputSource(inputSource.id, inputSource.name);
     }
   }
@@ -525,19 +531,19 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @param name the input source display name
    */
   private registerInputSource(id: string, name: string) {
-    this.logInfo('Registering input source: %s', name);
+    this.logInfo('Registering input source: %s (%s)', name, id);
 
     const inputSourceService = this.accessory.getService(id)
       ?? this.accessory.addService(this.platform.Service.InputSource, id, id);
     inputSourceService.name = id;
     inputSourceService
-      .setCharacteristic(this.platform.Characteristic.Identifier, this.inputSources.length)
+      .setCharacteristic(this.platform.Characteristic.Identifier, this.inputSourceServices.length)
       .setCharacteristic(this.platform.Characteristic.ConfiguredName, name)
       .setCharacteristic(this.platform.Characteristic.IsConfigured, this.platform.Characteristic.IsConfigured.CONFIGURED)
       .setCharacteristic(this.platform.Characteristic.InputSourceType, this.guessInputSourceType(id));
     this.service.addLinkedService(inputSourceService);
 
-    this.inputSources.push(inputSourceService);
+    this.inputSourceServices.push(inputSourceService);
   }
 
   /**

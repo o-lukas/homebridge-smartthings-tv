@@ -101,6 +101,25 @@
                 "functionBody": "return model.deviceMappings[arrayIndices].ping === true;"
               }
             },
+            "inputSources": {
+              "title": "Custom input sources list",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Input source name",
+                    "type": "string"
+                  },
+                  "id": {
+                    "title": "Input source id",
+                    "type": "string"
+                  }
+                },
+                "required": false,
+                "description": "Overrides the device's default input sources map to add custom input sources. Check the log for information about the default input sources."
+              }
+            },
             "applications": {
               "title": "Custom application list",
               "type": "array",
