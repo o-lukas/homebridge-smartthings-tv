@@ -243,6 +243,10 @@ Some TVs always report the same picture & sound mode. This will cause the expose
 
 Sometimes the SmartThings API seems to loose the contact to the device and does not update it's state so every request will end up with an error message like `invalid device state`. To fix this try to remove the device from your SmartThings account and add it again. This seems to fix the problem.
 
+## DisplayPort input sources do not show up
+
+For some TVs display port sources do not show up. When having the same problem you might try to use [inputSources](#inputsources). `Id` might be something like `Display Port` but you will have to experiment a bit trying different ids until you find the the right one.
+
 ***
 
 Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems.
