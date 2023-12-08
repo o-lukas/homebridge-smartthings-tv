@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye
+FROM mcr.microsoft.com/devcontainers/javascript-node:20-bullseye
 
 # Install homebridge
 RUN npm install -g --unsafe-perm homebridge homebridge-config-ui-x
