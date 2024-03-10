@@ -40,7 +40,7 @@
     "wol": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^20.11.20",
+    "@types/node": "^20.11.25",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
