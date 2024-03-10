@@ -51,7 +51,7 @@
     "rimraf": "^5.0.5",
     "semantic-release": "^22.0.12",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "overrides": {
     "@smartthings/core-sdk": {
