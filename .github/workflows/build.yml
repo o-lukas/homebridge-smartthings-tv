@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # the Node.js versions to build on
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
           CI: true
 
       - name: Eventually create release
-        if: ${{ matrix.node-version == '18.x' }}
+        if: ${{ matrix.node-version == '20.x' }}
         run: npm run semantic-release
         env:
           CI: true
