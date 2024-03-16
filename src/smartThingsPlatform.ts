@@ -202,6 +202,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         accessory.context.device = device;
         accessory.category = this.api.hap.Categories.SWITCH;
 
+        this.log.info('Registering accessory: %s', accessory.displayName);
+
         new SwitchAccessory(device, component, client, this.log, this, accessory, modes.capability,
           modes.command, mode.name);
 
