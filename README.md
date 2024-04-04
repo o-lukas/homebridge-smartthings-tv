@@ -25,6 +25,7 @@ The following snippet shows the most simple configuration you can use for the pl
     "accessories": [],
     "platforms": [
         {
+            "name": "SmartThings TV",
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "platform": "smartthings-tv"
         }
@@ -41,6 +42,7 @@ The following snippets shows all available properties you can use for the plugin
     "accessories": [],
     "platforms": [
         {
+            "name": "SmartThings TV",
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "capabilityLogging": true,
             "cyclicCallsLogging": true,
@@ -198,6 +200,7 @@ The command to turn the TV on using the SmartThings API does not work for some T
     "accessories": [],
     "platforms": [
         {
+            "name": "SmartThings TV",
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "deviceMappings": [
                 {
@@ -222,6 +225,7 @@ Some TVs report a false active state using the SmartThings API. To get the actua
     "accessories": [],
     "platforms": [
         {
+            "name": "SmartThings TV",
             "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "deviceMappings": [
                 {
