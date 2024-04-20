@@ -12,7 +12,7 @@
     "url": "https://github.com/o-lukas/homebridge-smartthings-tv/issues"
   },
   "engines": {
-    "node": "^20",
+    "node": "^18 || ^20",
     "homebridge": "^1.6.0"
   },
   "main": "dist/index.js",
