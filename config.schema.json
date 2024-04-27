@@ -53,7 +53,7 @@
         "required": false,
         "description": "Some characteristics are not updated automatically (e.g. power state). To enable polling these characteristics automatically set this value to the desired polling interval in milliseconds. Leave empty to disable this functionality."
       },
-      "deviceBlacklist": {
+      "deviceBlocklist": {
         "description": "Devices not to be registered.",
         "type": "array",
         "items": {

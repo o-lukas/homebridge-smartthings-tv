@@ -51,7 +51,7 @@ The following snippets shows all available properties you can use for the plugin
             "registerSoundModes": true,
             "registerVolumeSlider": true,
             "pollInterval": 5000,
-            "deviceBlacklist": [
+            "deviceBlocklist": [
                 "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                 "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             ],
@@ -131,7 +131,7 @@ Registers a separate volume slider accessorry that will be exposed as a light bu
 
 Some characteristics are not updated automatically (e.g. power state). To enable polling these characteristics automatically set this value to the desired polling interval in milliseconds. Leave empty to disable this functionality.
 
-### deviceBlacklist
+### deviceBlocklist
 
 Devices not to be registered.
 
