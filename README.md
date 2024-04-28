@@ -189,6 +189,8 @@ The application's possible ids. Since some applications have different ids for d
 
 After starting you have to add the TV manually to HomeKit because they are published as external accessory to get over the limit of only one TV per bridge.
 
+If your TV is lost after an update/restart/etc. you might need to reset the connection. To do so reset the externally published accessories in Homebridge using: Unpair Bridges / Cameras / TVs / External Accessories in the Homebridge settings.
+
 ## TV does not turn on
 
 The command to turn the TV on using the SmartThings API does not work for some TVs. To solve this problem you can use the built-in wake-on-lan functionality. To activate this functionality add a device mapping containing the device id and the mac address of your TV.
