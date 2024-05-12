@@ -44,7 +44,7 @@
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.7.0",
+    "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
     "homebridge": "^1.8.0",
     "nodemon": "^3.1.0",
