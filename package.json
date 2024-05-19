@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "eslint": "^8.57.0",
-    "homebridge": "^1.8.0",
+    "homebridge": "^1.8.2",
     "nodemon": "^3.1.0",
     "rimraf": "^5.0.7",
     "semantic-release": "^23.1.1",
