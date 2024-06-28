@@ -63,6 +63,7 @@ The following snippets shows all available properties you can use for the plugin
                     "macAddress": "xx:xx:xx:xx:xx:xx",
                     "ping": true,
                     "ipAddress": "xx:xx:xx:xx:xx:xx",
+                    "infoKey": "MENU",
                     "inputSources": [
                       {
                         "name": "xxxx",
@@ -163,6 +164,10 @@ Enables usage of ping functionality to determine if device is turned on. Use onl
 ### ipAddress
 
 The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
+
+### infoKey
+
+The key to be emulated when pressing info button in HomeKit remote. The list of valid values must be read from the log as it differs per device. To do so enable capabilityLogging and look for log entry containing the possible values.
 
 ### inputSources
 

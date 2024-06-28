@@ -35,6 +35,7 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly ipAddress: string | undefined = undefined,
     private readonly inputSources: [{name: string; id: string}] | undefined = undefined,
     private readonly applications: [{name: string; ids: [string]}] | undefined = undefined,
+    private readonly informationKey: string | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
 
@@ -216,6 +217,11 @@ export class TvAccessory extends SmartThingsAccessory {
         } else {
           this.logInfo('Not registering capability because registering of applications has been disabled: %s', capability.name);
         }
+        break;
+
+      case 'samsungvd.remoteControl':
+        this.logError('Possible infoKey values are: %s',
+          JSON.stringify(capability.commands?.send.arguments?.find(a => a.name === 'keyValue')?.schema.enum, null, 2));
         break;
     }
   }
@@ -455,7 +461,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
 
       case this.platform.Characteristic.RemoteKey.INFORMATION:
         if (this.validateRemoteKeyCapability('samsungvd.remoteControl', 'INFORMATION')) {
-          await this.executeCommand('samsungvd.remoteControl', 'send', ['MENU']);
+          await this.executeCommand('samsungvd.remoteControl', 'send', [this.informationKey ?? 'MENU']);
         }
         break;
     }

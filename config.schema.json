@@ -106,6 +106,11 @@
                 "functionBody": "return model.deviceMappings[arrayIndices].ping === true;"
               }
             },
+            "infoKey": {
+              "title": "Info key",
+              "type": "string",
+              "description": "The key to be emulated when pressing info button in HomeKit remote. The list of valid values must be read from the log as it differs per device. To do so enable capabilityLogging and look for log entry containing the possible values."
+            },
             "inputSources": {
               "title": "Custom input sources list",
               "type": "array",

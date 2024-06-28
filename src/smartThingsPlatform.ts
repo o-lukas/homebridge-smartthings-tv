@@ -24,7 +24,8 @@ class DeviceMapping {
     public readonly macAddress: string,
     public readonly ipAddress: string,
     public readonly inputSources: [{name: string; id: string}],
-    public readonly applications: [{name: string; ids: [string]}]) {
+    public readonly applications: [{name: string; ids: [string]}],
+    public readonly infoKey: string) {
   }
 }
 
@@ -162,7 +163,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       deviceMapping?.macAddress,
       deviceMapping?.ipAddress,
       deviceMapping?.inputSources,
-      deviceMapping?.applications);
+      deviceMapping?.applications,
+      deviceMapping?.infoKey,
+    );
     await tv.registerCapabilities();
 
     if (this.config.registerPictureModes) {
