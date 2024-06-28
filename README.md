@@ -58,6 +58,7 @@ The following snippets shows all available properties you can use for the plugin
             "deviceMappings": [
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "nameOverride": "xxxx",
                     "wol": true,
                     "macAddress": "xx:xx:xx:xx:xx:xx",
                     "ping": true,
@@ -142,6 +143,10 @@ Use the device mappings when e.g. turning on the accessory does not work as expe
 #### deviceId
 
 The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id.
+
+### nameOverride
+
+Use this to override the default display name of the device. Must be configured here because name configured in HomeKit will get lost after restart.
 
 ### wol
 
@@ -252,6 +257,10 @@ Sometimes the SmartThings API seems to loose the contact to the device and does 
 ## DisplayPort input sources do not show up
 
 For some TVs display port sources do not show up. When having the same problem you might try to use [inputSources](#inputsources). `Id` might be something like `Display Port` but you will have to experiment a bit trying different ids until you find the the right one.
+
+## Name of TV gets reset in HomeKit after HomeBridge restart
+
+The configured name can not be cached because TV is published as external accessory. To permanently change the name use [nameOverride](#nameOverride).
 
 ***
 

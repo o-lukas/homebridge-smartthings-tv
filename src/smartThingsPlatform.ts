@@ -20,6 +20,7 @@ import { SliderAccessory } from './sliderAccessory';
  */
 class DeviceMapping {
   constructor(public readonly deviceId: string,
+    public readonly nameOverride: string,
     public readonly macAddress: string,
     public readonly ipAddress: string,
     public readonly inputSources: [{name: string; id: string}],
@@ -142,12 +143,18 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    const accessory = new this.api.platformAccessory(device.name ?? device.deviceId, device.deviceId);
+    let displayName = device.name ?? device.deviceId;
+    if(deviceMapping?.nameOverride) {
+      this.log.info('Overriding device default name \'%s\' with configured display name \'%s\'', device.name, deviceMapping.nameOverride);
+      displayName = deviceMapping.nameOverride;
+    }
+
+    const accessory = new this.api.platformAccessory(displayName, '6781aefe-0185-4e86-8265-84c52a94b8a0');
     accessory.context.device = device;
     accessory.category = this.api.hap.Categories.TELEVISION;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
-    const tv = new TvAccessory(device, component, client, this.log, this, accessory,
+    const tv = new TvAccessory(displayName, device, component, client, this.log, this, accessory,
       this.config.capabilityLogging as boolean ?? false,
       this.config.registerApplications as boolean ?? false,
       this.config.pollInterval as number ?? undefined,

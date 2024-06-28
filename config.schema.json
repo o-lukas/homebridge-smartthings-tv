@@ -73,6 +73,11 @@
               "type": "string",
               "description": "The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id."
             },
+            "nameOverride": {
+              "title": "Name override",
+              "type": "string",
+              "description": "Use this to override the default display name of the device. Must be configured here because name configured in HomeKit will get lost after restart."
+            },
             "wol": {
               "title": "Wake-on-lan functionality",
               "type": "boolean",

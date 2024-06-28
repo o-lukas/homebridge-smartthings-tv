@@ -20,6 +20,7 @@ export class TvAccessory extends SmartThingsAccessory {
   private activeIdentifierChangeValue = 0;
 
   constructor(
+    name: string,
     device: Device,
     component: Component,
     client: SmartThingsClient,
@@ -38,14 +39,14 @@ export class TvAccessory extends SmartThingsAccessory {
     super(device, component, client, platform, accessory, log);
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Name, device.name ?? device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.Name, name);
 
     this.service = this.accessory.getService(this.platform.Service.Television)
       ?? this.accessory.addService(this.platform.Service.Television);
     this.service
       .setCharacteristic(this.platform.Characteristic.SleepDiscoveryMode,
         this.platform.Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE)
-      .setCharacteristic(this.platform.Characteristic.ConfiguredName, device.name ?? device.deviceId);
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, name);
     this.service.getCharacteristic(this.platform.Characteristic.RemoteKey)
       .onSet(this.setRemoteKey.bind(this));
   }
