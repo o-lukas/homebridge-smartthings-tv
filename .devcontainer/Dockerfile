@@ -16,3 +16,4 @@ RUN apt-get install iputils-ping
 # Install python3 and pip and pre-commit
 RUN apt-get install python3 python3-pip -y
 RUN pip install pre-commit
+RUN pip install commitizen
