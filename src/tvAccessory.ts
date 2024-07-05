@@ -220,7 +220,7 @@ export class TvAccessory extends SmartThingsAccessory {
         break;
 
       case 'samsungvd.remoteControl':
-        this.logError('Possible infoKey values are: %s',
+        this.logInfo('Possible infoKey values are: %s',
           JSON.stringify(capability.commands?.send.arguments?.find(a => a.name === 'keyValue')?.schema.enum, null, 2));
         break;
     }
