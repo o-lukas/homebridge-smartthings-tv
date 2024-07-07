@@ -17,3 +17,6 @@ updates:
     commit-message:
       prefix: "fix"
       prefix-development: "build"
+    groups:
+      development-dependencies:
+        dependency-type: "development"
