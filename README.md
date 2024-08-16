@@ -10,11 +10,9 @@
 
 This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It offers some basic functions to control Samsung TVs using the SmartThings API.
 
-# Configuration
+## Configuration
 
 The easiest way to configure the plugin is to use [Homebridge Config UI X](https://github.com/oznu/homebridge-config-ui-x) which should contain a description for every needed property. The only property needed to make the plugin work is the SmartThings API token. The other properties enable some additional functions but are not mandatory for the plugin to work.
-
-## Configuration example
 
 The following snippet shows the most simple configuration you can use for the plugin:
 
@@ -99,8 +97,6 @@ The following snippets shows all available properties you can use for the plugin
 }
 ```
 
-## Available configuration properties
-
 ### token
 
 The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open [SmartThings website]( https://account.smartthings.com/tokens) and generate a new one (make sure at least devices is selected).
@@ -143,65 +139,65 @@ Use the device mappings when e.g. turning on the accessory does not work as expe
 
 #### deviceId
 
-The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id.
+The SmartThings device id. Check the log or go to <https://account.smartthings.com/> and get the device id.
 
-### nameOverride
+#### nameOverride
 
 Use this to override the default display name of the device. Must be configured here because name configured in HomeKit will get lost after restart.
 
-### wol
+#### wol
 
 Enables usage of wake-on-lan functionality to turn the device on. Use only if using the SmartThings API does not work for your device.
 
-### macAddress
+#### macAddress
 
 The mac address of the device to turn device on using wake-on-lan functionality.
 
-### ping
+#### ping
 
 Enables usage of ping functionality to determine if device is turned on. Use only if using the SmartThings API does not work for your device.
 
-### ipAddress
+#### ipAddress
 
 The IP address of the device (assign a static IP address to make sure it does not change) to determine the status using ping.
 
-### infoKey
+#### infoKey
 
 The key to be emulated when pressing info button in HomeKit remote. The list of valid values must be read from the log as it differs per device. To do so enable capabilityLogging and look for log entry containing the possible values.
 
-### inputSources
+#### inputSources
 
 Overrides the device's default input sources map to add custom input sources. Check the log for information about the default input sources.
 
-#### name
+##### name
 
 The input source's name.
 
-#### id
+##### id
 
 The input source's id.
 
-### applications
+#### applications
 
 Overrides the default application mapping list to add custom applications. See [registerApplications](#registerapplications) for more details about application registration.
 
-#### name
+##### name
 
 The application's name.
 
-#### ids
+##### ids
 
 The application's possible ids. Since some applications have different ids for different versions of TVs you can provide a list here so the plugin will try every id and use the one that's working.
 
-# Common issues
+## Common issues
 
-## TV does not show in HomeKit
+### TV does not show in HomeKit
 
 After starting you have to add the TV manually to HomeKit because they are published as external accessory to get over the limit of only one TV per bridge.
 
 If your TV is lost after an update/restart/etc. you might need to reset the connection. To do so reset the externally published accessories in Homebridge using: Unpair Bridges / Cameras / TVs / External Accessories in the Homebridge settings.
 
-## TV does not turn on
+### TV does not turn on
 
 The command to turn the TV on using the SmartThings API does not work for some TVs. To solve this problem you can use the built-in wake-on-lan functionality. To activate this functionality add a device mapping containing the device id and the mac address of your TV.
 
@@ -226,7 +222,7 @@ The command to turn the TV on using the SmartThings API does not work for some T
 }
 ```
 
-## TV state does not match actual state
+### TV state does not match actual state
 
 Some TVs report a false active state using the SmartThings API. To get the actual state of the television you can use the build-in ping functionality. To activate this functionality add a device mapping containing the device id and the IP address of your TV.
 
@@ -251,21 +247,21 @@ Some TVs report a false active state using the SmartThings API. To get the actua
 }
 ```
 
-## Picture/sound mode switches do not match TV picture mode settings
+### Picture/sound mode switches do not match TV picture mode settings
 
 Some TVs always report the same picture & sound mode. This will cause the exposed switches to not match the actual picture/sound mode state. I have not found a proper solution for this problem yet. But toggling the buttons will still work.
 
-## Error `invalid device state`
+### Error `invalid device state`
 
 Sometimes the SmartThings API seems to loose the contact to the device and does not update it's state so every request will end up with an error message like `invalid device state`. To fix this try to remove the device from your SmartThings account and add it again. This seems to fix the problem.
 
-## DisplayPort input sources do not show up
+### DisplayPort input sources do not show up
 
 For some TVs display port sources do not show up. When having the same problem you might try to use [inputSources](#inputsources). `Id` might be something like `Display Port` but you will have to experiment a bit trying different ids until you find the the right one.
 
-## Name of TV gets reset in HomeKit after HomeBridge restart
+### Name of TV gets reset in HomeKit after HomeBridge restart
 
-The configured name can not be cached because TV is published as external accessory. To permanently change the name use [nameOverride](#nameOverride).
+The configured name can not be cached because TV is published as external accessory. To permanently change the name use [nameOverride](#nameoverride).
 
 ***
 
