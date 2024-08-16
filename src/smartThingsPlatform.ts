@@ -14,6 +14,7 @@ import { TvAccessory } from './tvAccessory';
 import { SmartThingsClient, BearerTokenAuthenticator, Device, Component, CapabilityStatus } from '@smartthings/core-sdk';
 import { SwitchAccessory } from './switchAccessory';
 import { SliderAccessory } from './sliderAccessory';
+import { SoundbarAccessory } from './soundbarAccessory';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -119,6 +120,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         await this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
         break;
 
+      case 'oic.d.networkaudio':
+        await this.registerSoundbarDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
+        break;
+
       default:
         this.log.debug('Ignoring SmartThings device %s because device type %s is not implemented: %s',
           device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
@@ -136,7 +141,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param deviceMappings the array of configured DeviceMapping
    */
   async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
-    this.log.info('Adding new accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+    this.log.info('Adding new TV accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
     if (!component) {
@@ -188,6 +193,49 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       } else {
         this.log.warn('Volume slider can not be registered because TV has no volume capabilities');
       }
+    }
+  }
+
+  /**
+   * Registers a SmartThings Soundbar Device for Homebridge.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
+   * @param deviceMappings the array of configured DeviceMapping
+   */
+  async registerSoundbarDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
+    this.log.info('Adding new soundbar accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+
+    const component = device.components?.at(0);
+    if (!component) {
+      this.log.info('Can\'t register soundbar accessory because (main) component does not exist');
+      return;
+    }
+
+    let displayName = device.name ?? device.deviceId;
+    if(deviceMapping?.nameOverride) {
+      this.log.info('Overriding device default name \'%s\' with configured display name \'%s\'', device.name, deviceMapping.nameOverride);
+      displayName = deviceMapping.nameOverride;
+    }
+
+    const accessory = new this.api.platformAccessory(displayName, device.deviceId);
+    accessory.context.device = device;
+    accessory.category = this.api.hap.Categories.TELEVISION;
+    this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
+
+    const tv = new SoundbarAccessory(displayName, device, component, client, this.log, this, accessory,
+      this.config.capabilityLogging as boolean ?? false,
+      this.config.pollInterval as number ?? undefined,
+      this.config.cyclicCallsLogging as boolean ?? false,
+      deviceMapping?.macAddress,
+      deviceMapping?.ipAddress,
+      deviceMapping?.inputSources,
+    );
+    await tv.registerCapabilities();
+
+    if(this.config.registerVolumeSlider){
+      this.registerVolumeSlider(client, device, component);
     }
   }
 
