@@ -55,7 +55,7 @@
   },
   "overrides": {
     "@smartthings/core-sdk": {
-      "axios": "~>1.6.0"
+      "axios": "~>1.7.3"
     }
   },
   "release": {
