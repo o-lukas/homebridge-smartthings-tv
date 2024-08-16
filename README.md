@@ -8,7 +8,9 @@
 ![GitHub issues](https://img.shields.io/github/issues/o-lukas/homebridge-smartthings-tv?label=Issues)
 [![Build and Lint](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml)
 
-This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It offers some basic functions to control Samsung TVs using the SmartThings API.
+This is a plugin for [Homebridge](https://github.com/homebridge/homebridge). It offers some basic functions to control Samsung TVs and SoundBars using the SmartThings API.
+
+Both device types will be registered as TVs because this is the only device type that is able to control input sources at the moment.
 
 ## Configuration
 
@@ -113,13 +115,22 @@ Enable debug logging for cyclic calls (e.g. polling).
 
 To use installed application as input sources, a [predefined list of applications](./src/res/apps.json) will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV).
 
+> [!NOTE]
+> Not implemented for SoundBars.
+
 ### registerPictureModes
 
 Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API.
 
+> [!NOTE]
+> Not implemented for SoundBars.
+
 ### registerSoundModes
 
 Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API.
+
+> [!NOTE]
+> Not implemented for SoundBars.
 
 ### registerVolumeSlider
 
@@ -136,6 +147,20 @@ Devices not to be registered.
 ### deviceMappings
 
 Use the device mappings when e.g. turning on the accessory does not work as expected. When a device mapping is available the wake-on-lan functionality is used to turn on the device instead of the SmartThings API. To make use of the functionality you must enter the mapping using the SmartThings device ID and the mac address of the device. If status does not show up properly you can use the ping functionality to determine the device status. To make use of it you must enter the SmartThings device ID and the ip address of the device.
+
+The following table gives an overview which properties do work for the device types:
+
+| Configuration property | TV                 | SoundBar           |
+| ---------------------- | ------------------ | ------------------ |
+| deviceId               | :white_check_mark: | :white_check_mark: |
+| nameOverride           | :white_check_mark: | :white_check_mark: |
+| wol                    | :white_check_mark: | :white_check_mark: |
+| macAddress             | :white_check_mark: | :white_check_mark: |
+| ping                   | :white_check_mark: | :white_check_mark: |
+| ipAddress              | :white_check_mark: | :white_check_mark: |
+| infoKey                | :white_check_mark: | :x:                |
+| inputSources           | :white_check_mark: | :white_check_mark: |
+| applications           | :white_check_mark: | :x:                |
 
 #### deviceId
 
