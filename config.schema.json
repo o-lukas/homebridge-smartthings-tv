@@ -71,6 +71,7 @@
             "deviceId": {
               "title": "Device Id",
               "type": "string",
+              "required": true,
               "description": "The SmartThings device id. Check the log or go to https://account.smartthings.com/ and get the device id."
             },
             "nameOverride": {
