@@ -1,12 +1,13 @@
 import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
-import { SmartThingsPlatform } from './smartThingsPlatform';
+import { SmartThingsPlatform } from './smartThingsPlatform.js';
 import { SmartThingsClient, Device, Component, Capability } from '@smartthings/core-sdk';
 import { wake } from 'wol';
 import ping from 'ping';
-import { SmartThingsAccessory } from './smartThingsAccessory';
+import { SmartThingsAccessory } from './smartThingsAccessory.js';
 
-import data from './res/apps.json';
+// @ts-expect-error: imports assertions are not yet supported in used TS version
+import data from './res/apps.json' with { type: 'json' };
 
 /**
  * Class implements a SmartThings TV accessory.
@@ -33,8 +34,8 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
-    private readonly inputSources: [{name: string; id: string}] | undefined = undefined,
-    private readonly applications: [{name: string; ids: [string]}] | undefined = undefined,
+    private readonly inputSources: [{ name: string; id: string }] | undefined = undefined,
+    private readonly applications: [{ name: string; ids: [string] }] | undefined = undefined,
     private readonly informationKey: string | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
@@ -147,7 +148,7 @@ export class TvAccessory extends SmartThingsAccessory {
         break;
 
       case 'audioVolume':
-        if(!this.speakerService){
+        if (!this.speakerService) {
           this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
             ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
           this.service.addLinkedService(this.speakerService);
@@ -169,7 +170,7 @@ export class TvAccessory extends SmartThingsAccessory {
         break;
 
       case 'audioMute':
-        if(!this.speakerService){
+        if (!this.speakerService) {
           this.speakerService = this.accessory.getService(this.platform.Service.TelevisionSpeaker)
             ?? this.accessory.addService(this.platform.Service.TelevisionSpeaker);
           this.service.addLinkedService(this.speakerService);
@@ -191,7 +192,7 @@ export class TvAccessory extends SmartThingsAccessory {
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
 
-          if(!inputSourcePollingStarted){
+          if (!inputSourcePollingStarted) {
             inputSourcePollingStarted = true;
             this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
               this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
@@ -208,7 +209,7 @@ export class TvAccessory extends SmartThingsAccessory {
               .onSet(this.setActiveIdentifier.bind(this))
               .onGet(this.getActiveIdentifier.bind(this));
 
-            if(!inputSourcePollingStarted){
+            if (!inputSourcePollingStarted) {
               inputSourcePollingStarted = true;
               this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
                 this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
@@ -260,7 +261,7 @@ export class TvAccessory extends SmartThingsAccessory {
     if (this.ipAddress) {
       try {
         const status = await ping.promise.probe(this.ipAddress);
-        if(log) {
+        if (log) {
           this.logDebug('ping status: %s', status);
         }
 
@@ -360,7 +361,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
 
     if (Date.parse(status?.inputSource.timestamp ?? '') > this.activeIdentifierChangeTime) {
       const id = this.inputSourceServices.findIndex(inputSource => inputSource.name === status?.inputSource.value);
-      if(log){
+      if (log) {
         this.logDebug('ActiveIdentifier has been changed on the device - using API result: %s', id);
       }
 
@@ -372,7 +373,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
 
       return id;
     } else {
-      if(log){
+      if (log) {
         this.logDebug('ActiveIdentifier has not been changed on the device - using temporary result: %s',
           this.activeIdentifierChangeValue);
       }
@@ -489,7 +490,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   private async registerAvailableMediaInputSources() {
     const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, 'samsungvd.mediaInputSource');
     const supportedInputSources = [...new Set(status.supportedInputSourcesMap.value as { id: string; name: string }[])];
-    if(this.inputSources){
+    if (this.inputSources) {
       this.logInfo('Overriding default input sources map "%s" with custom map "%s"',
         JSON.stringify(supportedInputSources, null, 2),
         JSON.stringify(this.inputSources, null, 2));
@@ -543,7 +544,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     this.logInfo('Registering input source: %s (%s)', name, id);
 
     let inputSourceType = inputSource;
-    if(inputSourceType === undefined){
+    if (inputSourceType === undefined) {
       inputSourceType = this.guessInputSourceType(id);
       this.logDebug('Guessed input source type for %s is: %i', name, inputSourceType);
     }

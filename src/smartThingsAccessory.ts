@@ -1,6 +1,6 @@
 import { Characteristic, CharacteristicValue, Logger, PlatformAccessory, Service, WithUUID } from 'homebridge';
 
-import { SmartThingsPlatform } from './smartThingsPlatform';
+import { SmartThingsPlatform } from './smartThingsPlatform.js';
 import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } from '@smartthings/core-sdk';
 import { CustomCapabilityStatus } from '@smartthings/core-sdk';
 
@@ -60,7 +60,7 @@ export abstract class SmartThingsAccessory {
   protected async getCapabilityStatus(capability: string, log = true): Promise<CapabilityStatus | null> {
     try {
       const status = await this.client.devices.getCapabilityStatus(this.device.deviceId, this.component.id, capability);
-      if(log){
+      if (log) {
         this.logDebug('Successfully get status of %s: %s', capability, JSON.stringify(status, null, 2));
       }
       return status;
@@ -87,7 +87,7 @@ export abstract class SmartThingsAccessory {
   protected startStatusPolling<T extends WithUUID<new () => Characteristic>>(
     capability: string, service: Service,
     characteristic: T, getter: () => Promise<CharacteristicValue>, interval: number | undefined) {
-    if(interval === undefined) {
+    if (interval === undefined) {
       return;
     }
 
