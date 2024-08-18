@@ -161,6 +161,7 @@ The following table gives an overview which properties do work for the device ty
 | infoKey                | :white_check_mark: | :x:                |
 | inputSources           | :white_check_mark: | :white_check_mark: |
 | applications           | :white_check_mark: | :x:                |
+| category               | :white_check_mark: | :white_check_mark: |
 
 #### deviceId
 
