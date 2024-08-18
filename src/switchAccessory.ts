@@ -1,8 +1,8 @@
 import { Service, PlatformAccessory, CharacteristicValue, Logger } from 'homebridge';
 
-import { SmartThingsPlatform } from './smartThingsPlatform';
+import { SmartThingsPlatform } from './smartThingsPlatform.js';
 import { SmartThingsClient, Device, Component } from '@smartthings/core-sdk';
-import { SmartThingsAccessory } from './smartThingsAccessory';
+import { SmartThingsAccessory } from './smartThingsAccessory.js';
 
 /**
  * Class implements a stateless switch accessory to execute a capability commmand.

@@ -9,11 +9,11 @@ import {
   CharacteristicValue,
 } from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { TvAccessory } from './tvAccessory';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
+import { TvAccessory } from './tvAccessory.js';
 import { SmartThingsClient, BearerTokenAuthenticator, Device, Component, CapabilityStatus } from '@smartthings/core-sdk';
-import { SwitchAccessory } from './switchAccessory';
-import { SliderAccessory } from './sliderAccessory';
+import { SwitchAccessory } from './switchAccessory.js';
+import { SliderAccessory } from './sliderAccessory.js';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -23,8 +23,8 @@ class DeviceMapping {
     public readonly nameOverride: string,
     public readonly macAddress: string,
     public readonly ipAddress: string,
-    public readonly inputSources: [{name: string; id: string}],
-    public readonly applications: [{name: string; ids: [string]}],
+    public readonly inputSources: [{ name: string; id: string }],
+    public readonly applications: [{ name: string; ids: [string] }],
     public readonly infoKey: string) {
   }
 }
@@ -33,8 +33,8 @@ class DeviceMapping {
  * Class implements the plugin platform.
  */
 export class SmartThingsPlatform implements DynamicPlatformPlugin {
-  public readonly Service: typeof Service = this.api.hap.Service;
-  public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+  public readonly Service: typeof Service;
+  public readonly Characteristic: typeof Characteristic;
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
@@ -46,6 +46,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   ) {
     this.log.debug('Finished initializing platform: %s', this.config.name);
 
+    this.Service = this.api.hap.Service;
+    this.Characteristic = this.api.hap.Characteristic;
+
     if (!config.token) {
       this.log.error('SmartThings API token must be configured');
       return;
@@ -54,7 +57,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     this.api.on('didFinishLaunching', () => {
       this.log.debug('Executed didFinishLaunching callback');
       let deviceBlocklist = config.deviceBlocklist as [string];
-      if(this.config.deviceBlacklist) {
+      if (this.config.deviceBlacklist) {
         deviceBlocklist = config.deviceBlacklist as [string];
         this.log.warn('Config property deviceBlacklist has been renamed to deviceBlocklist \
  - adjust your configuration because deviceBlacklist will be removed in future versions');
@@ -69,7 +72,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   /**
    * @inheritdoc
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache: %s', accessory.displayName);
 
@@ -89,7 +92,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     try {
       for (const device of await client.devices.list()) {
-        if(deviceBlocklist.includes(device.deviceId)) {
+        if (deviceBlocklist.includes(device.deviceId)) {
           this.log.debug('Ignoring SmartThings device %s because it is on the blocklist',
             device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
         } else {
@@ -145,7 +148,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     }
 
     let displayName = device.name ?? device.deviceId;
-    if(deviceMapping?.nameOverride) {
+    if (deviceMapping?.nameOverride) {
       this.log.info('Overriding device default name \'%s\' with configured display name \'%s\'', device.name, deviceMapping.nameOverride);
       displayName = deviceMapping.nameOverride;
     }
@@ -182,8 +185,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       }
     }
 
-    if(this.config.registerVolumeSlider){
-      if(tv.hasSpeakerService()){
+    if (this.config.registerVolumeSlider) {
+      if (tv.hasSpeakerService()) {
         this.registerVolumeSlider(client, device, component);
       } else {
         this.log.warn('Volume slider can not be registered because TV has no volume capabilities');
@@ -244,10 +247,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
 
       new SliderAccessory(device, component, client, this.log, this, existingAccessory, 'audioVolume', 'setVolume',
-        (value: CapabilityStatus | null) : CharacteristicValue => {
+        (value: CapabilityStatus | null): CharacteristicValue => {
           return value?.volume.value as number;
         },
-        (value: CharacteristicValue) : (string | number | object)[]=> {
+        (value: CharacteristicValue): (string | number | object)[] => {
           return [value as number];
         },
         this.config.pollInterval as number ?? undefined,
@@ -259,10 +262,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       accessory.category = this.api.hap.Categories.LIGHTBULB;
 
       new SliderAccessory(device, component, client, this.log, this, accessory, 'audioVolume', 'setVolume',
-        (value: CapabilityStatus | null) : CharacteristicValue => {
+        (value: CapabilityStatus | null): CharacteristicValue => {
           return value?.volume.value as number;
         },
-        (value: CharacteristicValue) : (string | number | object)[]=> {
+        (value: CharacteristicValue): (string | number | object)[] => {
           return [value as number];
         },
         this.config.pollInterval as number ?? undefined,

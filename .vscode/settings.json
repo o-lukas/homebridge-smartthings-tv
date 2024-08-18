@@ -10,6 +10,7 @@
   "editor.formatOnSave": true,
   "eslint.format.enable": true,
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "files.insertFinalNewline": true
 }

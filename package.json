@@ -1,27 +1,18 @@
 {
   "displayName": "Homebridge SmartThings TV",
   "name": "@o-lukas/homebridge-smartthings-tv",
+  "type": "module",
   "version": "0.0.0-development",
   "description": "This is a plugin for Homebridge. It offers some basic functions to control Samsung TVs using the SmartThings API.",
+  "author": "o-lukas",
   "license": "MIT",
+  "homepage": "https://github.com/o-lukas/homebridge-smartthings-tv#README",
   "repository": {
     "type": "git",
     "url": "https://github.com/o-lukas/homebridge-smartthings-tv.git"
   },
   "bugs": {
     "url": "https://github.com/o-lukas/homebridge-smartthings-tv/issues"
-  },
-  "engines": {
-    "node": "^18 || ^20",
-    "homebridge": "^1.6.0"
-  },
-  "main": "dist/index.js",
-  "scripts": {
-    "lint": "eslint src/**.ts --max-warnings=0",
-    "watch": "npm run build && npm link && nodemon",
-    "build": "rimraf ./dist && tsc",
-    "prepublishOnly": "npm run lint && npm run build",
-    "semantic-release": "semantic-release"
   },
   "keywords": [
     "homebridge",
@@ -34,6 +25,18 @@
     "remote",
     "tizen"
   ],
+  "main": "dist/index.js",
+  "engines": {
+    "node": "^18 || ^20",
+    "homebridge": "^1.6.0"
+  },
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "lint": "eslint . --max-warnings=0",
+    "prepublishOnly": "npm run lint && npm run build",
+    "watch": "npm run build && npm link && nodemon",
+    "semantic-release": "semantic-release"
+  },
   "dependencies": {
     "@smartthings/core-sdk": "^8.1.4",
     "ping": "^0.4.4",
@@ -51,7 +54,8 @@
     "rimraf": "^6.0.1",
     "semantic-release": "^24.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1"
   },
   "overrides": {
     "@smartthings/core-sdk": {
