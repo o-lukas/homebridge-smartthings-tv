@@ -26,7 +26,8 @@ class DeviceMapping {
     public readonly ipAddress: string,
     public readonly inputSources: [{ name: string; id: string }],
     public readonly applications: [{ name: string; ids: [string] }],
-    public readonly infoKey: string) {
+    public readonly infoKey: string,
+    public readonly category: number) {
   }
 }
 
@@ -160,7 +161,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     const accessory = new this.api.platformAccessory(displayName, device.deviceId);
     accessory.context.device = device;
-    accessory.category = this.api.hap.Categories.TELEVISION;
+    accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TELEVISION;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new TvAccessory(displayName, device, component, client, this.log, this, accessory,
@@ -224,7 +225,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     const accessory = new this.api.platformAccessory(displayName, device.deviceId);
     accessory.context.device = device;
-    accessory.category = this.api.hap.Categories.TV_SET_TOP_BOX;
+    accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TV_SET_TOP_BOX;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new SoundbarAccessory(displayName, device, component, client, this.log, this, accessory,

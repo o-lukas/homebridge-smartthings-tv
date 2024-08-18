@@ -214,6 +214,10 @@ The application's name.
 
 The application's possible ids. Since some applications have different ids for different versions of TVs you can provide a list here so the plugin will try every id and use the one that's working.
 
+#### category
+
+The icon to be used as a hint to iOS clients about what type of Accessory this represents. Can be used to override default values.
+
 ## Common issues
 
 ### TV does not show in HomeKit

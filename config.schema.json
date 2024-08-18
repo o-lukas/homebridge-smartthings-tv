@@ -154,6 +154,74 @@
               },
               "required": false,
               "description": "Overrides the default application mapping list to add custom applications."
+            },
+            "category": {
+              "title": "Display icon",
+              "type": "integer",
+              "description": "The icon to be used as a hint to iOS clients about what type of Accessory this represents. Can be used to override default values.",
+              "required": false,
+              "oneOf": [
+                {
+                  "title": "AppleTV",
+                  "enum": [
+                    "24"
+                  ]
+                },
+                {
+                  "title": "HomePod",
+                  "enum": [
+                    "25"
+                  ]
+                },
+                {
+                  "title": "Speaker",
+                  "enum": [
+                    "26"
+                  ]
+                },
+                {
+                  "title": "AirPort",
+                  "enum": [
+                    "27"
+                  ]
+                },
+                {
+                  "title": "Television",
+                  "enum": [
+                    "31"
+                  ]
+                },
+                {
+                  "title": "Remote Control",
+                  "enum": [
+                    "32"
+                  ]
+                },
+                {
+                  "title": "Router",
+                  "enum": [
+                    "33"
+                  ]
+                },
+                {
+                  "title": "Audio Receiver",
+                  "enum": [
+                    "34"
+                  ]
+                },
+                {
+                  "title": "TV Set Top Box",
+                  "enum": [
+                    "35"
+                  ]
+                },
+                {
+                  "title": "TV Streaming Stick",
+                  "enum": [
+                    "36"
+                  ]
+                }
+              ]
             }
           }
         }
