@@ -7,7 +7,7 @@ import ping from 'ping';
 import { SmartThingsAccessory } from './smartThingsAccessory.js';
 
 // @ts-expect-error: imports assertions are not yet supported in used TS version
-import data from './res/apps.json' with { type: 'json' };
+import data from './res/apps.json' assert { type: 'json' };
 
 /**
  * Class implements a SmartThings TV accessory.
