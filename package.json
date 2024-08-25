@@ -43,19 +43,19 @@
     "wol": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^22.4.0",
+    "@types/node": "^22.5.0",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.1.0",
-    "@typescript-eslint/parser": "^8.1.0",
-    "eslint": "^9.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "eslint": "^9.9.1",
     "homebridge": "^1.8.4",
     "nodemon": "^3.1.4",
     "rimraf": "^6.0.1",
     "semantic-release": "^24.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
-    "typescript-eslint": "^8.0.1"
+    "typescript-eslint": "^8.2.0"
   },
   "overrides": {
     "@smartthings/core-sdk": {
