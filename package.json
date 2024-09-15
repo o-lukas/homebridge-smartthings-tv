@@ -38,7 +38,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@smartthings/core-sdk": "^8.1.4",
+    "@smartthings/core-sdk": "^8.3.1",
     "ping": "^0.4.4",
     "wol": "^1.0.7"
   },
