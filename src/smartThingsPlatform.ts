@@ -225,6 +225,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     const accessory = new this.api.platformAccessory(displayName, device.deviceId);
     accessory.context.device = device;
+    accessory.context.uuid = device.deviceId;
+    accessory.context.isexternal = true;
     accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TV_SET_TOP_BOX;
     this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
