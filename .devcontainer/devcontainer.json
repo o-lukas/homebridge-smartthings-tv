@@ -2,8 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
 	"name": "Homebridge",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "homebridge",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"features": {},
 	"forwardPorts": [
 		51826,
@@ -17,7 +18,6 @@
 			]
 		}
 	},
-	"workspaceFolder": "/workspace",
 	"onCreateCommand": "pre-commit install",
 	"postStartCommand": "npm install"
 }
