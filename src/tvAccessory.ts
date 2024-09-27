@@ -5,9 +5,7 @@ import { SmartThingsClient, Device, Component, Capability } from '@smartthings/c
 import { wake } from 'wol';
 import ping from 'ping';
 import { SmartThingsAccessory } from './smartThingsAccessory.js';
-
-// @ts-expect-error: imports assertions are not yet supported in used TS version
-import data from './res/apps.json' assert { type: 'json' };
+import { Apps } from './tvApps.js';
 
 /**
  * Class implements a SmartThings TV accessory.
@@ -34,8 +32,8 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
     private readonly ipAddress: string | undefined = undefined,
-    private readonly inputSources: [{ name: string; id: string }] | undefined = undefined,
-    private readonly applications: [{ name: string; ids: [string] }] | undefined = undefined,
+    private readonly inputSources: { name: string; id: string }[] | undefined = undefined,
+    private readonly applications: { name: string; ids: string[] }[] | undefined = undefined,
     private readonly informationKey: string | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
@@ -512,7 +510,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
       this.logWarn('Registering applications will probably not work because TV is not turned on');
     }
 
-    for (const app of this.applications ?? data.apps) {
+    for (const app of this.applications ?? Apps) {
       this.logDebug('Try to register application %s with ids: %s', app.name, app.ids.join(', '));
 
       for (const appId of app.ids) {
