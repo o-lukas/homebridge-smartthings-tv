@@ -299,10 +299,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
       new SliderAccessory(device, component, client, this.log, this, existingAccessory, 'audioVolume', 'setVolume',
         (value: CapabilityStatus | null): CharacteristicValue => {
-          return value?.volume.value as number;
+          return value?.volume.value as number ?? 0;
         },
         (value: CharacteristicValue): (string | number | object)[] => {
-          return [value as number];
+          return [value as number ?? 0];
         },
         this.config.pollInterval as number ?? undefined,
         this.config.cyclicCallsLogging as boolean ?? false,
@@ -314,10 +314,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
       new SliderAccessory(device, component, client, this.log, this, accessory, 'audioVolume', 'setVolume',
         (value: CapabilityStatus | null): CharacteristicValue => {
-          return value?.volume.value as number;
+          return value?.volume.value as number ?? 0;
         },
         (value: CharacteristicValue): (string | number | object)[] => {
-          return [value as number];
+          return [value as number ?? 0];
         },
         this.config.pollInterval as number ?? undefined,
         this.config.cyclicCallsLogging as boolean ?? false,

@@ -293,7 +293,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async setVolume(value: CharacteristicValue) {
     this.logDebug('Set volume to: %s', value);
-    await this.executeCommand('audioVolume', 'setVolume', [value as number]);
+    await this.executeCommand('audioVolume', 'setVolume', [value as number ?? 0]);
   }
 
   /**
@@ -304,7 +304,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    */
   private async getVolume(log = true): Promise<CharacteristicValue> {
     const status = await this.getCapabilityStatus('audioVolume', log);
-    return status?.volume.value as number;
+    return status?.volume.value as number ?? 0;
   }
 
   /**
