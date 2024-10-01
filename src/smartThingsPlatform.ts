@@ -166,7 +166,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       displayName = deviceMapping.nameOverride;
     }
 
-    const accessory = new this.api.platformAccessory('TV1', crypto.randomUUID());
+    const accessory = new this.api.platformAccessory(displayName, device.deviceId);
     accessory.context.device = device;
     accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TELEVISION;
 
