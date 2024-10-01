@@ -92,13 +92,15 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   async discoverDevices(token: string, deviceBlocklist: [string], deviceMappings: [DeviceMapping]) {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
+    let externalAccessories: PlatformAccessory[] = [];
+
     try {
       for (const device of await client.devices.list()) {
         if (deviceBlocklist.includes(device.deviceId)) {
           this.log.debug('Ignoring SmartThings device %s because it is on the blocklist',
             device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
         } else {
-          await this.registerDevice(client, device, deviceMappings);
+          externalAccessories = externalAccessories.concat(await this.registerDevice(client, device, deviceMappings));
         }
       }
     } catch (error) {
@@ -108,6 +110,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       }
       this.log.error('Error when getting devices: %s', errorMessage);
     }
+
+    this.log.debug('Publishing %s external accessories', externalAccessories.length);
+    this.api.publishExternalAccessories(PLUGIN_NAME, externalAccessories);
   }
 
   /**
@@ -116,23 +121,23 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param client the SmartThingsClient used to send API calls
    * @param device the SmartThings Device
    * @param deviceMappings the array of configured DeviceMapping
+   * @returns the PlatformAccessory that must be published as external accessory or undefined
+   * if accessory must not be published as external accessory
    */
-  async registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]) {
+  async registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]): Promise<PlatformAccessory[]> {
     switch (device.ocf?.ocfDeviceType) {
       case 'oic.d.tv':
       case 'x.com.st.d.monitor':
-        await this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
-        break;
+        return await this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
 
       case 'oic.d.networkaudio':
-        await this.registerSoundbarDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
-        break;
+        return await this.registerSoundbarDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
 
       default:
         this.log.debug('Ignoring SmartThings device %s because device type %s is not implemented: %s',
           device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
           device.ocf?.ocfDeviceType, JSON.stringify(device, null, 2));
-        break;
+        return [];
     }
   }
 
@@ -143,14 +148,16 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param device the SmartThings Device
    * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
    * @param deviceMappings the array of configured DeviceMapping
+   * @returns the PlatformAccessory that must be published as external accessory or undefined
+   * if device could not be registered
    */
-  async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
+  async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined): Promise<PlatformAccessory[]> {
     this.log.info('Adding new TV accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
     if (!component) {
       this.log.info('Can\'t register TV accessory because (main) component does not exist');
-      return;
+      return [];
     }
 
     let displayName = device.name ?? device.deviceId;
@@ -159,10 +166,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       displayName = deviceMapping.nameOverride;
     }
 
-    const accessory = new this.api.platformAccessory(displayName, device.deviceId);
+    const accessory = new this.api.platformAccessory('TV1', crypto.randomUUID());
     accessory.context.device = device;
     accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TELEVISION;
-    this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new TvAccessory(displayName, device, component, client, this.log, this, accessory,
       this.config.capabilityLogging as boolean ?? false,
@@ -198,6 +204,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
         this.log.warn('Volume slider can not be registered because TV has no volume capabilities');
       }
     }
+
+    return [accessory];
   }
 
   /**
@@ -207,14 +215,16 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param device the SmartThings Device
    * @param accessory the cached PlatformAccessory or undefined if no cached PlatformAccessory exists
    * @param deviceMappings the array of configured DeviceMapping
+   * @returns the PlatformAccessory that must be published as external accessory or undefined
+   * if device could not be registered
    */
-  async registerSoundbarDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined) {
+  async registerSoundbarDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined): Promise<PlatformAccessory[]> {
     this.log.info('Adding new soundbar accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
 
     const component = device.components?.at(0);
     if (!component) {
       this.log.info('Can\'t register soundbar accessory because (main) component does not exist');
-      return;
+      return [];
     }
 
     let displayName = device.name ?? device.deviceId;
@@ -225,10 +235,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     const accessory = new this.api.platformAccessory(displayName, device.deviceId);
     accessory.context.device = device;
-    accessory.context.uuid = device.deviceId;
-    accessory.context.isexternal = true;
     accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TV_SET_TOP_BOX;
-    this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
 
     const tv = new SoundbarAccessory(displayName, device, component, client, this.log, this, accessory,
       this.config.capabilityLogging as boolean ?? false,
@@ -243,6 +250,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     if (this.config.registerVolumeSlider) {
       this.registerVolumeSlider(client, device, component);
     }
+
+    return [accessory];
   }
 
   /**
