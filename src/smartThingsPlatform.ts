@@ -95,7 +95,10 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     let externalAccessories: PlatformAccessory[] = [];
 
     try {
-      for (const device of await client.devices.list()) {
+      const devices = await client.devices.list();
+      this.log.debug('SmartThings API returned %i devices', devices.length);
+
+      for (const device of devices) {
         if (deviceBlocklist.includes(device.deviceId)) {
           this.log.debug('Ignoring SmartThings device %s because it is on the blocklist',
             device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
