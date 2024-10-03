@@ -58,7 +58,15 @@ export class TvAccessory extends SmartThingsAccessory {
     this.logInfo('Registering capabilities for component %s', this.component.id);
 
     for (const reference of this.component.capabilities) {
-      await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
+      try {
+        await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
+      } catch (error) {
+        let errorMessage = 'unknown';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        this.logError('Registering capability \'%s\' failed: %s', reference.id, errorMessage);
+      }
     }
 
     if (this.registerApplications && this.inputSourceServices.length > 0) {
