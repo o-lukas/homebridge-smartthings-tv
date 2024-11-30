@@ -21,3 +21,7 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "03:00"
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: weekly
