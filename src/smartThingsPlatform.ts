@@ -67,7 +67,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
       void this.discoverDevices(config.token as string,
         deviceBlocklist ?? [],
-        config.deviceMappings as [DeviceMapping] ?? []);
+        config.deviceMappings as [DeviceMapping] ?? [],
+        config.tvDeviceTypes as [string] ?? ['oic.d.tv', 'x.com.st.d.monitor'],
+        config.soundbarDeviceTypes as [string] ?? ['oic.d.networkaudio']);
     });
   }
 
@@ -88,8 +90,11 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param token the SmartThings API token
    * @param deviceBlocklist the device ids to be ignored
    * @param deviceMappings the array of configured DeviceMapping
+   * @param tvDeviceTypes the array of configured TV device types
+   * @param soundbarDeviceTypes the array of configured SoundBar device types
    */
-  async discoverDevices(token: string, deviceBlocklist: [string], deviceMappings: [DeviceMapping]) {
+  async discoverDevices(token: string, deviceBlocklist: [string], deviceMappings: [DeviceMapping],
+    tvDeviceTypes: [string], soundbarDeviceTypes: [string]) {
     const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
 
     let externalAccessories: PlatformAccessory[] = [];
@@ -103,7 +108,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
           this.log.debug('Ignoring SmartThings device %s because it is on the blocklist',
             device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
         } else {
-          externalAccessories = externalAccessories.concat(await this.registerDevice(client, device, deviceMappings));
+          externalAccessories = externalAccessories.concat(
+            await this.registerDevice(client, device, deviceMappings, tvDeviceTypes, soundbarDeviceTypes));
         }
       }
     } catch (error) {
@@ -124,24 +130,34 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param client the SmartThingsClient used to send API calls
    * @param device the SmartThings Device
    * @param deviceMappings the array of configured DeviceMapping
+   * @param tvDeviceTypes the array of configured TV device types
+   * @param soundbarDeviceTypes the array of configured SoundBar device types
    * @returns the PlatformAccessory that must be published as external accessory or undefined
    * if accessory must not be published as external accessory
    */
-  async registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping]): Promise<PlatformAccessory[]> {
-    switch (device.ocf?.ocfDeviceType) {
-      case 'oic.d.tv':
-      case 'x.com.st.d.monitor':
-        return await this.registerTvDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
+  async registerDevice(client: SmartThingsClient, device: Device, deviceMappings: [DeviceMapping],
+    tvDeviceTypes: [string], soundbarDeviceTypes: [string]): Promise<PlatformAccessory[]> {
+    const deviceType = device.ocf?.ocfDeviceType;
 
-      case 'oic.d.networkaudio':
-        return await this.registerSoundbarDevice(client, device, deviceMappings.find(mapping => mapping.deviceId === device.deviceId));
-
-      default:
-        this.log.debug('Ignoring SmartThings device %s because device type %s is not implemented: %s',
-          device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
-          device.ocf?.ocfDeviceType, JSON.stringify(device, null, 2));
-        return [];
+    if (!deviceType) {
+      this.log.error('Ignoring SmartThings device %s because it has no device type',
+        device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+      return [];
     }
+
+    const deviceMapping = deviceMappings.find(mapping => mapping.deviceId === device.deviceId);
+
+    if (tvDeviceTypes.includes(deviceType)) {
+      return await this.registerTvDevice(client, device, deviceMapping);
+    } else if (soundbarDeviceTypes.includes(deviceType)) {
+      return await this.registerSoundbarDevice(client, device, deviceMapping);
+    }
+
+    this.log.debug('Ignoring SmartThings device %s because device type %s is not in list of implemented/configured types (%s): %s',
+      device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId,
+      device.ocf?.ocfDeviceType, tvDeviceTypes.concat(soundbarDeviceTypes).join(', '),
+      JSON.stringify(device, null, 2));
+    return [];
   }
 
   /**

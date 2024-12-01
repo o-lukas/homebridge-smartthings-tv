@@ -93,6 +93,13 @@ The following snippets shows all available properties you can use for the plugin
                     "ipAddress": "xx:xx:xx:xx:xx:xx"
                 }
             ],
+            "tvDeviceTypes": [
+                "oic.d.tv",
+                "x.com.st.d.monitor"
+            ],
+            "soundbarDeviceTypes": [
+                "oic.d.networkaudio"
+            ],
             "platform": "smartthings-tv"
         }
     ]
@@ -219,6 +226,14 @@ The application's possible ids. Since some applications have different ids for d
 
 The icon to be used as a hint to iOS clients about what type of Accessory this represents. Can be used to override default values.
 
+## tvDeviceTypes
+
+List of SmartThings device types that should be registered as TVs (leave empty to use default values).
+
+## soundbarDeviceTypes
+
+List of SmartThings device types that should be registered as Soundbar (leave empty to use default values).
+
 ## Common issues
 
 ### TV does not show in HomeKit
@@ -292,6 +307,12 @@ For some TVs display port sources do not show up. When having the same problem y
 ### Name of TV gets reset in HomeKit after HomeBridge restart
 
 The configured name can not be cached because TV is published as external accessory. To permanently change the name use [nameOverride](#nameoverride).
+
+### Device does not get registered
+
+TVs do have different device types returned from SmartThings API. If your TV does not get registered, activate debug logging and look for a log entry like `Ignoring SmartThings device ... because device type ... is not in list of implemented/configured types [...]`. Use the device type stated here and add it to the matching configuration property [tvDeviceTypes](#tvdevicetypes) or [soundbarDeviceType](#soundbardevicetypes).
+
+Currently only the default values have been tested. So please create a ticket if you're running into any problems with your device type. If everything is working well please create a ticket as well so the device type can be added to the default configuration.
 
 ***
 

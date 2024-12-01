@@ -225,6 +225,33 @@
             }
           }
         }
+      },
+      "tvDeviceTypes": {
+        "title": "TV device types",
+        "description": "List of SmartThings device types that should be registered as TVs (leave empty to use default values)",
+        "type": "array",
+        "items": {
+          "title": "Device type",
+          "type": "string",
+          "description": "The SmartThings device type as appearing in the Debug log"
+        },
+        "default": [
+          "oic.d.tv",
+          "x.com.st.d.monitor"
+        ]
+      },
+      "soundbarDeviceTypes": {
+        "title": "Soundbar device types",
+        "description": "List of SmartThings device types that should be registered as Soundbar (leave empty to use default values)",
+        "type": "array",
+        "items": {
+          "title": "Device type",
+          "type": "string",
+          "description": "The SmartThings device type as appearing in the Debug log"
+        },
+        "default": [
+          "oic.d.networkaudio"
+        ]
       }
     }
   }
