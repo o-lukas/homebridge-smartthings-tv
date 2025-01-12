@@ -28,6 +28,7 @@ export class TvAccessory extends SmartThingsAccessory {
     accessory: PlatformAccessory,
     private readonly logCapabilities: boolean,
     private readonly registerApplications: boolean,
+    private readonly validateApplications: boolean,
     private readonly pollingInterval: number | undefined,
     private readonly cyclicCallsLogging: boolean,
     private readonly macAddress: string | undefined = undefined,
@@ -69,7 +70,7 @@ export class TvAccessory extends SmartThingsAccessory {
       }
     }
 
-    if (this.registerApplications && this.inputSourceServices.length > 0) {
+    if (this.registerApplications && this.validateApplications && this.inputSourceServices.length > 0) {
       this.logInfo('Resetting active identifier to %s because application registration needed to open all applications',
         this.inputSourceServices[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
       try {
@@ -213,7 +214,26 @@ export class TvAccessory extends SmartThingsAccessory {
       case 'custom.launchapp':
         if (this.registerApplications) {
           this.logCapabilityRegistration(capability);
-          await this.registerAvailableLaunchApplications();
+
+          let appsToRegister = this.applications ?? Apps;
+          if (this.validateApplications) {
+            appsToRegister = await this.getAvailableLaunchApplications();
+
+            const config = this.platform.getPlatformConfig();
+            const deviceMapping = config.deviceMappings.find(
+              (d: { deviceId: string; }) => d.deviceId === this.device.deviceId);
+
+            this.logInfo('Updating list of applications in configuration with valid values: %s',
+              JSON.stringify(appsToRegister, null, 4));
+            deviceMapping.applications = appsToRegister;
+
+            this.logInfo('De-activating validation of application list in configuration');
+            deviceMapping.validateApplications = false;
+
+            this.platform.savePlatformConfig(config);
+          }
+          await this.registerLaunchApplications(appsToRegister);
+
           if (this.inputSourceServices.length > 0) {
             this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
               .onSet(this.setActiveIdentifier.bind(this))
@@ -511,19 +531,38 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   }
 
   /**
-   * Registers all installed applications.
+   * Registers all applications passed in.
+   */
+  private async registerLaunchApplications(apps: {
+    name: string;
+    ids: string[];
+  }[]) {
+    for (const app of apps) {
+      for (const appId of app.ids) {
+        let name = app.name;
+        if (app.ids.length > 1) {
+          name += ' (' + appId + ')';
+        }
+        this.registerInputSource(appId, name, this.platform.Characteristic.InputSourceType.APPLICATION);
+      }
+    }
+  }
+
+  /**
+   * Returns all installed applications.
    *
-   * Tests a list of known application ids by trying to open them. If opening succeeded the application is registered
-   * as an input source. If it fails the application will not be added. If multiple ids for an application are available
+   * Tests a list of known application ids by trying to open them. If opening succeeded the application will be added
+   * to returned list. If it fails the application will not be added. If multiple ids for an application are available
    * the first successfully tested id will be used.
    */
-  private async registerAvailableLaunchApplications() {
+  private async getAvailableLaunchApplications() {
     if (!await this.getActive(false)) {
       this.logWarn('Registering applications will probably not work because TV is not turned on');
     }
 
+    const applications = [];
     for (const app of this.applications ?? Apps) {
-      this.logDebug('Try to register application %s with ids: %s', app.name, app.ids.join(', '));
+      this.logDebug('Try to launch application %s with ids: %s', app.name, app.ids.join(', '));
 
       for (const appId of app.ids) {
         try {
@@ -533,13 +572,15 @@ ping command fails mostly because of permission issues - falling back to SmartTh
             arguments: [appId],
           });
 
-          this.registerInputSource(appId, app.name, this.platform.Characteristic.InputSourceType.APPLICATION);
+          applications.push({ ids: [appId], name: app.name });
           break;
         } catch (exc) {
           continue;
         }
       }
     }
+
+    return applications;
   }
 
   /**

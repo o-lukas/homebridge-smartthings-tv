@@ -27,7 +27,7 @@
         "title": "Register applications",
         "type": "boolean",
         "required": false,
-        "description": "To use installed application as input sources, a predefined list of applications will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV)."
+        "description": "To use installed application as input sources, a predefined list of applications will be used."
       },
       "registerPictureModes": {
         "title": "Register picture modes",
@@ -154,6 +154,12 @@
               },
               "required": false,
               "description": "Overrides the default application mapping list to add custom applications."
+            },
+            "validateApplications": {
+              "title": "Validate application list",
+              "type": "boolean",
+              "description": "Validates the list of applications by trying to open them when starting the plugin. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV). Afterwards the list of working applications will be written to this device list of applications. Note that this flag will be set to off after validation the application list. So check will only run on first start or manual reset.",
+              "default": true
             },
             "category": {
               "title": "Display icon",

@@ -28,6 +28,7 @@ class DeviceMapping {
     public readonly ipAddress: string,
     public readonly inputSources: [{ name: string; id: string }],
     public readonly applications: [{ name: string; ids: [string] }],
+    public readonly validateApplications: boolean,
     public readonly infoKey: string,
     public readonly category: number) {
   }
@@ -226,6 +227,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
     const tv = new TvAccessory(displayName, device, component, client, this.log, this, accessory,
       this.config.capabilityLogging as boolean ?? false,
       this.config.registerApplications as boolean ?? false,
+      deviceMapping?.validateApplications as boolean ?? true,
       this.config.pollInterval as number ?? undefined,
       this.config.cyclicCallsLogging as boolean ?? false,
       deviceMapping?.macAddress,
