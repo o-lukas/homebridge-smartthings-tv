@@ -72,7 +72,11 @@ export class TvAccessory extends SmartThingsAccessory {
     if (this.registerApplications && this.inputSourceServices.length > 0) {
       this.logInfo('Resetting active identifier to %s because application registration needed to open all applications',
         this.inputSourceServices[0].getCharacteristic(this.platform.Characteristic.ConfiguredName).value);
-      await this.setActiveIdentifier(0);
+      try {
+        await this.setActiveIdentifier(0);
+      } catch (error) {
+        this.logWarn('Active identifier could not be reset - probably because device is in invalid state');
+      }
     }
   }
 
