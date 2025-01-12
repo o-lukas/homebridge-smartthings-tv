@@ -15,6 +15,8 @@ import { SmartThingsClient, BearerTokenAuthenticator, Device, Component, Capabil
 import { SwitchAccessory } from './switchAccessory.js';
 import { SliderAccessory } from './sliderAccessory.js';
 import { SoundbarAccessory } from './soundbarAccessory.js';
+import path from 'path';
+import fs from 'fs';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -37,6 +39,7 @@ class DeviceMapping {
 export class SmartThingsPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service;
   public readonly Characteristic: typeof Characteristic;
+  private configPath = process.env.UIX_CONFIG_PATH || path.join('./', 'config.json');
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
@@ -82,6 +85,37 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory);
+  }
+
+  /**
+   * Reads the platform configuration from the file system.
+   *
+   * @returns the platform configuration
+   */
+  getPlatformConfig() {
+    try {
+      const readConfig = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
+      return readConfig.platforms.find((p: { platform: string; }) => p.platform === this.config.platform);
+    } catch (error) {
+      console.error('Error when reading configuration:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Writes the platform configuration passed in to the file system.
+   *
+   * @param platformConfig the new platform configuration
+   */
+  savePlatformConfig(platformConfig: unknown) {
+    try {
+      const newConfig = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
+      const platform = newConfig.platforms.find((p: { platform: string; }) => p.platform === this.config.platform);
+      newConfig.platforms[newConfig.platforms.indexOf(platform)] = platformConfig;
+      fs.writeFileSync(this.configPath, JSON.stringify(newConfig, null, 4), 'utf8');
+    } catch (error) {
+      console.error('Error when writing configuration:', error);
+    }
   }
 
   /**
