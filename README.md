@@ -78,7 +78,8 @@ The following snippets shows all available properties you can use for the plugin
                                 "xxxx"
                             ]
                         }
-                    ]
+                    ],
+                    "validateApplications": false
                 },
                 {
                     "deviceId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -120,7 +121,7 @@ Enable debug logging for cyclic calls (e.g. polling).
 
 ### registerApplications
 
-To use installed application as input sources, a [predefined list of applications](./src/tvApps.ts) will be used. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV).
+To use installed application as input sources, a [predefined list of applications](./src/tvApps.ts) will be used.
 
 > [!NOTE]
 > Not implemented for SoundBars.
@@ -221,6 +222,10 @@ The application's name.
 ##### ids
 
 The application's possible ids. Since some applications have different ids for different versions of TVs you can provide a list here so the plugin will try every id and use the one that's working.
+
+#### validateApplications
+
+Validates the list of applications by trying to open them when starting the plugin. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV). Afterwards the list of working applications will be written to this device list of applications. Note that this flag will be set to off after validation the application list. So check will only run on first start or manual reset.
 
 #### category
 
