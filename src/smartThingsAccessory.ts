@@ -3,6 +3,7 @@ import { Characteristic, CharacteristicValue, Logger, PlatformAccessory, Service
 import { SmartThingsPlatform } from './smartThingsPlatform.js';
 import { SmartThingsClient, Device, Component, CapabilityStatus, Capability } from '@smartthings/core-sdk';
 import { CustomCapabilityStatus } from '@smartthings/core-sdk';
+import axios from 'axios';
 
 /**
  * Class implements a base class for SmartThings accessories.
@@ -44,7 +45,13 @@ export abstract class SmartThingsAccessory {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      this.logError('Error when executing %s of capability %s: %s', command, capability, errorMessage);
+
+      let statusCode = -1;
+      if (axios.isAxiosError(error)) {
+        statusCode = error.response?.status ?? -1;
+      }
+
+      this.logError('Error when executing %s of capability %s: [%s] %s', command, capability, statusCode, errorMessage);
       throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
     }
   }
@@ -69,7 +76,13 @@ export abstract class SmartThingsAccessory {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      this.logError('Error when getting status of %s: %s', capability, errorMessage);
+
+      let statusCode = -1;
+      if (axios.isAxiosError(error)) {
+        statusCode = error.response?.status ?? -1;
+      }
+
+      this.logError('Error when getting status of %s: [%s] %s', capability, statusCode, errorMessage);
       return null;
     }
   }

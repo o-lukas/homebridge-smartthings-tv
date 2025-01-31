@@ -17,6 +17,7 @@ import { SliderAccessory } from './sliderAccessory.js';
 import { SoundbarAccessory } from './soundbarAccessory.js';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 /**
  * Class implements the configured Device to mac and ip address mappings.
@@ -152,7 +153,13 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      this.log.error('Error when getting devices: %s', errorMessage);
+
+      let statusCode = -1;
+      if (axios.isAxiosError(error)) {
+        statusCode = error.response?.status ?? -1;
+      }
+
+      this.log.error('Error when getting devices: [%s] %s', statusCode, errorMessage);
     }
 
     this.log.debug('Publishing %s external accessories', externalAccessories.length);

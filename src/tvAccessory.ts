@@ -6,6 +6,7 @@ import { wake } from 'wol';
 import ping from 'ping';
 import { SmartThingsAccessory } from './smartThingsAccessory.js';
 import { Apps } from './tvApps.js';
+import axios from 'axios';
 
 /**
  * Class implements a SmartThings TV accessory.
@@ -66,7 +67,13 @@ export class TvAccessory extends SmartThingsAccessory {
         if (error instanceof Error) {
           errorMessage = error.message;
         }
-        this.logError('Registering capability \'%s\' failed: %s', reference.id, errorMessage);
+
+        let statusCode = -1;
+        if (axios.isAxiosError(error)) {
+          statusCode = error.response?.status ?? -1;
+        }
+
+        this.logError('Registering capability \'%s\' failed: [%s] %s', reference.id, statusCode, errorMessage);
       }
     }
 
