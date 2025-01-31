@@ -4,18 +4,18 @@ repos:
   - id: end-of-file-fixer
   - id: trailing-whitespace
   repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.3.0
+  rev: v5.0.0
 - hooks:
   - files: \.[jt]sx?$
     id: eslint
     types:
     - file
   repo: https://github.com/pre-commit/mirrors-eslint
-  rev: v8.44.0
+  rev: v9.19.0
 - hooks:
   - id: commitizen
   - id: commitizen-branch
     stages:
-    - push
+    - pre-push
   repo: https://github.com/commitizen-tools/commitizen
-  rev: v3.27.0
+  rev: v4.1.1
