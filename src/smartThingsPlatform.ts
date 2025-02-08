@@ -70,7 +70,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
  - adjust your configuration because deviceBlacklist will be removed in future versions');
       }
 
-      void this.discoverDevices(config.token as string,
+      this.discoverDevices(config.token as string,
         deviceBlocklist ?? [],
         config.deviceMappings as [DeviceMapping] ?? [],
         config.tvDeviceTypes as [string] ?? ['oic.d.tv', 'x.com.st.d.monitor'],
