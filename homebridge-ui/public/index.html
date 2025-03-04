@@ -1,0 +1,294 @@
+<div class="container">
+    <div id="pat-warning" class="alert alert-warning" role="alert" style="display:none">
+        You're using personal access tokens (PAT) to access the SmartThings API. As Samsung made some
+        <a href="https://community.smartthings.com/t/changes-to-personal-access-tokens-pat/292019" target="_blank">major
+            changes</a> to usage of PATs at then end of 2024 the usage of PATs is not recommended anymore. Please
+        consider switching to OAuth for authentication.
+    </div>
+
+    <div id="oauth-start" class="alert alert-info" role="info" style="display:none">
+        To simplify setup of OAuth please use the following button to start a wizard that guides you through the
+        setup. This wizard can also be used if token has unexpectedly expired.<br>
+        <button class="btn btn-primary" onclick="showWizard()">Open OAuth wizard</button>
+    </div>
+
+    <div id="wizard" style="display:none">
+        <h2 class="mb-4">OAuth Setup Wizard</h2>
+        <div class="nav nav-pills mb-3" id="wizardNav">
+            <a class="nav-link active" data-target="#step1">SmartThings App</a>
+            <a class="nav-link" data-target="#step2">Redirection</a>
+            <a class="nav-link" data-target="#step3">Authorization code</a>
+            <a class="nav-link" data-target="#step4">Authorization token</a>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="step1">
+                <h4>SmartThings App</h4>
+                <p>To activate OAuth integration you have to create a SmartThings application. To do so use the
+                    <a href="https://github.com/SmartThingsCommunity/smartthings-cli">smartthings-cli</a>.
+                    To install the CLI use the installation steps from the
+                    <a href="https://github.com/SmartThingsCommunity/smartthings-cli">documentation</a>.
+                </p>
+                <p>If installation succeeded use the
+                    <a
+                        href="https://github.com/SmartThingsCommunity/smartthings-cli?tab=readme-ov-file#smartthings-appscreate">apps:create
+                        command</a>
+                    to create a new application. While creating the application make sure you use the matching redirect
+                    URL and scopes defined below.
+                </p>
+
+                <form id="step1Form">
+                    <div class="form-group row">
+                        <label for="oauth-redirect-url" class="col-sm-3 col-form-label font-weight-bold">OAuth redirect
+                            URL</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-redirect-url" class="form-control" id="oauth-redirect-url"
+                                value="https://httpbin.org/get" readonly onfocus="this.removeAttribute('readonly');"
+                                required>
+                            <small class="form-text text-warning">
+                                ⚠ You can customize the redirect URL if you want but it is recommended to keep the
+                                default so you can stick to instructions in this wizard.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="oauth-scopes" class="col-sm-3 col-form-label font-weight-bold">OAuth scopes</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-scopes" class="form-control" id="oauth-scopes"
+                                value="x:devices:* w:devices:* r:devices:*" readonly
+                                onfocus="this.removeAttribute('readonly');" required>
+                            <small class="form-text text-warning">
+                                ⚠ You can customize the scopes if you want but it is recommended to keep the default
+                                so you can stick to instructions in this wizard.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="oauth-client-id" class="col-sm-3 col-form-label font-weight-bold">OAuth client
+                            id</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-client-id" class="form-control" id="oauth-client-id"
+                                placeholder="Paste the OAuth client id" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="oauth-client-secret" class="col-sm-3 col-form-label font-weight-bold">OAuth client
+                            secret</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-client-secret" class="form-control" id="oauth-client-secret"
+                                placeholder="Paste the OAuth client secret" required>
+                        </div>
+                    </div>
+                </form>
+
+                <button class="btn btn-primary next" onclick="validateStep1()">Next</button>
+            </div>
+            <div class="tab-pane fade" id="step2">
+                <h4>Redirection</h4>
+                <p>You will now be redirected to login at SmartThings home page where you have to select desired
+                    location and confirm access for selected scopes.</p>
+                <p>Afterwards you will be redirected to httpbin. This page will show the OAuth response that is needed
+                    for continuing. To do so paste the <b>args.code</b> value in next step of the wizard.</p>
+
+                <button class="btn btn-secondary prev" onclick="prevStep()">Back</button>
+                <button class="btn btn-primary next" onclick="validateStep2()">Next</button>
+            </div>
+            <div class="tab-pane fade" id="step3">
+                <h4>Authorization code</h4>
+                <p>Do now paste <b>args.code</b> value shown at httpbin below.</p>
+
+                <form id="step3Form">
+                    <div class="form-group row">
+                        <label for="oauth-code" class="col-sm-3 col-form-label font-weight-bold">Authorization
+                            code</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-code" class="form-control" id="oauth-code"
+                                placeholder="Paste the Authorization code" required>
+                        </div>
+                    </div>
+                </form>
+
+                <button class="btn btn-secondary prev" onclick="prevStep()">Back</button>
+                <button class="btn btn-primary next" onclick="validateStep3()">Next</button>
+            </div>
+            <div class="tab-pane fade" id="step4">
+                <h4>Authorization token</h4>
+
+                <p>Your access and refresh token will now be requested and set automatically.</p>
+                <p>When tokens have been filled in OAuth setup has been successful and you will be redirected to main
+                    config page.</p>
+
+                <form id="step4Form">
+                    <div class="form-group row">
+                        <label for="oauth-access-token" class="col-sm-3 col-form-label font-weight-bold">OAuth access
+                            token</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-access-token" class="form-control" id="oauth-access-token"
+                                placeholder="OAuth access token" required readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="oauth-refresh-token" class="col-sm-3 col-form-label font-weight-bold">OAuth refresh
+                            token</label>
+                        <div class="col-sm-9">
+                            <input type="oauth-refresh-token" class="form-control" id="oauth-refresh-token"
+                                placeholder="OAuth refresh token" required readonly>
+                        </div>
+                    </div>
+                </form>
+
+                <button class="btn btn-secondary prev" onclick="prevStep()">Back</button>
+                <button class="btn btn-success" onclick="validateStep4()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showWizard() {
+        homebridge.disableSaveButton();
+        homebridge.hideSchemaForm();
+        document.getElementById('wizard').style.display = "block";
+        document.getElementById('oauth-start').style.display = "none";
+        document.getElementById('pat-warning').style.display = "none";
+    }
+
+    function hideWizard() {
+        homebridge.enableSaveButton();
+        homebridge.showSchemaForm();
+        document.getElementById('wizard').style.display = "none";
+        document.getElementById('oauth-start').style.display = "block";
+        document.getElementById('pat-warning').style.display = "none";
+    }
+
+    async function updateUi() {
+        const pluginConfig = await homebridge.getPluginConfig();
+        switch (pluginConfig[0].tokenType) {
+            case "oauth":
+                homebridge.showSchemaForm();
+                document.getElementById('wizard').style.display = "none";
+                document.getElementById('oauth-start').style.display = "block";
+                document.getElementById('pat-warning').style.display = "none";
+                break;
+
+            case "pat":
+            default:
+                homebridge.showSchemaForm();
+                document.getElementById('wizard').style.display = "none";
+                document.getElementById('oauth-start').style.display = "none";
+                document.getElementById('pat-warning').style.display =
+                    pluginConfig[0].disablePatWarning === true ? "none" : "block";
+                break;
+        }
+
+        document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId;
+        document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret;
+    }
+
+    function validateStep(id) {
+        var form = document.getElementById(id);
+        if (form.checkValidity() === false) {
+            form.classList.add('was-validated');
+            return false;
+        } else {
+            nextStep();
+            return true;
+        }
+    }
+
+    async function validateStep1() {
+        if (validateStep('step1Form')) {
+            const pluginConfig = await homebridge.getPluginConfig();
+            pluginConfig[0].oauthClientId = document.getElementById('oauth-client-id').value;
+            pluginConfig[0].oauthClientSecret = document.getElementById('oauth-client-secret').value;
+
+            await homebridge.updatePluginConfig(pluginConfig);
+        }
+    }
+
+    async function validateStep2() {
+        nextStep();
+        requestAuthCode();
+    }
+
+    async function validateStep3() {
+        if (validateStep('step3Form')) {
+            homebridge.showSpinner();
+
+            try {
+                await requestAuthToken();
+            } catch {
+                homebridge.toast.error("Could not request authorization token");
+            } finally {
+                homebridge.hideSpinner();
+            }
+        }
+    }
+
+    async function validateStep4() {
+        if (validateStep('step4Form')) {
+            const pluginConfig = await homebridge.getPluginConfig();
+            pluginConfig[0].oauthRefreshToken = document.getElementById('oauth-refresh-token').value;
+
+            await homebridge.updatePluginConfig(pluginConfig);
+            await homebridge.savePluginConfig();
+
+            homebridge.toast.success("Restart Homebridge to apply the changes.", "OAuth Config Saved");
+
+            hideWizard();
+            updateUi();
+        }
+    }
+
+    function nextStep() {
+        let activeTab = document.querySelector('.nav-pills .active');
+        let nextTab = activeTab.nextElementSibling;
+        if (nextTab) changeTab(nextTab);
+    }
+
+    function prevStep() {
+        let activeTab = document.querySelector('.nav-pills .active');
+        let prevTab = activeTab.previousElementSibling;
+        if (prevTab) changeTab(prevTab);
+    }
+
+    function changeTab(targetTab) {
+        document.querySelector('.nav-pills .active').classList.remove('active');
+        document.querySelector('.tab-pane.show').classList.remove('show', 'active');
+
+        targetTab.classList.add('active');
+        document.querySelector(targetTab.getAttribute('data-target')).classList.add('show', 'active');
+    }
+
+    async function requestAuthCode() {
+        const authUrl = await homebridge.request('/authCode', {
+            clientId: document.getElementById('oauth-client-id').value,
+            clientSecret: document.getElementById('oauth-client-secret').value,
+            redirectUrl: document.getElementById('oauth-redirect-url').value,
+            scopes: document.getElementById('oauth-scopes').value
+        });
+
+        window.open(authUrl, "_blank");
+    }
+
+    async function requestAuthToken() {
+        const authToken = await homebridge.request('/authToken', {
+            code: document.getElementById('oauth-code').value,
+            redirectUrl: document.getElementById('oauth-redirect-url').value,
+            scopes: document.getElementById('oauth-scopes').value
+        });
+
+        document.getElementById('oauth-access-token').value = authToken.access_token;
+        document.getElementById('oauth-refresh-token').value = authToken.refresh_token;
+    }
+
+    updateUi();
+
+    window.homebridge.addEventListener('configChanged', (event) => {
+        updateUi();
+    });
+</script>
