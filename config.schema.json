@@ -5,11 +5,62 @@
   "schema": {
     "type": "object",
     "properties": {
-      "token": {
-        "title": "SmartThings API token",
+      "tokenType": {
+        "title": "SmartThings authentication type",
         "type": "string",
         "required": true,
-        "description": "The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a token open https://account.smartthings.com/tokens and generate a new one (make sure at least devices is selected)."
+        "description": "The authentication type to be used for SmartThings API.",
+        "default": "pat",
+        "oneOf": [
+          {
+            "title": "PAT",
+            "enum": [
+              "pat"
+            ]
+          },
+          {
+            "title": "OAuth",
+            "enum": [
+              "oauth"
+            ]
+          }
+        ]
+      },
+      "token": {
+        "title": "SmartThings personal access token",
+        "type": "string",
+        "required": true,
+        "description": "The SmartThings API token is needed to authenticate the requests sent to the SmartThings API. To generate a PAT open https://account.smartthings.com/tokens and generate a new one (make sure at least devices is selected).",
+        "condition": {
+          "functionBody": "return model.tokenType === \"pat\";"
+        }
+      },
+      "oauthClientId": {
+        "title": "OAuth client id",
+        "type": "string",
+        "required": true,
+        "description": "",
+        "condition": {
+          "functionBody": "return model.tokenType === \"oauth\";"
+        }
+      },
+      "oauthClientSecret": {
+        "title": "OAuth client secret",
+        "type": "string",
+        "required": true,
+        "description": "",
+        "condition": {
+          "functionBody": "return model.tokenType === \"oauth\";"
+        }
+      },
+      "oauthRefreshToken": {
+        "title": "OAuth refresh token",
+        "type": "string",
+        "required": true,
+        "description": "",
+        "condition": {
+          "functionBody": "return model.tokenType === \"oauth\";"
+        }
       },
       "capabilityLogging": {
         "title": "Capability Logging",

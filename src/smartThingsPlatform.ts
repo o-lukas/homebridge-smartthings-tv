@@ -11,7 +11,18 @@ import {
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
 import { TvAccessory } from './tvAccessory.js';
-import { SmartThingsClient, BearerTokenAuthenticator, Device, Component, CapabilityStatus } from '@smartthings/core-sdk';
+import {
+  SmartThingsClient,
+  Device,
+  Component,
+  CapabilityStatus,
+  RefreshTokenAuthenticator,
+  RefreshTokenStore,
+  AuthData,
+  RefreshData,
+  Authenticator,
+  BearerTokenAuthenticator,
+} from '@smartthings/core-sdk';
 import { SwitchAccessory } from './switchAccessory.js';
 import { SliderAccessory } from './sliderAccessory.js';
 import { SoundbarAccessory } from './soundbarAccessory.js';
@@ -38,10 +49,11 @@ class DeviceMapping {
 /**
  * Class implements the plugin platform.
  */
-export class SmartThingsPlatform implements DynamicPlatformPlugin {
+export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenStore {
   public readonly Service: typeof Service;
   public readonly Characteristic: typeof Characteristic;
   private configPath = process.env.UIX_CONFIG_PATH || path.join('./', 'config.json');
+  private authData: AuthData | undefined;
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
@@ -70,7 +82,18 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
  - adjust your configuration because deviceBlacklist will be removed in future versions');
       }
 
-      this.discoverDevices(config.token as string,
+      let authenticator = undefined;
+      switch (this.config.tokenType) {
+        case 'oauth':
+          authenticator = new RefreshTokenAuthenticator(config.oauthRefreshToken as string, this);
+          break;
+
+        case 'pat':
+        default:
+          authenticator = new BearerTokenAuthenticator(config.token as string);
+      }
+
+      this.discoverDevices(authenticator,
         deviceBlocklist ?? [],
         config.deviceMappings as [DeviceMapping] ?? [],
         config.tvDeviceTypes as [string] ?? ['oic.d.tv', 'x.com.st.d.monitor'],
@@ -81,7 +104,30 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
   /**
    * @inheritdoc
    */
+  async getRefreshData(): Promise<RefreshData> {
+    const config = this.getPlatformConfig();
+    return {
+      refreshToken: this.authData?.refreshToken ?? config.oauthRefreshToken,
+      clientId: config.oauthClientId,
+      clientSecret: config.oauthClientSecret,
+    };
+  }
 
+  /**
+   * @inheritdoc
+   */
+  async putAuthData(data: AuthData): Promise<void> {
+    this.log.debug('Updating auth data: %s', JSON.stringify(data, null, 4));
+    this.authData = data;
+
+    const config = this.getPlatformConfig();
+    config.oauthRefreshToken = data.refreshToken;
+    this.savePlatformConfig(config);
+  }
+
+  /**
+   * @inheritdoc
+   */
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache: %s', accessory.displayName);
 
@@ -129,9 +175,9 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin {
    * @param tvDeviceTypes the array of configured TV device types
    * @param soundbarDeviceTypes the array of configured SoundBar device types
    */
-  async discoverDevices(token: string, deviceBlocklist: [string], deviceMappings: [DeviceMapping],
+  async discoverDevices(authenticator: Authenticator, deviceBlocklist: [string], deviceMappings: [DeviceMapping],
     tvDeviceTypes: [string], soundbarDeviceTypes: [string]) {
-    const client = new SmartThingsClient(new BearerTokenAuthenticator(token));
+    const client = new SmartThingsClient(authenticator);
 
     let externalAccessories: PlatformAccessory[] = [];
 
