@@ -185,8 +185,8 @@
                 break;
         }
 
-        document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId;
-        document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret;
+        document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId ?? '';
+        document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret ?? '';
     }
 
     function validateStep(id) {
