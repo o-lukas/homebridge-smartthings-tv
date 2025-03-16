@@ -79,19 +79,19 @@
         "title": "Register applications",
         "type": "boolean",
         "required": false,
-        "description": "To use installed application as input sources, a predefined list of applications will be used."
+        "description": "To use installed application as input sources, a predefined list of applications will be used. Please note that this has no effect on SoundBars."
       },
       "registerPictureModes": {
         "title": "Register picture modes",
         "type": "boolean",
         "required": false,
-        "description": "Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API."
+        "description": "Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars."
       },
       "registerSoundModes": {
         "title": "Register sound modes",
         "type": "boolean",
         "required": false,
-        "description": "Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API."
+        "description": "Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars"
       },
       "registerVolumeSlider": {
         "title": "Register volume slider",
@@ -162,7 +162,7 @@
             "infoKey": {
               "title": "Info key",
               "type": "string",
-              "description": "The key to be emulated when pressing info button in HomeKit remote. The list of valid values must be read from the log as it differs per device. To do so enable capabilityLogging and look for log entry containing the possible values."
+              "description": "The key to be emulated when pressing info button in HomeKit remote. The list of valid values must be read from the log as it differs per device. To do so enable capabilityLogging and look for log entry containing the possible values. Please note that this has no effect on SoundBars."
             },
             "inputSources": {
               "title": "Custom input sources list",
@@ -205,12 +205,12 @@
                 }
               },
               "required": false,
-              "description": "Overrides the default application mapping list to add custom applications."
+              "description": "Overrides the default application mapping list to add custom applications. Please note that this has no effect on SoundBars."
             },
             "validateApplications": {
               "title": "Validate application list",
               "type": "boolean",
-              "description": "Validates the list of applications by trying to open them when starting the plugin. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV). Afterwards the list of working applications will be written to this device list of applications. Note that this flag will be set to off after validation the application list. So check will only run on first start or manual reset.",
+              "description": "Validates the list of applications by trying to open them when starting the plugin. This list will be checked for availability at the TV(s) and eventually be registered as input sources. Make sure to have the TV(s) turned on when starting your instance as this functionality requires your TV(s) be turned on to determine whether an application is installed or not. On startup the applications will be opened to determine if they are available. Do not use your TV until the input source is being changed back to the first one (usually Live TV). Afterwards the list of working applications will be written to this device list of applications. Note that this flag will be set to off after validation the application list. So check will only run on first start or manual reset. Please note that this has no effect on SoundBars.",
               "default": true
             },
             "category": {
