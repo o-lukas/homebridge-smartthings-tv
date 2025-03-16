@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@homebridge/plugin-ui-utils": "^2.0.1",
-    "@smartthings/core-sdk": "^8.3.2",
+    "@smartthings/core-sdk": "^8.4.1",
     "ping": "^0.4.4",
     "simple-oauth2": "^5.1.0",
     "wol": "^1.0.7"
