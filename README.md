@@ -37,8 +37,6 @@ The following snippet shows the most simple configuration you can use for the pl
 
 To get information about all supported properties please check the [config schema file](./config.schema.json).
 
-***
+## Disclaimer
 
-Since this is my first plugin it may contain some problems. Feel free to create an issue or pull request and I will try to help and fix the problems.
-
-But since this plugin is developed in my spare time don't expect a quick fix.
+This project is not affiliated with, endorsed by, or sponsored by any of the companies or products mentioned herein. All product names, trademarks, and registered trademarks are the property of their respective owners. The use of these names, logos, or brands is for identification purposes only and does not imply any association or endorsement.
