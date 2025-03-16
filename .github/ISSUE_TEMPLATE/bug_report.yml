@@ -11,7 +11,7 @@ body:
       options:
         - label: Searched for existing issues
           required: true
-        - label: Looked through common issues
+        - label: Looked through [common issues](https://github.com/o-lukas/homebridge-smartthings-tv/blob/main/docs/common-issues.md)
           required: true
         - label: Updated plugin to the latest version (if applicable)
           required: true
