@@ -4,7 +4,7 @@
 [![semantic-release](https://img.shields.io/badge/semantic--release-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 ![NPM Version](https://badgen.net/npm/v/@o-lukas/homebridge-smartthings-tv?label=stable)
 ![NPM Node Version](https://badgen.net/npm/node/@o-lukas/homebridge-smartthings-tv)
-![NPM Total Downloads](https://badgen.net/npm/dt/@o-lukas/homebridge-smartthings-tv)
+![NPM Weekly Downloads](https://badgen.net/npm/dw/@o-lukas/homebridge-smartthings-tv)
 ![GitHub issues](https://img.shields.io/github/issues/o-lukas/homebridge-smartthings-tv?label=Issues)
 [![Build and Lint](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml/badge.svg)](https://github.com/o-lukas/homebridge-smartthings-tv/actions/workflows/build.yml)
 
