@@ -37,6 +37,10 @@ The following snippet shows the most simple configuration you can use for the pl
 
 To get information about all supported properties please check the [config schema file](./config.schema.json).
 
+## Authentication
+
+This plugin requires an OAuth based workflow for authentication with Samsung SmartThings API.  Please see the [OAuth documentation](./docs/oauth.md) for detailed instructions on how to configure OAuth with this plugin.
+
 ## Disclaimer
 
 This project is not affiliated with, endorsed by, or sponsored by any of the companies or products mentioned herein. All product names, trademarks, and registered trademarks are the property of their respective owners. The use of these names, logos, or brands is for identification purposes only and does not imply any association or endorsement.
