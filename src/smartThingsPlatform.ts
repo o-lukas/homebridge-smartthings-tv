@@ -68,8 +68,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
     this.Service = this.api.hap.Service;
     this.Characteristic = this.api.hap.Characteristic;
 
-    if (!config.token) {
-      this.log.error('SmartThings API token must be configured');
+    if (!this.validateConfig(config)) {
       return;
     }
 
@@ -442,5 +441,40 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
+  }
+
+  /**
+   * Validates the config and returns validation result.
+   * Basically checks that authentication token setup is correct.
+   *
+   * @param config the PlatformConfig
+   * @returns TRUE in case config is valid - FALSE otherwise
+   */
+  private validateConfig(config: PlatformConfig) {
+    switch (this.config.tokenType) {
+      case 'oauth':
+        if (!config.oauthClientId) {
+          this.log.error('OAuth client id must be set for OAuth token type');
+          return false;
+        }
+        if (!config.oauthClientSecret) {
+          this.log.error('OAuth client secret must be set for OAuth token type');
+          return false;
+        }
+        if (!config.oauthRefreshToken) {
+          this.log.error('OAuth refresh token must be set for OAuth token type');
+          return false;
+        }
+        break;
+
+      case 'pat':
+      default:
+        if (!config.token) {
+          this.log.error('SmartThings personal access token must be set for PAT token type');
+          return false;
+        }
+    }
+
+    return true;
   }
 }
