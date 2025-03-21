@@ -40,7 +40,7 @@
         "title": "OAuth client id",
         "type": "string",
         "required": true,
-        "description": "",
+        "description": "The client id of the OAuth application.",
         "condition": {
           "functionBody": "return model.tokenType === \"oauth\";"
         }
@@ -49,7 +49,7 @@
         "title": "OAuth client secret",
         "type": "string",
         "required": true,
-        "description": "",
+        "description": "The client secret of the OAuth application.",
         "condition": {
           "functionBody": "return model.tokenType === \"oauth\";"
         }
@@ -58,7 +58,7 @@
         "title": "OAuth refresh token",
         "type": "string",
         "required": true,
-        "description": "",
+        "description": "The refresh token used for OAuth.",
         "condition": {
           "functionBody": "return model.tokenType === \"oauth\";"
         }
