@@ -351,7 +351,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
     accessory.context.device = device;
     accessory.category = deviceMapping?.category ?? this.api.hap.Categories.TV_SET_TOP_BOX;
 
-    const tv = new SoundbarAccessory(displayName, device, component, client, this.log, this, accessory,
+    const soundbar = new SoundbarAccessory(displayName, device, component, client, this.log, this, accessory,
       this.config.capabilityLogging as boolean ?? false,
       this.config.pollInterval as number ?? undefined,
       this.config.cyclicCallsLogging as boolean ?? false,
@@ -359,7 +359,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       deviceMapping?.ipAddress,
       deviceMapping?.inputSources,
     );
-    await tv.registerCapabilities();
+    await soundbar.registerCapabilities();
 
     if (this.config.registerVolumeSlider) {
       this.registerVolumeSlider(client, device, component);
