@@ -75,6 +75,12 @@ export class SoundbarAccessory extends SmartThingsAccessory {
         this.logError('Registering capability \'%s\' failed: [%s] %s', reference.id, statusCode, errorMessage);
       }
     }
+
+    if (this.capabilities.find(s => s === 'samsungvd.audioInputSource') &&
+      !this.capabilities.find(s => s === 'mediaInputSource')) {
+      this.logWarn('Capability %s might not work as expected because capability %s is missing which is needed to set input sources',
+        'samsungvd.audioInputSource', 'mediaInputSource');
+    }
   }
 
   /**
