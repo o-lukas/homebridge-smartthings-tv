@@ -28,7 +28,7 @@ updates:
       day: "sunday"
       time: "03:00"
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: ".github"
     schedule:
       interval: weekly
       day: "sunday"
