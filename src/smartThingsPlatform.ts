@@ -259,6 +259,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
    */
   async registerTvDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined): Promise<PlatformAccessory[]> {
     this.log.info('Adding new TV accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+    this.log.debug('New TV accessory\'s properties: %s', JSON.stringify(device, null, 4));
 
     const component = device.components?.at(0);
     if (!component) {
@@ -334,6 +335,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
    */
   async registerSoundbarDevice(client: SmartThingsClient, device: Device, deviceMapping: DeviceMapping | undefined): Promise<PlatformAccessory[]> {
     this.log.info('Adding new soundbar accessory: %s', device.name ? device.name + ' (' + device.deviceId + ')' : device.deviceId);
+    this.log.debug('New Soundbar accessory\'s properties: %s', JSON.stringify(device, null, 4));
 
     const component = device.components?.at(0);
     if (!component) {
