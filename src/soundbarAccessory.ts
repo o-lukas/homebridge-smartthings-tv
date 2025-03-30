@@ -5,6 +5,7 @@ import { SmartThingsClient, Device, Component, Capability } from '@smartthings/c
 import { wake } from 'wol';
 import ping from 'ping';
 import { SmartThingsAccessory } from './smartThingsAccessory.js';
+import axios from 'axios';
 
 /**
  * Class implements a SmartThings soundbar accessory.
@@ -58,7 +59,21 @@ export class SoundbarAccessory extends SmartThingsAccessory {
     this.logInfo('Registering capabilities for component %s', this.component.id);
 
     for (const reference of this.component.capabilities) {
-      await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
+      try {
+        await this.registerCapability(await this.client.capabilities.get(reference.id, reference.version ?? 0));
+      } catch (error) {
+        let errorMessage = 'unknown';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
+        let statusCode = -1;
+        if (axios.isAxiosError(error)) {
+          statusCode = error.response?.status ?? -1;
+        }
+
+        this.logError('Registering capability \'%s\' failed: [%s] %s', reference.id, statusCode, errorMessage);
+      }
     }
   }
 
