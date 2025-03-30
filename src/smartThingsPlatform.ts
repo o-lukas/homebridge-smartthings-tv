@@ -293,14 +293,21 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
     if (this.config.registerPictureModes) {
       const modes = await tv.getPictureModes();
       if (modes) {
-        this.registerModeSwitches(client, device, component, modes);
+        this.registerModeSwitches(client, device, component, false, modes);
       }
     }
 
     if (this.config.registerSoundModes) {
       const modes = await tv.getSoundModes();
       if (modes) {
-        this.registerModeSwitches(client, device, component, modes);
+        this.registerModeSwitches(client, device, component, false, modes);
+      }
+    }
+
+    if (this.config.registerInputSwitches) {
+      const sources = await tv.getInputSources();
+      if (sources) {
+        this.registerModeSwitches(client, device, component, true, sources);
       }
     }
 
@@ -368,13 +375,14 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
    * @param client the SmartThingsClient used to send API calls
    * @param device the SmartThings Device
    * @param component the SmartThings Device's Component
+   * @param stateful flag if switch will be stateful (set to TRUE to get capability status and reflect changes in switch)
    * @param modes the modes to register
    */
-  registerModeSwitches(client: SmartThingsClient, device: Device, component: Component,
+  registerModeSwitches(client: SmartThingsClient, device: Device, component: Component, stateful: boolean,
     modes: {
-      capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
+      capability: string; command: string; prefix: string; values: { id: string; name: string; value: string }[];
     }) {
-    for (const mode of modes.modes) {
+    for (const mode of modes.values) {
       const id = this.api.hap.uuid.generate(`${device.deviceId}${modes.prefix}${mode.id}`);
       const name = `${modes.prefix} ${mode.name}`;
 
@@ -383,14 +391,14 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
         this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
 
         new SwitchAccessory(device, component, client, this.log, this, existingAccessory, modes.capability,
-          modes.command, mode.name);
+          modes.command, mode.value, stateful);
       } else {
         const accessory = new this.api.platformAccessory(name, id);
         accessory.context.device = device;
         accessory.category = this.api.hap.Categories.SWITCH;
 
         new SwitchAccessory(device, component, client, this.log, this, accessory, modes.capability,
-          modes.command, mode.name);
+          modes.command, mode.value, stateful);
 
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }

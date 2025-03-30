@@ -85,19 +85,25 @@
         "title": "Register picture modes",
         "type": "boolean",
         "required": false,
-        "description": "Registers all available picture modes as separate switches that can be toggled to enable/disable a picture mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars."
+        "description": "Registers all available picture modes as separate switches that can be toggled to enable a picture mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars."
       },
       "registerSoundModes": {
         "title": "Register sound modes",
         "type": "boolean",
         "required": false,
-        "description": "Registers all available sound modes as separate switches that can be toggled to enable/disable a sound mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars"
+        "description": "Registers all available sound modes as separate switches that can be toggled to enable a sound mode. Uses the names as exposed from the SmartThings API. Please not that this has no effect on SoundBars"
       },
       "registerVolumeSlider": {
         "title": "Register volume slider",
         "type": "boolean",
         "required": false,
         "description": "Registers a separate volume slider accessorry that will be exposed as a light bulb accessory (because there is currently no option to change a speaker volume directly using Home)."
+      },
+      "registerInputSwitches": {
+        "title": "Register input sources as switches",
+        "type": "boolean",
+        "required": false,
+        "description": "Register all input sources as seperate stateless switches that can be toggled to switch to input source."
       },
       "pollInterval": {
         "title": "State polling interval [ms]",

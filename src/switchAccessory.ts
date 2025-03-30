@@ -5,7 +5,7 @@ import { SmartThingsClient, Device, Component } from '@smartthings/core-sdk';
 import { SmartThingsAccessory } from './smartThingsAccessory.js';
 
 /**
- * Class implements a stateless switch accessory to execute a capability commmand.
+ * Class implements a switch accessory to execute a capability commmand and get capability status.
  */
 export class SwitchAccessory extends SmartThingsAccessory {
   private readonly service: Service;
@@ -20,6 +20,7 @@ export class SwitchAccessory extends SmartThingsAccessory {
     private readonly capability: string,
     private readonly command: string,
     private readonly value: string,
+    private readonly stateful: boolean = false,
   ) {
     super(device, component, client, platform, accessory, log);
 
@@ -30,12 +31,18 @@ export class SwitchAccessory extends SmartThingsAccessory {
       .onSet(this.handleSet.bind(this));
   }
 
-  private handleGet(): CharacteristicValue {
-    return false;
+  private async handleGet(): Promise<CharacteristicValue> {
+    if (!this.stateful) {
+      return false;
+    }
+
+    const status = await this.getCapabilityStatus(this.capability, true);
+    this.logDebug('Get %s mode: %s %s %s', this.capability, this.value, this.value === status?.inputSource.value ? '==' : '!=', status?.inputSource.value);
+    return status?.inputSource.value as string === this.value;
   }
 
   private async handleSet(value: CharacteristicValue) {
-    if (value === true) {
+    if (this.stateful || value === true) {
       this.logDebug('Set %s mode to: %s', this.capability, this.value);
       await this.executeCommand(this.capability, this.command, [this.value]);
 

@@ -94,18 +94,21 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available picture modes or undefined
    */
   public async getPictureModes(): Promise<{
-    capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
+    capability: string; command: string; prefix: string; values: { id: string; name: string; value: string; }[];
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.picturemode', true);
     if (!status) {
       return undefined;
     }
 
+    const map = [...new Set(status?.supportedPictureModesMap.value as { id: string; name: string; }[])];
     return {
       capability: 'custom.picturemode',
       command: 'setPictureMode',
       prefix: 'Picture',
-      modes: [...new Set(status?.supportedPictureModesMap.value as { id: string; name: string }[])],
+      values: map.map(s => {
+        return { id: s.id, name: s.name, value: s.name };
+      }),
     };
   }
 
@@ -115,18 +118,44 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the available sound modes or undefined
    */
   public async getSoundModes(): Promise<{
-    capability: string; command: string; prefix: string; modes: { id: string; name: string }[];
+    capability: string; command: string; prefix: string; values: { id: string; name: string; value: string; }[];
   } | undefined> {
     const status = await this.getCapabilityStatus('custom.soundmode', true);
     if (!status) {
       return undefined;
     }
 
+    const map = [...new Set(status?.supportedSoundModesMap.value as { id: string; name: string }[])];
     return {
       capability: 'custom.soundmode',
       command: 'setSoundMode',
       prefix: 'Sound',
-      modes: [...new Set(status?.supportedSoundModesMap.value as { id: string; name: string }[])],
+      values: map.map(s => {
+        return { id: s.id, name: s.name, value: s.name };
+      }),
+    };
+  }
+
+  /**
+   * Returns all available input sources for the current device.
+   *
+   * @returns the available input sources
+   */
+  public async getInputSources(): Promise<{
+    capability: string; command: string; prefix: string; values: { id: string; name: string; value: string; }[];
+  }> {
+    const sources = this.inputSourceServices.map(s => {
+      return {
+        id: s.getCharacteristic(this.platform.Characteristic.Identifier).value as string,
+        name: s.getCharacteristic(this.platform.Characteristic.ConfiguredName).value as string,
+        value: s.name as string,
+      };
+    });
+    return {
+      capability: 'samsungvd.mediaInputSource',
+      command: 'setInputSource',
+      prefix: 'Input source',
+      values: [...new Set(sources)],
     };
   }
 
