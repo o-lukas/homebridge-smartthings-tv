@@ -38,7 +38,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@homebridge/plugin-ui-utils": "^2.0.1",
+    "@homebridge/plugin-ui-utils": "^2.0.2",
     "@smartthings/core-sdk": "^8.4.1",
     "ping": "^0.4.4",
     "simple-oauth2": "^5.1.0",
