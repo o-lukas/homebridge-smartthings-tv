@@ -171,6 +171,14 @@
 
     async function updateUi() {
         const pluginConfig = await homebridge.getPluginConfig();
+        if (pluginConfig.length === 0) {
+            pluginConfig[0] = {
+                platform: "smartthings-tv",
+                tokenType: "oauth"
+            };
+            await homebridge.updatePluginConfig(pluginConfig);
+        }
+
         switch (pluginConfig[0].tokenType) {
             case "oauth":
                 homebridge.showSchemaForm();
