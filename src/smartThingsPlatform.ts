@@ -295,6 +295,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       const modes = await tv.getPictureModes();
       if (modes) {
         this.registerModeSwitches(client, device, component, false, modes);
+      } else {
+        this.log.warn('Picture mode switches can not be registered because required capability is missing or there are no picture modes');
       }
     }
 
@@ -302,6 +304,8 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       const modes = await tv.getSoundModes();
       if (modes) {
         this.registerModeSwitches(client, device, component, false, modes);
+      } else {
+        this.log.warn('Sound mode switches can not be registered because required capability is missing or there are no sound modes');
       }
     }
 
