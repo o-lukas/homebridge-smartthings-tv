@@ -137,6 +137,30 @@ export class TvAccessory extends SmartThingsAccessory {
   }
 
   /**
+   * Returns all available ambient modes for the current device.
+   *
+   * @returns the available ambient modes or undefined
+   */
+  public async getAmbientModes(): Promise<{
+    capability: string; command: string; prefix: string; values: { id: string; name: string; value: string; }[];
+  } | undefined> {
+    const status = await this.getCapabilityStatus('samsungvd.ambientContent', true);
+    if (!status) {
+      return undefined;
+    }
+
+    const array = [...new Set(status?.supportedAmbientApps.value as string[])];
+    return {
+      capability: 'samsungvd.ambientContent',
+      command: 'setAmbientContent',
+      prefix: 'Ambient',
+      values: array.map(s => {
+        return { id: s, name: s, value: s };
+      }),
+    };
+  }
+
+  /**
    * Returns all available input sources for the current device.
    *
    * @returns the available input sources
@@ -294,6 +318,7 @@ export class TvAccessory extends SmartThingsAccessory {
       case 'custom.picturemode':
       case 'custom.soundmode':
       case 'samsungvd.ambient':
+      case 'samsungvd.ambientContent':
         this.logCapabilityState(capability);
         break;
     }

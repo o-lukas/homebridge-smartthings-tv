@@ -99,6 +99,12 @@
         "required": false,
         "description": "Registers a stateless switches that can be toggled to switch ambient mode on."
       },
+      "registerAmbientModes": {
+        "title": "Register ambient modes",
+        "type": "boolean",
+        "required": false,
+        "description": "Registers all available ambient modes as separate switches that can be toggled to enable an ambient mode. Uses the names as exposed from the SmartThings API. Please note that this has no effect on SoundBars."
+      },
       "registerVolumeSlider": {
         "title": "Register volume slider",
         "type": "boolean",

@@ -319,6 +319,15 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       }
     }
 
+    if (this.config.registerAmbientModes) {
+      const modes = await tv.getAmbientModes();
+      if (modes) {
+        this.registerModeSwitches(client, device, component, false, modes);
+      } else {
+        this.log.warn('Ambient mode switches can not be registered because required capability is missing or there are no ambient modes');
+      }
+    }
+
     if (this.config.registerInputSwitches) {
       const sources = await tv.getInputSources();
       if (sources) {
