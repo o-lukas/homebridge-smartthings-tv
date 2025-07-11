@@ -387,23 +387,39 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
     for (const mode of modes.values) {
       const id = this.api.hap.uuid.generate(`${device.deviceId}${modes.prefix}${mode.id}`);
       const name = `${modes.prefix} ${mode.name}`;
+      this.registerSwitch(client, device, component, name, id, modes.capability, modes.command, mode.value, stateful);
+    }
+  }
 
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
-      if (existingAccessory) {
-        this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
+  /**
+   * Registers a switch for parameters passed in.
+   * Handles caching of accessories as well.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param component the SmartThings Device's Component
+   * @param name the switch's name
+   * @param id the switch's id
+   * @param capability the capability identifier
+   * @param command the command identifier
+   * @param value the value to set
+   * @param stateful flag if switch will be stateful (set to TRUE to get capability status and reflect changes in switch)
+   */
+  registerSwitch(client: SmartThingsClient, device: Device, component: Component, name: string, id: string, capability: string,
+    command: string, value: string, stateful: boolean) {
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
+    if (existingAccessory) {
+      this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
 
-        new SwitchAccessory(device, component, client, this.log, this, existingAccessory, modes.capability,
-          modes.command, mode.value, stateful);
-      } else {
-        const accessory = new this.api.platformAccessory(name, id);
-        accessory.context.device = device;
-        accessory.category = this.api.hap.Categories.SWITCH;
+      new SwitchAccessory(device, component, client, this.log, this, existingAccessory, capability, command, value, stateful);
+    } else {
+      const accessory = new this.api.platformAccessory(name, id);
+      accessory.context.device = device;
+      accessory.category = this.api.hap.Categories.SWITCH;
 
-        new SwitchAccessory(device, component, client, this.log, this, accessory, modes.capability,
-          modes.command, mode.value, stateful);
+      new SwitchAccessory(device, component, client, this.log, this, accessory, capability, command, value, stateful);
 
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      }
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 
