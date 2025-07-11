@@ -290,6 +290,11 @@ export class TvAccessory extends SmartThingsAccessory {
         this.logInfo('Possible infoKey values are: %s',
           JSON.stringify(capability.commands?.send.arguments?.find(a => a.name === 'keyValue')?.schema.enum, null, 2));
         break;
+
+      case 'custom.picturemode':
+      case 'custom.soundmode':
+        this.logCapabilityState(capability);
+        break;
     }
   }
 
