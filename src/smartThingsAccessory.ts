@@ -119,6 +119,10 @@ export abstract class SmartThingsAccessory {
 
   protected logCapabilityRegistration(capability: Capability) {
     this.logInfo('Registering capability:', capability.name);
+    this.logCapabilityState(capability);
+  }
+
+  protected logCapabilityState(capability: Capability) {
     if (capability.status !== CustomCapabilityStatus.LIVE) {
       this.logWarn('Capability %s might not work as expected because it\'s status is: %s', capability.name, capability.status);
     }
