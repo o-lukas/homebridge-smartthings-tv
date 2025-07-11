@@ -19,7 +19,7 @@ export class SwitchAccessory extends SmartThingsAccessory {
     accessory: PlatformAccessory,
     private readonly capability: string,
     private readonly command: string,
-    private readonly value: string,
+    private readonly value: string | undefined,
     private readonly stateful: boolean = false,
   ) {
     super(device, component, client, platform, accessory, log);
@@ -44,7 +44,7 @@ export class SwitchAccessory extends SmartThingsAccessory {
   private async handleSet(value: CharacteristicValue) {
     if (this.stateful || value === true) {
       this.logDebug('Set %s mode to: %s', this.capability, this.value);
-      await this.executeCommand(this.capability, this.command, [this.value]);
+      await this.executeCommand(this.capability, this.command, this.value ? [this.value] : []);
 
       setTimeout(() => {
         this.service.setCharacteristic(this.platform.Characteristic.On, false);

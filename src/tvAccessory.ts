@@ -293,6 +293,7 @@ export class TvAccessory extends SmartThingsAccessory {
 
       case 'custom.picturemode':
       case 'custom.soundmode':
+      case 'samsungvd.ambient':
         this.logCapabilityState(capability);
         break;
     }

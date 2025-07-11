@@ -309,6 +309,16 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       }
     }
 
+    if (this.config.registerAmbientSwitch) {
+      if (tv.validateCapability('samsungvd.ambient')) {
+        const name = 'Ambient mode';
+        this.registerSwitch(client, device, component, name, this.api.hap.uuid.generate(`${device.deviceId}${name}`), 'samsungvd.ambient',
+          'setAmbientOn', undefined, false);
+      } else {
+        this.log.warn('Ambient mode switch can not be registered because required capability is missing');
+      }
+    }
+
     if (this.config.registerInputSwitches) {
       const sources = await tv.getInputSources();
       if (sources) {
@@ -410,7 +420,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
    * @param stateful flag if switch will be stateful (set to TRUE to get capability status and reflect changes in switch)
    */
   registerSwitch(client: SmartThingsClient, device: Device, component: Component, name: string, id: string, capability: string,
-    command: string, value: string, stateful: boolean) {
+    command: string, value: string | undefined, stateful: boolean) {
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
