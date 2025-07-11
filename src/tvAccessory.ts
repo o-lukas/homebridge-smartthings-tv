@@ -540,6 +540,16 @@ ping command fails mostly because of permission issues - falling back to SmartTh
   }
 
   /**
+   * Validates that the SmartThings Capability with id passed in is available
+   *
+   * @param capabilityId the identifier of the SmartThings Capablity
+   * @returns TRUE in case capability is available - FALSE otherwise
+   */
+  public validateCapability(capabilityId: string): boolean {
+    return this.capabilities.includes(capabilityId);
+  }
+
+  /**
    * Validates that the SmartThings Capability needed to execute the remote key is available.
    *
    * @param capabilityId the identifier of the SmartThings Capablity
@@ -547,7 +557,7 @@ ping command fails mostly because of permission issues - falling back to SmartTh
    * @returns TRUE in case capability is available - FALSE otherwise
    */
   private validateRemoteKeyCapability(capabilityId: string, remoteKey: string): boolean {
-    if (this.capabilities.includes(capabilityId)) {
+    if (this.validateCapability(capabilityId)) {
       return true;
     } else {
       this.logError('can\'t handle RemoteKey %s because %s capability is not available', remoteKey, capabilityId);
