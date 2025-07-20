@@ -45,19 +45,19 @@
     "wol": "^1.0.7"
   },
   "devDependencies": {
-    "@types/node": "^24.0.10",
+    "@types/node": "^24.0.15",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.35.1",
-    "@typescript-eslint/parser": "^8.35.1",
-    "eslint": "^9.30.1",
-    "homebridge": "^1.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "eslint": "^9.31.0",
+    "homebridge": "^1.11.0",
     "nodemon": "^3.1.10",
     "rimraf": "^6.0.1",
-    "semantic-release": "^24.2.6",
+    "semantic-release": "^24.2.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.1"
+    "typescript-eslint": "^8.37.0"
   },
   "release": {
     "branches": [
