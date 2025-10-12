@@ -27,8 +27,8 @@
   ],
   "main": "dist/index.js",
   "engines": {
-    "node": "^18 || ^20 || ^22",
-    "homebridge": "^1.6.0 || ^2.0.0-beta.0"
+    "node": "^20 || ^22 || ^24",
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
@@ -45,13 +45,14 @@
     "wol": "^1.0.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.36.0",
     "@types/node": "^24.6.2",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
     "eslint": "^9.37.0",
-    "homebridge": "^1.11.0",
+    "homebridge": "^2.0.0-beta.30",
     "nodemon": "^3.1.10",
     "rimraf": "^6.0.1",
     "semantic-release": "^24.2.9",
