@@ -10,6 +10,12 @@
 
 * don't close wizard when configChanged callback is called ([0c66020](https://github.com/o-lukas/homebridge-smartthings-tv/commit/0c6602055d400f497daa16272c5f5dac5829bb0c)), closes [#494](https://github.com/o-lukas/homebridge-smartthings-tv/issues/494)
 
+## [3.0.0-alpha.2](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.1...v3.0.0-alpha.2) (2025-10-22)
+
+### Features
+
+* add logging to custom UI ([11e9dc1](https://github.com/o-lukas/homebridge-smartthings-tv/commit/11e9dc1b8c6311310fe2908e7cabd1691c57fb9d))
+
 ## [3.0.0-alpha.1](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v2.8.0...v3.0.0-alpha.1) (2025-10-12)
 
 ### ⚠ BREAKING CHANGES
