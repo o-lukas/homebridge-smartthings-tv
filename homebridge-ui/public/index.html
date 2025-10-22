@@ -153,154 +153,305 @@
 </div>
 
 <script>
+    // Simple logger helpers
+    function _log(name, ...args) {
+        try {
+            console.log(`[index.html] ${name}`, ...args);
+        } catch (e) {
+            // ignore logging errors
+        }
+    }
+
+    function _logError(name, err) {
+        try {
+            // prefer structured console.error, but guard against failures
+            if (console && console.error) {
+                console.error(`[index.html] ${name}`, err);
+            } else {
+                _log(`${name} - error`, err && (err.stack || err));
+            }
+        } catch (e) {
+            // ensure logging never throws
+            try { _log(`${name} - failed to log error`, e); } catch (_) { /* ignore */ }
+        }
+    }
+
     function showWizard() {
-        homebridge.disableSaveButton();
-        homebridge.hideSchemaForm();
-        document.getElementById('wizard').style.display = "block";
-        document.getElementById('oauth-start').style.display = "none";
-        document.getElementById('pat-warning').style.display = "none";
+        _log('showWizard - start');
+        try {
+            homebridge.disableSaveButton();
+            homebridge.hideSchemaForm();
+            document.getElementById('wizard').style.display = "block";
+            document.getElementById('oauth-start').style.display = "none";
+            document.getElementById('pat-warning').style.display = "none";
+            _log('showWizard - done');
+        } catch (err) {
+            _logError('showWizard - error', err);
+            throw err;
+        }
     }
 
     function hideWizard() {
-        homebridge.enableSaveButton();
-        homebridge.showSchemaForm();
-        document.getElementById('wizard').style.display = "none";
-        document.getElementById('oauth-start').style.display = "block";
-        document.getElementById('pat-warning').style.display = "none";
+        _log('hideWizard - start');
+        try {
+            homebridge.enableSaveButton();
+            homebridge.showSchemaForm();
+            document.getElementById('wizard').style.display = "none";
+            document.getElementById('oauth-start').style.display = "block";
+            document.getElementById('pat-warning').style.display = "none";
+            _log('hideWizard - done');
+        } catch (err) {
+            _logError('hideWizard - error', err);
+            throw err;
+        }
     }
 
     async function updateUi() {
-        const pluginConfig = await homebridge.getPluginConfig();
-        if (pluginConfig.length === 0) {
-            pluginConfig[0] = {
-                platform: "smartthings-tv",
-                tokenType: "oauth"
-            };
-            await homebridge.updatePluginConfig(pluginConfig);
+        _log('updateUi - start');
+        try {
+            const pluginConfig = await homebridge.getPluginConfig();
+            _log('updateUi - got pluginConfig', pluginConfig);
+
+            if (pluginConfig.length === 0) {
+                _log('updateUi - pluginConfig empty, initializing default');
+                pluginConfig[0] = {
+                    platform: "smartthings-tv",
+                    tokenType: "oauth"
+                };
+                await homebridge.updatePluginConfig(pluginConfig);
+                _log('updateUi - default pluginConfig saved');
+            }
+
+            switch (pluginConfig[0].tokenType) {
+                case "oauth":
+                    _log('updateUi - tokenType oauth');
+                    homebridge.showSchemaForm();
+                    document.getElementById('wizard').style.display = "none";
+                    document.getElementById('oauth-start').style.display = "block";
+                    document.getElementById('pat-warning').style.display = "none";
+                    break;
+
+                case "pat":
+                default:
+                    _log('updateUi - tokenType pat or default', pluginConfig[0].tokenType);
+                    homebridge.showSchemaForm();
+                    document.getElementById('wizard').style.display = "none";
+                    document.getElementById('oauth-start').style.display = "none";
+                    document.getElementById('pat-warning').style.display =
+                        pluginConfig[0].disablePatWarning === true ? "none" : "block";
+                    break;
+            }
+
+            document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId ?? '';
+            document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret ?? '';
+
+            _log('updateUi - end');
+        } catch (err) {
+            _logError('updateUi - error', err);
+            throw err;
         }
-
-        switch (pluginConfig[0].tokenType) {
-            case "oauth":
-                homebridge.showSchemaForm();
-                document.getElementById('wizard').style.display = "none";
-                document.getElementById('oauth-start').style.display = "block";
-                document.getElementById('pat-warning').style.display = "none";
-                break;
-
-            case "pat":
-            default:
-                homebridge.showSchemaForm();
-                document.getElementById('wizard').style.display = "none";
-                document.getElementById('oauth-start').style.display = "none";
-                document.getElementById('pat-warning').style.display =
-                    pluginConfig[0].disablePatWarning === true ? "none" : "block";
-                break;
-        }
-
-        document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId ?? '';
-        document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret ?? '';
     }
 
     function validateStep(id) {
-        var form = document.getElementById(id);
-        if (form.checkValidity() === false) {
-            form.classList.add('was-validated');
-            return false;
-        } else {
-            nextStep();
-            return true;
+        _log('validateStep - start', id);
+        try {
+            var form = document.getElementById(id);
+            if (form.checkValidity() === false) {
+                _log('validateStep - invalid', id);
+                form.classList.add('was-validated');
+                return false;
+            } else {
+                _log('validateStep - valid, advancing');
+                nextStep();
+                return true;
+            }
+        } catch (err) {
+            _logError('validateStep - error', err);
+            throw err;
         }
     }
 
     async function validateStep1() {
-        if (validateStep('step1Form')) {
-            const pluginConfig = await homebridge.getPluginConfig();
-            pluginConfig[0].oauthClientId = document.getElementById('oauth-client-id').value;
-            pluginConfig[0].oauthClientSecret = document.getElementById('oauth-client-secret').value;
-
-            await homebridge.updatePluginConfig(pluginConfig);
+        _log('validateStep1 - start');
+        try {
+            if (validateStep('step1Form')) {
+                const pluginConfig = await homebridge.getPluginConfig();
+                _log('validateStep1 - current pluginConfig', pluginConfig);
+                pluginConfig[0].oauthClientId = document.getElementById('oauth-client-id').value;
+                pluginConfig[0].oauthClientSecret = document.getElementById('oauth-client-secret').value;
+                _log('validateStep1 - updating pluginConfig', {
+                    oauthClientId: pluginConfig[0].oauthClientId ? '***' : '',
+                    oauthClientSecret: pluginConfig[0].oauthClientSecret ? '***' : ''
+                });
+                await homebridge.updatePluginConfig(pluginConfig);
+                _log('validateStep1 - update complete');
+            } else {
+                _log('validateStep1 - form invalid, abort');
+            }
+        } catch (err) {
+            _logError('validateStep1 - error', err);
+            throw err;
         }
     }
 
     async function validateStep2() {
-        nextStep();
-        requestAuthCode();
+        _log('validateStep2 - start');
+        try {
+            nextStep();
+            _log('validateStep2 - requested nextStep, calling requestAuthCode');
+            requestAuthCode();
+            _log('validateStep2 - requestAuthCode called (not awaited)');
+        } catch (err) {
+            _logError('validateStep2 - error', err);
+            throw err;
+        }
     }
 
     async function validateStep3() {
-        if (validateStep('step3Form')) {
-            homebridge.showSpinner();
-
-            try {
-                await requestAuthToken();
-            } catch {
-                homebridge.toast.error("Could not request authorization token");
-            } finally {
-                homebridge.hideSpinner();
+        _log('validateStep3 - start');
+        try {
+            if (validateStep('step3Form')) {
+                homebridge.showSpinner();
+                _log('validateStep3 - spinner shown, requesting token');
+                try {
+                    await requestAuthToken();
+                    _log('validateStep3 - requestAuthToken succeeded');
+                } catch (err) {
+                    _logError('validateStep3 - requestAuthToken error', err);
+                    homebridge.toast.error("Could not request authorization token");
+                } finally {
+                    homebridge.hideSpinner();
+                    _log('validateStep3 - spinner hidden');
+                }
+            } else {
+                _log('validateStep3 - form invalid, abort');
             }
+        } catch (err) {
+            _logError('validateStep3 - error', err);
+            throw err;
         }
     }
 
     async function validateStep4() {
-        if (validateStep('step4Form')) {
-            const pluginConfig = await homebridge.getPluginConfig();
-            pluginConfig[0].oauthRefreshToken = document.getElementById('oauth-refresh-token').value;
+        _log('validateStep4 - start');
+        try {
+            if (validateStep('step4Form')) {
+                const pluginConfig = await homebridge.getPluginConfig();
+                _log('validateStep4 - got pluginConfig', pluginConfig);
+                pluginConfig[0].oauthRefreshToken = document.getElementById('oauth-refresh-token').value;
+                _log('validateStep4 - setting oauthRefreshToken ***');
 
-            await homebridge.updatePluginConfig(pluginConfig);
-            await homebridge.savePluginConfig();
+                await homebridge.updatePluginConfig(pluginConfig);
+                await homebridge.savePluginConfig();
 
-            homebridge.toast.success("Restart Homebridge to apply the changes.", "OAuth Config Saved");
+                homebridge.toast.success("Restart Homebridge to apply the changes.", "OAuth Config Saved");
 
-            hideWizard();
-            updateUi();
+                hideWizard();
+                updateUi();
+                _log('validateStep4 - complete');
+            } else {
+                _log('validateStep4 - form invalid, abort');
+            }
+        } catch (err) {
+            _logError('validateStep4 - error', err);
+            throw err;
         }
     }
 
     function nextStep() {
-        let activeTab = document.querySelector('.nav-pills .active');
-        let nextTab = activeTab.nextElementSibling;
-        if (nextTab) changeTab(nextTab);
+        _log('nextStep - start');
+        try {
+            let activeTab = document.querySelector('.nav-pills .active');
+            let nextTab = activeTab.nextElementSibling;
+            _log('nextStep - activeTab', activeTab ? activeTab.getAttribute('data-target') : null, 'nextTab', nextTab ? nextTab.getAttribute('data-target') : null);
+            if (nextTab) changeTab(nextTab);
+            _log('nextStep - done');
+        } catch (err) {
+            _logError('nextStep - error', err);
+            throw err;
+        }
     }
 
     function prevStep() {
-        let activeTab = document.querySelector('.nav-pills .active');
-        let prevTab = activeTab.previousElementSibling;
-        if (prevTab) changeTab(prevTab);
+        _log('prevStep - start');
+        try {
+            let activeTab = document.querySelector('.nav-pills .active');
+            let prevTab = activeTab.previousElementSibling;
+            _log('prevStep - activeTab', activeTab ? activeTab.getAttribute('data-target') : null, 'prevTab', prevTab ? prevTab.getAttribute('data-target') : null);
+            if (prevTab) changeTab(prevTab);
+            _log('prevStep - done');
+        } catch (err) {
+            _logError('prevStep - error', err);
+            throw err;
+        }
     }
 
     function changeTab(targetTab) {
-        document.querySelector('.nav-pills .active').classList.remove('active');
-        document.querySelector('.tab-pane.show').classList.remove('show', 'active');
+        _log('changeTab - start', targetTab ? targetTab.getAttribute('data-target') : targetTab);
+        try {
+            document.querySelector('.nav-pills .active').classList.remove('active');
+            document.querySelector('.tab-pane.show').classList.remove('show', 'active');
 
-        targetTab.classList.add('active');
-        document.querySelector(targetTab.getAttribute('data-target')).classList.add('show', 'active');
+            targetTab.classList.add('active');
+            document.querySelector(targetTab.getAttribute('data-target')).classList.add('show', 'active');
+            _log('changeTab - done', targetTab.getAttribute('data-target'));
+        } catch (err) {
+            _logError('changeTab - error', err);
+            throw err;
+        }
     }
 
     async function requestAuthCode() {
-        const authUrl = await homebridge.request('/authCode', {
-            clientId: document.getElementById('oauth-client-id').value,
-            clientSecret: document.getElementById('oauth-client-secret').value,
-            redirectUrl: document.getElementById('oauth-redirect-url').value,
-            scopes: document.getElementById('oauth-scopes').value
-        });
+        _log('requestAuthCode - start');
+        try {
+            const payload = {
+                clientId: document.getElementById('oauth-client-id').value,
+                clientSecret: document.getElementById('oauth-client-secret').value,
+                redirectUrl: document.getElementById('oauth-redirect-url').value,
+                scopes: document.getElementById('oauth-scopes').value
+            };
+            _log('requestAuthCode - payload', { clientId: payload.clientId ? '***' : '', redirectUrl: payload.redirectUrl, scopes: payload.scopes });
 
-        window.open(authUrl, "_blank");
+            const authUrl = await homebridge.request('/authCode', payload);
+            _log('requestAuthCode - got authUrl', authUrl);
+
+            window.open(authUrl, "_blank");
+            _log('requestAuthCode - window.open called');
+            return authUrl;
+        } catch (err) {
+            _logError('requestAuthCode - error', err);
+            throw err;
+        }
     }
 
     async function requestAuthToken() {
-        const authToken = await homebridge.request('/authToken', {
-            code: document.getElementById('oauth-code').value,
-            redirectUrl: document.getElementById('oauth-redirect-url').value,
-            scopes: document.getElementById('oauth-scopes').value
-        });
+        _log('requestAuthToken - start');
+        try {
+            const payload = {
+                code: document.getElementById('oauth-code').value,
+                redirectUrl: document.getElementById('oauth-redirect-url').value,
+                scopes: document.getElementById('oauth-scopes').value
+            };
+            _log('requestAuthToken - payload', { code: payload.code ? '***' : '', redirectUrl: payload.redirectUrl, scopes: payload.scopes });
 
-        document.getElementById('oauth-access-token').value = authToken.access_token;
-        document.getElementById('oauth-refresh-token').value = authToken.refresh_token;
+            const authToken = await homebridge.request('/authToken', payload);
+            _log('requestAuthToken - got authToken', { access: authToken?.access_token ? '***' : null, refresh: authToken?.refresh_token ? '***' : null });
+
+            document.getElementById('oauth-access-token').value = authToken.access_token;
+            document.getElementById('oauth-refresh-token').value = authToken.refresh_token;
+            _log('requestAuthToken - tokens set in UI');
+            return authToken;
+        } catch (err) {
+            _logError('requestAuthToken - error', err);
+            throw err;
+        }
     }
 
+    _log('initializing - calling updateUi');
     updateUi();
 
     window.homebridge.addEventListener('configChanged', (event) => {
+        _log('homebridge.configChanged event received', event);
         updateUi();
     });
 </script>
