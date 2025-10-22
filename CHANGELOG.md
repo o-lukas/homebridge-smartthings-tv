@@ -1,3 +1,10 @@
+# [3.0.0-alpha.4](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2025-10-22)
+
+
+### Features
+
+* generate CHANGELOG.md ([b4a545a](https://github.com/o-lukas/homebridge-smartthings-tv/commit/b4a545acebe093375f5ec66c24e0bdf28fab8762))
+
 # Changelog
 
 ## [3.0.0-alpha.3](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2025-10-22)
