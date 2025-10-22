@@ -1,4 +1,6 @@
 name: Build and Lint
+permissions:
+  contents: write
 
 on: [push, pull_request]
 
