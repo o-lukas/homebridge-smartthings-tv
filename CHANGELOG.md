@@ -1,3 +1,10 @@
+# [3.0.0-alpha.6](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2025-10-23)
+
+
+### Bug Fixes
+
+* ensure correct token type when saving refresh token ([1b95411](https://github.com/o-lukas/homebridge-smartthings-tv/commit/1b95411bd8b154c26c8098bf4f3496007f0e3cb0)), closes [#494](https://github.com/o-lukas/homebridge-smartthings-tv/issues/494)
+
 # [3.0.0-alpha.5](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2025-10-23)
 
 
