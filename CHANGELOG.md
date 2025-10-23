@@ -1,3 +1,25 @@
+# [3.0.0](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v2.8.0...v3.0.0) (2025-10-23)
+
+
+### Bug Fixes
+
+* bump ping from 0.4.4 to 1.0.0 ([9dc0124](https://github.com/o-lukas/homebridge-smartthings-tv/commit/9dc012417c7f82153a42079a80eb5d26e5999659))
+* don't close wizard when configChanged callback is called ([5c13355](https://github.com/o-lukas/homebridge-smartthings-tv/commit/5c133559985afe6c4370c6e41ef7d65876adff05)), closes [#494](https://github.com/o-lukas/homebridge-smartthings-tv/issues/494)
+* ensure correct token type when saving refresh token ([4ec7558](https://github.com/o-lukas/homebridge-smartthings-tv/commit/4ec75586268f512694b2aa392177886955742f56)), closes [#494](https://github.com/o-lukas/homebridge-smartthings-tv/issues/494)
+* prevent null assigns of OAuth client id & secret ([d0f57b4](https://github.com/o-lukas/homebridge-smartthings-tv/commit/d0f57b49577bbcdaf747e12af1371547ad0e6d63))
+
+
+### Features
+
+* add logging to custom UI ([f1908b4](https://github.com/o-lukas/homebridge-smartthings-tv/commit/f1908b4c84762844d5a99f704baf6b7c4a48199f))
+* generate CHANGELOG.md ([7af8618](https://github.com/o-lukas/homebridge-smartthings-tv/commit/7af8618a78dd59d3ad11aa125e04c2d7b165edd2))
+* make plugin ready for homebridge v2 ([1011561](https://github.com/o-lukas/homebridge-smartthings-tv/commit/10115613abf7170625080401937e3e34de5258ab))
+
+
+### BREAKING CHANGES
+
+* drop support for node v18
+
 # [3.0.0-alpha.6](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2025-10-23)
 
 
