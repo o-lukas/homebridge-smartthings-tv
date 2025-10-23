@@ -337,6 +337,7 @@
                 const pluginConfig = await homebridge.getPluginConfig();
                 _log('validateStep4 - got pluginConfig', pluginConfig);
                 pluginConfig[0].oauthRefreshToken = document.getElementById('oauth-refresh-token').value;
+                pluginConfig[0].tokenType = "oauth";
                 _log('validateStep4 - setting oauthRefreshToken ***');
 
                 await homebridge.updatePluginConfig(pluginConfig);
