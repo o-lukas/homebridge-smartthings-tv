@@ -1,3 +1,10 @@
+# [3.0.0-alpha.5](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2025-10-23)
+
+
+### Bug Fixes
+
+* prevent null assigns of OAuth client id & secret ([5b43f4b](https://github.com/o-lukas/homebridge-smartthings-tv/commit/5b43f4b561903aa16f54f0816b6f5473781b2bc1))
+
 # [3.0.0-alpha.4](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2025-10-22)
 
 ### Features
