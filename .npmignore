@@ -135,3 +135,6 @@ web_modules/
 
 # devcontainer files
 .devcontainer
+
+# Test directories
+test/

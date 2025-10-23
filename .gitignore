@@ -118,3 +118,8 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+
+# Test directories
+/test/hbConfig/accessories
+/test/hbConfig/backups
+/test/hbConfig/persist
