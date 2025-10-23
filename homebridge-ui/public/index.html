@@ -191,14 +191,15 @@
         }
     }
 
-    function hideWizard() {
+    function hideWizard(disablePatWarning) {
         _log('hideWizard - start');
         try {
             homebridge.enableSaveButton();
             homebridge.showSchemaForm();
             document.getElementById('wizard').style.display = "none";
             document.getElementById('oauth-start').style.display = "block";
-            document.getElementById('pat-warning').style.display = "none";
+            document.getElementById('pat-warning').style.display =
+                disablePatWarning ? "none" : "block";
             _log('hideWizard - done');
         } catch (err) {
             _logError('hideWizard - error', err);
@@ -227,36 +228,12 @@
                 _log('updateUi - default pluginConfig saved');
             }
 
-            // Update UI elements but avoid closing the wizard if it's already open.
-            switch (pluginConfig[0].tokenType) {
-                case "oauth":
-                    _log('updateUi - tokenType oauth');
-                    homebridge.showSchemaForm();
-                    // Only toggle wizard visibility when it's not currently open.
-                    if (!wizardOpen) {
-                        document.getElementById('wizard').style.display = "none";
-                        document.getElementById('oauth-start').style.display = "block";
-                        document.getElementById('pat-warning').style.display = "none";
-                        _log('updateUi - wizard was closed, showing oauth-start');
-                    } else {
-                        _log('updateUi - wizard open, leaving wizard visible');
-                    }
-                    break;
-
-                case "pat":
-                default:
-                    _log('updateUi - tokenType pat or default', pluginConfig[0].tokenType);
-                    homebridge.showSchemaForm();
-                    if (!wizardOpen) {
-                        document.getElementById('wizard').style.display = "none";
-                        document.getElementById('oauth-start').style.display = "none";
-                        document.getElementById('pat-warning').style.display =
-                            pluginConfig[0].disablePatWarning === true ? "none" : "block";
-                        _log('updateUi - wizard was closed, applied pat/default visibility');
-                    } else {
-                        _log('updateUi - wizard open, leaving wizard visible');
-                    }
-                    break;
+            if (wizardOpen) {
+                showWizard();
+                _log('updateUi - wizard open, leaving wizard visible');
+            } else {
+                hideWizard(pluginConfig[0].disablePatWarning === true);
+                _log('updateUi - wizard was closed');
             }
 
             document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId ?? '';
