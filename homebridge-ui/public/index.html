@@ -236,8 +236,12 @@
                 _log('updateUi - wizard was closed');
             }
 
-            document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId ?? '';
-            document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret ?? '';
+            if (pluginConfig[0].oauthClientId) {
+                document.getElementById('oauth-client-id').value = pluginConfig[0].oauthClientId;
+            }
+            if (pluginConfig[0].oauthClientSecret) {
+                document.getElementById('oauth-client-secret').value = pluginConfig[0].oauthClientSecret;
+            }
 
             _log('updateUi - end');
         } catch (err) {
