@@ -2,7 +2,7 @@
   "displayName": "Homebridge SmartThings TV",
   "name": "@o-lukas/homebridge-smartthings-tv",
   "type": "module",
-  "version": "3.0.0-alpha.5",
+  "version": "3.0.0-alpha.6",
   "description": "This is a plugin for Homebridge. It offers some basic functions to control Samsung TVs using the SmartThings API.",
   "author": "o-lukas",
   "license": "MIT",
