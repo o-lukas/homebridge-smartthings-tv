@@ -49,10 +49,10 @@
     "@types/node": "^24.10.1",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "eslint": "^9.39.1",
-    "homebridge": "^2.0.0-beta.56",
+    "homebridge": "^2.0.0-beta.63",
     "nodemon": "^3.1.11",
     "rimraf": "^6.1.2",
     "semantic-release": "^25.0.2",
@@ -60,7 +60,7 @@
     "@semantic-release/git": "10.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.47.0"
+    "typescript-eslint": "^8.48.0"
   },
   "release": {
     "plugins": [
