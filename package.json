@@ -46,13 +46,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@types/node": "^25.0.2",
+    "@types/node": "^25.0.10",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.49.0",
-    "@typescript-eslint/parser": "^8.49.0",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
     "eslint": "^9.39.2",
-    "homebridge": "^2.0.0-beta.64",
+    "homebridge": "^2.0.0-beta.68",
     "nodemon": "^3.1.11",
     "rimraf": "^6.1.2",
     "semantic-release": "^25.0.2",
@@ -60,7 +60,7 @@
     "@semantic-release/git": "10.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "typescript-eslint": "^8.53.1"
   },
   "release": {
     "plugins": [
