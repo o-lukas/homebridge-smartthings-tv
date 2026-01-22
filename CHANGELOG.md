@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.2...v3.0.3) (2026-01-22)
+
+
+### Bug Fixes
+
+* **deps-dev:** bump lodash-es from 4.17.21 to 4.17.23 ([ba2bd9a](https://github.com/o-lukas/homebridge-smartthings-tv/commit/ba2bd9a6df382849016dac8e5a48d555a6e22586))
+
 ## [3.0.2](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.1...v3.0.2) (2025-11-23)
 
 
