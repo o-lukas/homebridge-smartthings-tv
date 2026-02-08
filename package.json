@@ -45,22 +45,22 @@
     "wol": "^1.0.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/node": "^25.0.10",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.2.2",
     "@types/ping": "^0.4.4",
     "@types/wol": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.53.1",
-    "@typescript-eslint/parser": "^8.53.1",
-    "eslint": "^9.39.2",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
+    "eslint": "^10.0.0",
     "homebridge": "^2.0.0-beta.69",
     "nodemon": "^3.1.11",
     "rimraf": "^6.1.2",
-    "semantic-release": "^25.0.2",
+    "semantic-release": "^25.0.3",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1"
+    "typescript-eslint": "^8.54.0"
   },
   "release": {
     "plugins": [
