@@ -1,3 +1,10 @@
+## [3.0.7](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.6...v3.0.7) (2026-03-13)
+
+
+### Bug Fixes
+
+* **deps:** bump tar and npm ([44aad0f](https://github.com/o-lukas/homebridge-smartthings-tv/commit/44aad0f736ecd4d9d421bfef6c2666343d4a7866))
+
 ## [3.0.6](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.5...v3.0.6) (2026-03-08)
 
 
