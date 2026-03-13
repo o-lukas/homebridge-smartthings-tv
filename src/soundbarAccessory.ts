@@ -89,8 +89,6 @@ export class SoundbarAccessory extends SmartThingsAccessory {
    * @param capability the Capability
    */
   private async registerCapability(capability: Capability) {
-    let inputSourcePollingStarted = false;
-
     if (this.logCapabilities) {
       this.logDebug('Available capability: %s', JSON.stringify(capability, null, 2));
     }
@@ -141,12 +139,8 @@ export class SoundbarAccessory extends SmartThingsAccessory {
           this.service.getCharacteristic(this.platform.Characteristic.ActiveIdentifier)
             .onSet(this.setActiveIdentifier.bind(this))
             .onGet(this.getActiveIdentifier.bind(this));
-
-          if (!inputSourcePollingStarted) {
-            inputSourcePollingStarted = true;
-            this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
-              this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
-          }
+          this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
+            this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
         }
         break;
     }

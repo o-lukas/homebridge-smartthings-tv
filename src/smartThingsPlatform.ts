@@ -81,7 +81,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
  - adjust your configuration because deviceBlacklist will be removed in future versions');
       }
 
-      let authenticator = undefined;
+      let authenticator;
       switch (this.config.tokenType) {
         case 'oauth':
           authenticator = new RefreshTokenAuthenticator(config.oauthRefreshToken as string, this);
@@ -90,6 +90,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
         case 'pat':
         default:
           authenticator = new BearerTokenAuthenticator(config.token as string);
+          break;
       }
 
       this.discoverDevices(authenticator,
