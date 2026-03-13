@@ -198,7 +198,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @param capability the Capability
    */
   private async registerCapability(capability: Capability) {
-    let inputSourcePollingStarted = false;
+    const inputSourcePollingStarted = false;
 
     if (this.logCapabilities) {
       this.logDebug('Available capability: %s', JSON.stringify(capability, null, 2));
@@ -264,7 +264,6 @@ export class TvAccessory extends SmartThingsAccessory {
             .onGet(this.getActiveIdentifier.bind(this));
 
           if (!inputSourcePollingStarted) {
-            inputSourcePollingStarted = true;
             this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
               this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
           }
@@ -300,7 +299,6 @@ export class TvAccessory extends SmartThingsAccessory {
               .onGet(this.getActiveIdentifier.bind(this));
 
             if (!inputSourcePollingStarted) {
-              inputSourcePollingStarted = true;
               this.startStatusPolling('activeIdentifier', this.service, this.platform.Characteristic.ActiveIdentifier,
                 this.getActiveIdentifier.bind(this, this.cyclicCallsLogging), this.pollingInterval);
             }
