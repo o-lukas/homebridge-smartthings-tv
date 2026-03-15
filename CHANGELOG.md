@@ -1,3 +1,10 @@
+## [3.0.8](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.7...v3.0.8) (2026-03-15)
+
+
+### Bug Fixes
+
+* bump @smartthings/core-sdk from 8.5.0 to 8.5.1 ([0aa6d4d](https://github.com/o-lukas/homebridge-smartthings-tv/commit/0aa6d4d3b5f9ac915a9651692bd0df8bbd0c0de7))
+
 ## [3.0.7](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.6...v3.0.7) (2026-03-13)
 
 
