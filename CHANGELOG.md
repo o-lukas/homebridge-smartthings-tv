@@ -1,3 +1,10 @@
+## [3.0.10](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.9...v3.0.10) (2026-04-03)
+
+
+### Bug Fixes
+
+* **deps:** bump picomatch ([70e4ddf](https://github.com/o-lukas/homebridge-smartthings-tv/commit/70e4ddfdfcd47304ca601d2973d575c62552c7ef))
+
 ## [3.0.9](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.8...v3.0.9) (2026-03-22)
 
 
