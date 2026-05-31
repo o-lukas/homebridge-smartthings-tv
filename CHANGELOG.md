@@ -1,3 +1,10 @@
+## [3.0.11](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.10...v3.0.11) (2026-05-31)
+
+
+### Bug Fixes
+
+* bump @homebridge/plugin-ui-utils from 2.2.3 to 2.2.4 ([4baa908](https://github.com/o-lukas/homebridge-smartthings-tv/commit/4baa9082d919ff4333e4ec1b2db821a634b7372a))
+
 ## [3.0.10](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.9...v3.0.10) (2026-04-03)
 
 
