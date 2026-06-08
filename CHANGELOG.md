@@ -1,3 +1,10 @@
+## [3.0.12](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.11...v3.0.12) (2026-06-08)
+
+
+### Bug Fixes
+
+* bump axios and @smartthings/core-sdk ([1f376fc](https://github.com/o-lukas/homebridge-smartthings-tv/commit/1f376fc0f983cdbb5f57796e87b937c341034216))
+
 ## [3.0.11](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.10...v3.0.11) (2026-05-31)
 
 
