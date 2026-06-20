@@ -1,3 +1,10 @@
+## [3.0.14](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.13...v3.0.14) (2026-06-20)
+
+
+### Bug Fixes
+
+* bump js-yaml from 4.1.1 to 4.2.0 ([b584da2](https://github.com/o-lukas/homebridge-smartthings-tv/commit/b584da213ba7935a32ea74273266fdb5cf6e35ef))
+
 ## [3.0.13](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.12...v3.0.13) (2026-06-20)
 
 
