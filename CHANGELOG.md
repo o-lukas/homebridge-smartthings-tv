@@ -1,3 +1,10 @@
+## [3.0.13](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.12...v3.0.13) (2026-06-20)
+
+
+### Bug Fixes
+
+* bump undici from 6.24.1 to 6.27.0 ([f744a98](https://github.com/o-lukas/homebridge-smartthings-tv/commit/f744a98f74b5ed6669dd82a3b4ed5bb8310c6229))
+
 ## [3.0.12](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.11...v3.0.12) (2026-06-08)
 
 
