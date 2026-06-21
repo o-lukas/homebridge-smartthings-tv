@@ -1,3 +1,12 @@
+## [3.0.15](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.14...v3.0.15) (2026-06-21)
+
+
+### Bug Fixes
+
+* bump actions/checkout from 6 to 7 ([b3d2770](https://github.com/o-lukas/homebridge-smartthings-tv/commit/b3d27702a2b0cf34973fab6ac492eb2cd61708de))
+* bump form-data from 4.0.5 to 4.0.6 ([08bf8af](https://github.com/o-lukas/homebridge-smartthings-tv/commit/08bf8af1c70c3429bfa8ab67855913201b6f4667))
+* bump tar and npm ([d4a8cd4](https://github.com/o-lukas/homebridge-smartthings-tv/commit/d4a8cd490a80de77b7f625354799e5821c6511c4))
+
 ## [3.0.14](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.13...v3.0.14) (2026-06-20)
 
 
