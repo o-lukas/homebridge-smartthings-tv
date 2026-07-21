@@ -1,3 +1,10 @@
+## [3.0.16](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.15...v3.0.16) (2026-07-21)
+
+
+### Bug Fixes
+
+* bump brace-expansion from 5.0.5 to 5.0.6 ([597d077](https://github.com/o-lukas/homebridge-smartthings-tv/commit/597d077fb2f50509fe1a684f5edac85102a26fdb))
+
 ## [3.0.15](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.14...v3.0.15) (2026-06-21)
 
 
