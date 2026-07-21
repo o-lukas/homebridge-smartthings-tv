@@ -1,3 +1,12 @@
+## [3.0.17](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.16...v3.0.17) (2026-07-21)
+
+
+### Bug Fixes
+
+* bump @homebridge/plugin-ui-utils from 2.2.4 to 2.2.5 ([211c5f5](https://github.com/o-lukas/homebridge-smartthings-tv/commit/211c5f5b1cd0647475c67544c0d08680c1cfecba))
+* bump actions/setup-node from 6 to 7 ([e1ab6c7](https://github.com/o-lukas/homebridge-smartthings-tv/commit/e1ab6c7b9280f7bf430bcb841f6070039b4bb702))
+* bump tar and npm ([b056fce](https://github.com/o-lukas/homebridge-smartthings-tv/commit/b056fce4d5c51f1dde9cfe910725e0fafb2c6c49))
+
 ## [3.0.16](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.15...v3.0.16) (2026-07-21)
 
 
