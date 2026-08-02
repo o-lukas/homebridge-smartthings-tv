@@ -1,3 +1,10 @@
+## [3.0.18](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.17...v3.0.18) (2026-08-02)
+
+
+### Bug Fixes
+
+* bump actions/stale from 10 to 11 ([431cbf1](https://github.com/o-lukas/homebridge-smartthings-tv/commit/431cbf1498e59b3f176ef730a7bd22d8818a389a))
+
 ## [3.0.17](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.16...v3.0.17) (2026-07-21)
 
 
