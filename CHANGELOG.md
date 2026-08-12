@@ -1,3 +1,12 @@
+## [3.0.19](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.18...v3.0.19) (2026-08-12)
+
+
+### Bug Fixes
+
+* bump @smartthings/core-sdk from 8.5.2 to 8.5.3 ([0aae027](https://github.com/o-lukas/homebridge-smartthings-tv/commit/0aae027ecff7283f7e1a42a8f9ab0cdf363acd87))
+* bump js-yaml from 4.2.0 to 4.3.1 ([52e478b](https://github.com/o-lukas/homebridge-smartthings-tv/commit/52e478b20001e5514034edd45dc213e094f0ddb3))
+* bump undici ([77f05cf](https://github.com/o-lukas/homebridge-smartthings-tv/commit/77f05cfd9ffe3747effef7b8ae846c3a098c2ed6))
+
 ## [3.0.18](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.17...v3.0.18) (2026-08-02)
 
 
