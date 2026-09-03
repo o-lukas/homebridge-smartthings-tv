@@ -1,3 +1,10 @@
+## [3.0.22](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.21...v3.0.22) (2026-09-03)
+
+
+### Bug Fixes
+
+* bump qs from 6.15.3 to 6.16.0 ([e02a83a](https://github.com/o-lukas/homebridge-smartthings-tv/commit/e02a83ae3b04268f3c04ffe6f39a26641b4b2c8f))
+
 ## [3.0.21](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.20...v3.0.21) (2026-08-30)
 
 
