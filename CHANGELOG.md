@@ -1,3 +1,10 @@
+## [3.0.23](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.22...v3.0.23) (2026-09-06)
+
+
+### Bug Fixes
+
+* bump @humanfs/node from 0.16.7 to 0.16.8 ([f1dab72](https://github.com/o-lukas/homebridge-smartthings-tv/commit/f1dab72d456a72f6415de2b9522ccbceb1577f36))
+
 ## [3.0.22](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.21...v3.0.22) (2026-09-03)
 
 
