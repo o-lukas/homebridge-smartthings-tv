@@ -1,3 +1,11 @@
+## [3.0.24](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.23...v3.0.24) (2026-09-13)
+
+
+### Bug Fixes
+
+* bump joi from 17.13.3 to 17.13.7 ([d328068](https://github.com/o-lukas/homebridge-smartthings-tv/commit/d3280680e15a30440b3a8043e4f3fe486740481d))
+* bump js-yaml from 4.3.1 to 4.3.2 ([17a0afc](https://github.com/o-lukas/homebridge-smartthings-tv/commit/17a0afc2e61f18960a8d93f42fc3a6a510f6a3e8))
+
 ## [3.0.23](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.22...v3.0.23) (2026-09-06)
 
 
