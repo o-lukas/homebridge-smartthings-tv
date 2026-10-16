@@ -1,3 +1,13 @@
+## [3.0.25](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.24...v3.0.25) (2026-10-16)
+
+
+### Bug Fixes
+
+* bump brace-expansion from 5.0.7 to 5.0.12 ([1295f4c](https://github.com/o-lukas/homebridge-smartthings-tv/commit/1295f4caba3d6ad52bdb77a20b27e57a3ef34ec2))
+* bump handlebars from 4.7.9 to 4.7.10 ([4b9dcb4](https://github.com/o-lukas/homebridge-smartthings-tv/commit/4b9dcb4f2ba9f22213767e8edcd1313fbcd190fc))
+* bump joi from 17.13.7 to 17.13.8 ([f375a65](https://github.com/o-lukas/homebridge-smartthings-tv/commit/f375a6553f1527c79da71e9481613618df3ee0ea))
+* bump undici ([d6142f9](https://github.com/o-lukas/homebridge-smartthings-tv/commit/d6142f9de2d709b5dff0f39742bd28b9ff6e6be8))
+
 ## [3.0.24](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.23...v3.0.24) (2026-09-13)
 
 
