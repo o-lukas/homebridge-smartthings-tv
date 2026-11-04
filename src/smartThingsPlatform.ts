@@ -24,6 +24,7 @@ import {
   BearerTokenAuthenticator,
 } from '@smartthings/core-sdk';
 import { SwitchAccessory } from './switchAccessory.js';
+import { ArtModeSwitchAccessory } from './artModeSwitchAccessory.js';
 import { SliderAccessory } from './sliderAccessory.js';
 import { SoundbarAccessory } from './soundbarAccessory.js';
 import path from 'path';
@@ -322,6 +323,14 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       }
     }
 
+    if (this.config.registerArtModeSwitch) {
+      if (await tv.supportsArtMode()) {
+        this.registerArtModeSwitch(client, device, component, tv);
+      } else {
+        this.log.warn('Art mode switch can not be registered because the device does not support art mode');
+      }
+    }
+
     if (this.config.registerAmbientModes) {
       const modes = await tv.getAmbientModes();
       if (modes) {
@@ -444,6 +453,36 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       accessory.category = this.api.hap.Categories.SWITCH;
 
       new SwitchAccessory(device, component, client, this.log, this, accessory, capability, command, value, stateful);
+
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+    }
+  }
+
+  /**
+   * Register the art mode switch of the device passed in as platform accessory.
+   * Handles caching of accessories as well.
+   *
+   * @param client the SmartThingsClient used to send API calls
+   * @param device the SmartThings Device
+   * @param component the SmartThings Device's Component
+   * @param tv the TvAccessory of the device
+   */
+  registerArtModeSwitch(client: SmartThingsClient, device: Device, component: Component, tv: TvAccessory) {
+    const name = 'Art mode';
+    const id = this.api.hap.uuid.generate(`${device.deviceId}${name}`);
+    const pollInterval = this.config.pollInterval as number ?? undefined;
+
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
+    if (existingAccessory) {
+      this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
+
+      new ArtModeSwitchAccessory(device, component, client, this.log, this, existingAccessory, pollInterval, tv);
+    } else {
+      const accessory = new this.api.platformAccessory(name, id);
+      accessory.context.device = device;
+      accessory.category = this.api.hap.Categories.SWITCH;
+
+      new ArtModeSwitchAccessory(device, component, client, this.log, this, accessory, pollInterval, tv);
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
