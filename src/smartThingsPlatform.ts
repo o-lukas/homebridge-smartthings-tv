@@ -42,7 +42,8 @@ class DeviceMapping {
     public readonly applications: [{ name: string; ids: [string] }],
     public readonly validateApplications: boolean,
     public readonly infoKey: string,
-    public readonly category: number) {
+    public readonly category: number,
+    public readonly powerButtonOption: string | undefined) {
   }
 }
 
@@ -289,6 +290,7 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
       deviceMapping?.inputSources,
       deviceMapping?.applications,
       deviceMapping?.infoKey,
+      deviceMapping?.powerButtonOption ?? this.config.defaultPowerButtonOption,
     );
     await tv.registerCapabilities();
 
