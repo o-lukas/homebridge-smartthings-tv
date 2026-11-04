@@ -117,6 +117,33 @@
         "required": false,
         "description": "Register all input sources as seperate stateless switches that can be toggled to switch to input source."
       },
+      "registerArtModeSwitch": {
+        "title": "Register \"Art mode\" switch",
+        "type": "boolean",
+        "required": false,
+        "description": "Registers a switch that can be toggled to enable \"Art mode\" - only registered for devices that support it."
+      },
+      "defaultPowerButtonOption": {
+        "title": "Default power button option",
+        "type": "string",
+        "default": "on-off",
+        "required": false,
+        "description": "The power button option used for all discovered TVs. \"Art/TV\" is only supported by TVs that support \"Art mode\" - TVs that do not support it fall back to \"On/Off\". Can be overridden per device using the device mappings.",
+        "oneOf": [
+          {
+            "title": "On/Off",
+            "enum": [
+              "on-off"
+            ]
+          },
+          {
+            "title": "Art/TV",
+            "enum": [
+              "art-tv"
+            ]
+          }
+        ]
+      },
       "pollInterval": {
         "title": "State polling interval [ms]",
         "type": "number",
@@ -148,6 +175,26 @@
               "title": "Name override",
               "type": "string",
               "description": "Use this to override the default display name of the device. Must be configured here because name configured in HomeKit will get lost after restart."
+            },
+            "powerButtonOption": {
+              "title": "Power button option",
+              "type": "string",
+              "default": "on-off",
+              "description": "Use this to override the default power button option for this device. \"Art/TV\" is only supported by TVs that support \"Art Mode\", and falls back to \"On/Off\" for all other devices.",
+              "oneOf": [
+                {
+                  "title": "On/Off",
+                  "enum": [
+                    "on-off"
+                  ]
+                },
+                {
+                  "title": "Art/TV",
+                  "enum": [
+                    "art-tv"
+                  ]
+                }
+              ]
             },
             "wol": {
               "title": "Wake-on-lan functionality",
