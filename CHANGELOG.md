@@ -1,3 +1,21 @@
+# [3.1.0](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.25...v3.1.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* bump @homebridge/plugin-ui-utils from 2.2.6 to 2.2.7 ([c760bf8](https://github.com/o-lukas/homebridge-smartthings-tv/commit/c760bf812b353b5dc37afb6bb82d045e089b091b))
+* bump @smartthings/core-sdk from 8.5.4 to 9.0.0 ([9a6d4b5](https://github.com/o-lukas/homebridge-smartthings-tv/commit/9a6d4b51fb08dfe1b2005790e09d65a0d2a6d0b9))
+* bump follow-redirects from 1.16.0 to 1.16.1 ([a124561](https://github.com/o-lukas/homebridge-smartthings-tv/commit/a12456110f3c5a53e44b75e705b18da9fe5afb19))
+* bump follow-redirects from 1.16.1 to 1.16.2 ([68728c9](https://github.com/o-lukas/homebridge-smartthings-tv/commit/68728c9bb219afea7a9e811f0dad445aa38f7d36))
+* bump joi from 17.13.8 to 17.13.9 ([bd308fa](https://github.com/o-lukas/homebridge-smartthings-tv/commit/bd308fadcb75f1c4011e74f4efda1190d8a3c64d))
+* bump qs from 6.16.0 to 6.17.1 ([7b57dbd](https://github.com/o-lukas/homebridge-smartthings-tv/commit/7b57dbda08b586be65e91727a865f542922f3a81))
+* bump undici ([932c230](https://github.com/o-lukas/homebridge-smartthings-tv/commit/932c2304411dbe6c25d85006dfd18623e8dfda09))
+
+
+### Features
+
+* add support for "Art mode" ([#590](https://github.com/o-lukas/homebridge-smartthings-tv/issues/590)) ([4d5992f](https://github.com/o-lukas/homebridge-smartthings-tv/commit/4d5992fcc0bee1f8f3cd9d2254a2ee4e021dd084))
+
 ## [3.0.25](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.24...v3.0.25) (2026-10-16)
 
 
