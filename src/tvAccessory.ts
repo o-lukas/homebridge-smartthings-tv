@@ -9,6 +9,11 @@ import { Apps } from './tvApps.js';
 import axios from 'axios';
 
 /**
+ * Valid options for the behavior of the TV's power button.
+ */
+type PowerButtonOption = 'on-off' | 'art-tv';
+
+/**
  * Class implements a SmartThings TV accessory.
  */
 export class TvAccessory extends SmartThingsAccessory {
@@ -16,6 +21,7 @@ export class TvAccessory extends SmartThingsAccessory {
   private speakerService: Service | undefined = undefined;
   private inputSourceServices: Service[] = [];
   private capabilities: string[] = [];
+  private powerButtonOption: PowerButtonOption = 'on-off';
   private activeIdentifierChangeTime = 0;
   private activeIdentifierChangeValue = 0;
 
@@ -37,6 +43,7 @@ export class TvAccessory extends SmartThingsAccessory {
     private readonly inputSources: { name: string; id: string }[] | undefined = undefined,
     private readonly applications: { name: string; ids: string[] }[] | undefined = undefined,
     private readonly informationKey: string | undefined = undefined,
+    private readonly configuredPowerButtonOption: string | undefined = undefined,
   ) {
     super(device, component, client, platform, accessory, log);
 
@@ -58,6 +65,8 @@ export class TvAccessory extends SmartThingsAccessory {
    */
   public async registerCapabilities() {
     this.logInfo('Registering capabilities for component %s', this.component.id);
+
+    await this.resolvePowerButtonOption();
 
     for (const reference of this.component.capabilities) {
       try {
@@ -190,6 +199,38 @@ export class TvAccessory extends SmartThingsAccessory {
    */
   public hasSpeakerService(): boolean {
     return this.speakerService !== undefined;
+  }
+
+  /**
+   * Checks whether the device supports art mode.
+   *
+   * @returns TRUE in case art mode is supported - FALSE otherwise
+   */
+  public async supportsArtMode(): Promise<boolean> {
+    const status = await this.getCapabilityStatus('samsungvd.supportsFeatures', false);
+    return (status?.data as { value?: { artSupported?: unknown } } | undefined)?.value?.artSupported === true;
+  }
+
+  /**
+   * Checks whether the TV is currently showing art mode.
+   *
+   * @returns TRUE in case the TV is in art mode - FALSE otherwise
+   */
+  public async isInArtMode(): Promise<boolean> {
+    const status = await this.getCapabilityStatus('tvChannel', false);
+    return status?.tvChannelName?.value === 'art';
+  }
+
+  /**
+   * Leaves art mode by re-selecting the TV's current input source.
+   */
+  public async leaveArtMode() {
+    const status = await this.getCapabilityStatus('samsungvd.mediaInputSource', false);
+    const current = status?.inputSource?.value as string | undefined;
+    const supported = status?.supportedInputSourcesMap?.value as { id: string; name: string }[] | undefined;
+    const target = supported?.find(s => s.id === current)?.name ?? supported?.[0]?.name ?? 'TV';
+    this.logDebug('Leaving art mode by selecting input source: %s', target);
+    await this.executeCommand('samsungvd.mediaInputSource', 'setInputSource', [target]);
   }
 
   /**
@@ -330,7 +371,10 @@ export class TvAccessory extends SmartThingsAccessory {
   private async setActive(value: CharacteristicValue) {
     this.logDebug('Set active to: %s', value);
     if (value) {
-      if (this.macAddress) {
+      if (this.powerButtonOption === 'art-tv' && await this.isInArtMode()) {
+        // The TV is powered (switch is on) in art mode, so neither wake-on-lan nor the switch command would leave it
+        await this.leaveArtMode();
+      } else if (this.macAddress) {
         this.logDebug('Use wake-on-lan functionality because mac-address has been configured');
 
         if (await wake(this.macAddress)) {
@@ -341,6 +385,9 @@ export class TvAccessory extends SmartThingsAccessory {
       } else {
         await this.executeCommand('switch', 'on');
       }
+    } else if (this.powerButtonOption === 'art-tv') {
+      this.logDebug('Switching to art mode instead of powering off');
+      await this.executeCommand('samsungvd.art', 'setArtOn');
     } else {
       await this.executeCommand('switch', 'off');
     }
@@ -353,6 +400,11 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the CharacteristicValue
    */
   private async getActive(log = true): Promise<CharacteristicValue> {
+    if (this.powerButtonOption === 'art-tv' && await this.isInArtMode()) {
+      // The TV is still powered (and reachable) in art mode, but should show as off in HomeKit
+      return false;
+    }
+
     if (this.ipAddress) {
       try {
         const status = await ping.promise.probe(this.ipAddress);
@@ -702,5 +754,25 @@ ping command fails mostly because of permission issues - falling back to SmartTh
     } else {
       return this.platform.Characteristic.InputSourceType.OTHER;
     }
+  }
+
+  /**
+   * Resolves the power button option from the configured value. Falls back to "On/Off" in case the option is not configured or
+   * invalid, or if "Art/TV" has been selected, but the device does not support art mode.
+   */
+  private async resolvePowerButtonOption() {
+    this.powerButtonOption = 'on-off';
+
+    if (this.configuredPowerButtonOption === 'art-tv') {
+      if (await this.supportsArtMode()) {
+        this.powerButtonOption = 'art-tv';
+      } else {
+        this.logWarn('Power button option Art/TV has been configured but the device does not support art mode - using On/Off instead');
+      }
+    } else if (this.configuredPowerButtonOption !== undefined && this.configuredPowerButtonOption !== 'on-off') {
+      this.logWarn('Ignoring invalid power button option \'%s\' - using On/Off instead', this.configuredPowerButtonOption);
+    }
+
+    this.logInfo('Power button option is %s', this.powerButtonOption === 'art-tv' ? 'Art/TV' : 'On/Off');
   }
 }
