@@ -19,6 +19,7 @@ export class ArtModeSwitchAccessory extends SmartThingsAccessory {
     platform: SmartThingsPlatform,
     accessory: PlatformAccessory,
     private readonly pollingInterval: number | undefined,
+    private readonly cyclicCallsLogging: boolean,
     private readonly tv: TvAccessory,
   ) {
     super(device, component, client, platform, accessory, log);
@@ -30,17 +31,17 @@ export class ArtModeSwitchAccessory extends SmartThingsAccessory {
       .onSet(this.handleSet.bind(this));
 
     this.startStatusPolling('tvChannel', this.service, this.platform.Characteristic.On,
-      this.handleGet.bind(this), this.pollingInterval);
+      this.handleGet.bind(this, this.cyclicCallsLogging), this.pollingInterval);
   }
 
-  private async handleGet(): Promise<CharacteristicValue> {
-    return await this.tv.isInArtMode();
+  private async handleGet(log = true): Promise<CharacteristicValue> {
+    return await this.tv.isInArtMode(log);
   }
 
   private async handleSet(value: CharacteristicValue) {
     this.logDebug('Set art mode to: %s', value);
     if (value) {
-      await this.executeCommand('samsungvd.art', 'setArtOn');
+      await this.tv.enterArtMode();
     } else if (await this.tv.isInArtMode()) {
       // Only act while in art mode so this never changes input on a TV that is showing something else
       await this.tv.leaveArtMode();

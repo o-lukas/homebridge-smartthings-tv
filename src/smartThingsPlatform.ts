@@ -471,18 +471,19 @@ export class SmartThingsPlatform implements DynamicPlatformPlugin, RefreshTokenS
     const name = 'Art mode';
     const id = this.api.hap.uuid.generate(`${device.deviceId}${name}`);
     const pollInterval = this.config.pollInterval as number ?? undefined;
+    const cyclicCallsLogging = this.config.cyclicCallsLogging as boolean ?? false;
 
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === id);
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache: %s', existingAccessory.displayName);
 
-      new ArtModeSwitchAccessory(device, component, client, this.log, this, existingAccessory, pollInterval, tv);
+      new ArtModeSwitchAccessory(device, component, client, this.log, this, existingAccessory, pollInterval, cyclicCallsLogging, tv);
     } else {
       const accessory = new this.api.platformAccessory(name, id);
       accessory.context.device = device;
       accessory.category = this.api.hap.Categories.SWITCH;
 
-      new ArtModeSwitchAccessory(device, component, client, this.log, this, accessory, pollInterval, tv);
+      new ArtModeSwitchAccessory(device, component, client, this.log, this, accessory, pollInterval, cyclicCallsLogging, tv);
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
