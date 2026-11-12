@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.1.0...v3.1.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* track "Art Mode" status locally ([3be1681](https://github.com/o-lukas/homebridge-smartthings-tv/commit/3be168188e56e4130df57c7df5d0c7cbc0881d64))
+
 # [3.1.0](https://github.com/o-lukas/homebridge-smartthings-tv/compare/v3.0.25...v3.1.0) (2026-11-08)
 
 
