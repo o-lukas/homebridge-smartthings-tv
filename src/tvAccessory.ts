@@ -24,6 +24,8 @@ export class TvAccessory extends SmartThingsAccessory {
   private powerButtonOption: PowerButtonOption = 'on-off';
   private activeIdentifierChangeTime = 0;
   private activeIdentifierChangeValue = 0;
+  private artModeChangeTime = 0;
+  private artModeChangeValue = false;
 
   constructor(
     name: string,
@@ -214,17 +216,38 @@ export class TvAccessory extends SmartThingsAccessory {
   /**
    * Checks whether the TV is currently showing art mode.
    *
+   * @param log flag to turn logging on/off
    * @returns TRUE in case the TV is in art mode - FALSE otherwise
    */
-  public async isInArtMode(): Promise<boolean> {
+  public async isInArtMode(log = true): Promise<boolean> {
     const status = await this.getCapabilityStatus('tvChannel', false);
-    return status?.tvChannelName?.value === 'art';
+
+    if (Date.parse(status?.tvChannelName?.timestamp ?? '') > this.artModeChangeTime) {
+      return status?.tvChannelName?.value === 'art';
+    }
+
+    if (log) {
+      this.logDebug('Art mode has not been changed on the device - using temporary result: %s', this.artModeChangeValue);
+    }
+    return this.artModeChangeValue;
+  }
+
+  /**
+   * Enters art mode.
+   */
+  public async enterArtMode() {
+    this.artModeChangeTime = Date.now();
+    this.artModeChangeValue = true;
+    await this.executeCommand('samsungvd.art', 'setArtOn');
   }
 
   /**
    * Leaves art mode by re-selecting the TV's current input source.
    */
   public async leaveArtMode() {
+    this.artModeChangeTime = Date.now();
+    this.artModeChangeValue = false;
+
     const status = await this.getCapabilityStatus('samsungvd.mediaInputSource', false);
     const current = status?.inputSource?.value as string | undefined;
     const supported = status?.supportedInputSourcesMap?.value as { id: string; name: string }[] | undefined;
@@ -387,7 +410,7 @@ export class TvAccessory extends SmartThingsAccessory {
       }
     } else if (this.powerButtonOption === 'art-tv') {
       this.logDebug('Switching to art mode instead of powering off');
-      await this.executeCommand('samsungvd.art', 'setArtOn');
+      await this.enterArtMode();
     } else {
       await this.executeCommand('switch', 'off');
     }
@@ -400,7 +423,7 @@ export class TvAccessory extends SmartThingsAccessory {
    * @returns the CharacteristicValue
    */
   private async getActive(log = true): Promise<CharacteristicValue> {
-    if (this.powerButtonOption === 'art-tv' && await this.isInArtMode()) {
+    if (this.powerButtonOption === 'art-tv' && await this.isInArtMode(log)) {
       // The TV is still powered (and reachable) in art mode, but should show as off in HomeKit
       return false;
     }
